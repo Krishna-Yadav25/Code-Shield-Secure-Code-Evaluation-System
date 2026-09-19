@@ -23,11 +23,45 @@ Academic programming assessments require more than basic code execution. Running
 
 | Name | Roll Number | Role |
 |---|---|---|
-| Krishna Yadav | 240211229 | Assessment Management & System Integration |
-| Khyati Uttam | 240222306 | Database Design & Transaction Logic |
-| Abhishek Singh | 240211560 | OS Sandboxing & Execution Engine |
+| Krishna Yadav | 240211229 | Backend + Core OS/Sandbox |
+| Abhishek Singh | 240211560 | DBMS + Evaluation & Result Management |
+| Khyati Uttam | 240222306 | Frontend + Academic Integrity |
 
 **Mentor:** Dr. Vikas Tripathi (Prof.), Department of Computer Science & Engineering
+
+### Detailed Role Breakdown
+
+**Krishna Yadav — Backend + Core OS/Sandbox**
+- Develops the API/backend orchestration layer
+- Manages submissions in a job queue
+- Develops the C++ sandbox executor
+- Implements the fork-exec model
+- Integrates Linux namespaces and cgroups v2
+- Handles CPU, memory, and process-count limits
+- Implements the timeout/watchdog mechanism
+- Builds the worker pool for concurrent submission handling
+
+**Abhishek Singh — DBMS + Evaluation Engine**
+- Designs the PostgreSQL database
+- Creates tables for users, assessments, problems, test cases, submissions, and results
+- Implements primary keys, foreign keys, and constraints
+- Implements transactions
+- Handles indexing and connection pooling
+- Builds evaluation logic that checks submitted code against test cases
+- Stores execution result, time, and memory information in the database
+- Integrates the database with the backend
+
+**Khyati Uttam — Frontend + Academic Integrity**
+- Builds the React-based student dashboard
+- Builds the teacher dashboard
+- Builds the problem creation interface
+- Builds the test-case creation interface
+- Builds the code editor/submission interface
+- Builds submission history and result display
+- Builds the monitoring/analytics interface for teachers
+- Develops the Jaccard-based code similarity/plagiarism module
+- Builds the suspicious-activity logging interface
+- Integrates the frontend with backend APIs
 
 ## Technologies/Tools Used
 
@@ -77,25 +111,20 @@ sudo ./sandbox_executor <path_to_program>
 
 ## Major Features/Modules
 
-- **Sandbox Executor** — runs each submission in an isolated child process using fork-exec, with cgroups v2 enforcing CPU, memory, and process-count limits, and a watchdog timeout to terminate runaway executions
-- **Assessment Management** — allows teachers to create problems, define test cases, and configure difficulty/rules
-- **Submission & Evaluation Pipeline** — connects the frontend, execution engine, and database to process and verdict-check submissions
-- **Database Layer** — PostgreSQL schema for users, contests, problems, submissions, and results, with ACID transactions and connection pooling for burst-load handling
-- **Plagiarism Detection** — token-based similarity checking (Jaccard similarity) across submissions
-- **Suspicious Activity Tracking** — logs tab-switch events and anomalous submission timing
-- **Web Dashboard** — React-based interface for students (submit code, view results) and teachers (create tests, monitor submissions)
+- **Backend & Sandbox Executor** (Krishna) — API/backend orchestration, job queue management, and a C++ sandbox executor that runs each submission in an isolated child process using fork-exec; isolation via Linux namespaces and cgroups v2, with CPU/memory/process-count limits, a timeout/watchdog mechanism, and a worker pool for concurrent submissions
+- **Database & Evaluation Engine** (Abhishek) — PostgreSQL schema for users, assessments, problems, test cases, submissions, and results, with primary/foreign keys and constraints, ACID transactions, indexing, and connection pooling; evaluation logic that checks submitted code against test cases and stores execution result, time, and memory data
+- **Frontend & Academic Integrity** (Khyati) — React-based student and teacher dashboards, problem/test-case creation interfaces, code editor and submission interface, submission history and result display, teacher monitoring/analytics interface, a Jaccard-based plagiarism detection module, and a suspicious-activity logging interface
 
 ## Current Project Status
 
 **Phase I — Completed:** Problem identification, current-solution study, requirements discussion, feature scope finalization, and three mentor interactions completed.
 
 **Phase II — In Progress:** Building core modules in parallel —
-- Baseline naive executor built (demonstrates unprotected execution risk)
-- Basic sandboxed executor built with cgroups v2 (memory limit, process-count limit, timeout enforcement)
-- Database schema design in progress
-- Assessment management and API integration in progress
+- Krishna: baseline naive executor built (demonstrates unprotected execution risk); basic sandboxed executor built with cgroups v2 (memory limit, process-count limit, timeout enforcement); namespace integration and worker pool in progress
+- Abhishek: PostgreSQL schema design and evaluation logic in progress
+- Khyati: frontend dashboard wireframes and plagiarism module planning in progress
 
-**Phase III — Upcoming:** Namespace isolation, frontend dashboard, plagiarism detection, load testing, and final integration.
+**Phase III — Upcoming:** Namespace isolation, full frontend integration, plagiarism detection, load testing, and final integration.
 
 ## References
 
