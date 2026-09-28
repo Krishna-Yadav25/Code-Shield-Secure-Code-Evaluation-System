@@ -1,0 +1,571 @@
+/* =========================================
+   CODESHIELD DASHBOARD LAYOUT
+   ========================================= */
+
+.dl-root {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    background: #080d18;
+    color: #e8ecf5;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+}
+
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+
+.dl-sidebar {
+    width: 216px;
+    min-width: 216px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+
+    background: #0d1425;
+    border-right: 1px solid #1c2943;
+
+    transition:
+        transform 0.25s ease,
+        width 0.25s ease;
+}
+
+
+/* =========================================
+   BRAND
+   ========================================= */
+
+.dl-brand {
+    height: 78px;
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+
+    border-bottom: 1px solid #1c2943;
+}
+
+.dl-logo {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 11px;
+
+    color: #4f8cff;
+
+    background: rgba(47, 123, 255, 0.12);
+
+    border: 1px solid rgba(47, 123, 255, 0.4);
+
+    box-shadow:
+        0 0 18px rgba(47, 123, 255, 0.08);
+}
+
+.dl-brand-text {
+    margin-left: 11px;
+}
+
+.dl-brand-text h2 {
+    margin: 0;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    letter-spacing: -0.02em;
+}
+
+.dl-brand-text h2 span {
+    color: #4f8cff;
+}
+
+.dl-brand-text p {
+    margin: 2px 0 0;
+
+    color: #71809e;
+
+    font-size: 10px;
+}
+
+
+/* =========================================
+   NAVIGATION
+   ========================================= */
+
+.dl-nav {
+    flex: 1;
+
+    padding: 22px 12px;
+
+    overflow-y: auto;
+}
+
+.dl-nav-section {
+    margin-bottom: 26px;
+}
+
+.dl-nav-label {
+    padding: 0 12px;
+
+    color: #65728d;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+}
+
+.dl-nav-label-button {
+    width: 100%;
+
+    padding: 0 12px;
+    margin-bottom: 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border: 0;
+    background: transparent;
+
+    color: #65728d;
+
+    cursor: pointer;
+}
+
+.dl-nav-label-button svg {
+    transition: transform 0.2s ease;
+}
+
+.dl-nav-label-button svg.rotate {
+    transform: rotate(180deg);
+}
+
+.dl-nav-item {
+    width: 100%;
+
+    margin-top: 5px;
+
+    padding: 11px 12px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #8592ad;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.dl-nav-item:hover {
+    background: #131f38;
+    color: #dbe5f8;
+}
+
+.dl-nav-item.active {
+    background: #17305e;
+    color: #ffffff;
+
+    box-shadow:
+        inset 3px 0 0 #3f83ff;
+}
+
+.dl-nav-item.active svg {
+    color: #5d98ff;
+}
+
+
+/* =========================================
+   SIDEBAR USER
+   ========================================= */
+
+.dl-sidebar-bottom {
+    padding: 12px;
+
+    border-top: 1px solid #1c2943;
+}
+
+.dl-user-card {
+    min-height: 55px;
+
+    padding: 8px;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 11px;
+
+    background: #121c31;
+
+    border: 1px solid #1d2b47;
+}
+
+.dl-avatar {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #3274e8;
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.dl-user-info {
+    flex: 1;
+
+    margin-left: 9px;
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.dl-user-info strong {
+    color: #e7edf9;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dl-user-info span {
+    margin-top: 2px;
+
+    color: #71809e;
+
+    font-size: 10px;
+}
+
+.dl-logout-icon {
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #75839f;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.dl-logout-icon:hover {
+    background: #202d46;
+    color: #ff7280;
+}
+
+
+/* =========================================
+   MAIN
+   ========================================= */
+
+.dl-main {
+    width: calc(100% - 216px);
+
+    margin-left: 216px;
+
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================
+   TOPBAR
+   ========================================= */
+
+.dl-topbar {
+    height: 62px;
+
+    padding: 0 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #080d18;
+
+    border-bottom: 1px solid #18243b;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 50;
+}
+
+.dl-topbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.dl-page-title {
+    color: #e6ebf5;
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.dl-menu-button {
+    display: none;
+
+    margin-right: 12px;
+
+    width: 36px;
+    height: 36px;
+
+    place-items: center;
+
+    border: 1px solid #24334f;
+    border-radius: 8px;
+
+    background: #10192b;
+
+    color: #dbe5f8;
+
+    cursor: pointer;
+}
+
+.dl-topbar-right {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.dl-icon-button {
+    width: 36px;
+    height: 36px;
+
+    display: grid;
+    place-items: center;
+
+    position: relative;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #7f8da8;
+
+    cursor: pointer;
+}
+
+.dl-icon-button:hover {
+    background: #111c31;
+    color: #dbe5f8;
+}
+
+.dl-notification-dot {
+    position: absolute;
+
+    width: 6px;
+    height: 6px;
+
+    top: 8px;
+    right: 8px;
+
+    border-radius: 50%;
+
+    background: #4f8cff;
+
+    border: 1px solid #080d18;
+}
+
+.dl-top-user {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+.dl-top-avatar {
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #173f83;
+
+    color: #8bb6ff;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.dl-top-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.dl-top-user-info strong {
+    color: #dce5f5;
+
+    font-size: 12px;
+}
+
+.dl-top-user-info span {
+    color: #697792;
+
+    font-size: 10px;
+
+    margin-top: 1px;
+}
+
+
+/* =========================================
+   CONTENT
+   ========================================= */
+
+.dl-content {
+    flex: 1;
+
+    width: 100%;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   MOBILE OVERLAY
+   ========================================= */
+
+.dl-overlay {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 90;
+
+    background: rgba(0, 0, 0, 0.6);
+
+    backdrop-filter: blur(2px);
+}
+
+.dl-mobile-close {
+    display: none;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .dl-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .dl-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .dl-overlay {
+        display: block;
+    }
+
+    .dl-main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .dl-menu-button {
+        display: grid;
+    }
+
+    .dl-mobile-close {
+        display: grid;
+
+        margin-left: auto;
+
+        width: 30px;
+        height: 30px;
+
+        place-items: center;
+
+        border: 0;
+        border-radius: 7px;
+
+        background: transparent;
+
+        color: #71809e;
+
+        cursor: pointer;
+    }
+
+    .dl-mobile-close:hover {
+        background: #18243a;
+        color: #fff;
+    }
+
+    .dl-content {
+        padding: 22px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .dl-topbar {
+        padding: 0 16px;
+    }
+
+    .dl-top-user-info {
+        display: none;
+    }
+
+    .dl-content {
+        padding: 16px;
+    }
+
+}

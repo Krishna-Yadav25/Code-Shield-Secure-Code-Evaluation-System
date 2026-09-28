@@ -1,0 +1,798 @@
+.student-test-page {
+    min-height: 100vh;
+    background: #070b14;
+    color: #e8edf7;
+    display: flex;
+    flex-direction: column;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+
+/* ============================================================
+   TOP BAR
+============================================================ */
+
+.student-test-topbar {
+    height: 72px;
+    min-height: 72px;
+    border-bottom: 1px solid #1c2638;
+    background: #0a0f1b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.student-test-brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 260px;
+}
+
+.student-back-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #26344d;
+    background: #101827;
+    color: #aebbd0;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.student-back-btn:hover {
+    border-color: #3b82f6;
+    color: #60a5fa;
+    background: #111e33;
+}
+
+.student-brand-name {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.student-brand-subtitle {
+    color: #65738a;
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+.student-test-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.student-status {
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: #202b3c;
+    color: #9aa8bd;
+    font-size: 11px;
+}
+
+.student-status.active {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.student-timer {
+    min-width: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    color: #60a5fa;
+}
+
+.student-timer div {
+    display: flex;
+    flex-direction: column;
+}
+
+.student-timer span {
+    font-size: 10px;
+    color: #68778d;
+}
+
+.student-timer strong {
+    font-size: 14px;
+    color: #e7edf8;
+    margin-top: 2px;
+}
+
+
+/* ============================================================
+   BODY
+============================================================ */
+
+.student-test-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 260px minmax(420px, 1fr) minmax(430px, 0.95fr);
+    min-height: calc(100vh - 72px);
+}
+
+
+/* ============================================================
+   LEFT SIDEBAR
+============================================================ */
+
+.student-problem-sidebar {
+    background: #0a101d;
+    border-right: 1px solid #1b2638;
+    display: flex;
+    flex-direction: column;
+}
+
+.student-sidebar-header {
+    padding: 22px 18px;
+    border-bottom: 1px solid #1b2638;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.student-sidebar-header > div:first-child > span {
+    color: #52627a;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.student-sidebar-header h2 {
+    margin: 5px 0 0;
+    font-size: 18px;
+}
+
+.problem-count {
+    width: 29px;
+    height: 29px;
+    border-radius: 8px;
+    background: #14233c;
+    color: #60a5fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.student-problem-list {
+    padding: 12px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.student-problem-item {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #c8d1df;
+    padding: 12px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: 0.2s;
+}
+
+.student-problem-item:hover {
+    background: #101929;
+    border-color: #1d2d46;
+}
+
+.student-problem-item.selected {
+    background: #10213c;
+    border-color: #2563eb;
+}
+
+.problem-number {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 8px;
+    background: #152033;
+    color: #7e8da5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.student-problem-item.selected .problem-number {
+    background: #1d4ed8;
+    color: white;
+}
+
+.problem-item-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.problem-item-content strong {
+    display: block;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.problem-meta {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 5px;
+    color: #56667e;
+    font-size: 9px;
+}
+
+.difficulty {
+    padding: 3px 6px;
+    border-radius: 5px;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.difficulty.easy {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+}
+
+.difficulty.medium {
+    background: rgba(245, 158, 11, 0.12);
+    color: #fbbf24;
+}
+
+.difficulty.hard {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+}
+
+.problem-arrow {
+    color: #44536a;
+}
+
+.student-sidebar-footer {
+    padding: 18px;
+    border-top: 1px solid #1b2638;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    color: #718098;
+    font-size: 10px;
+    margin-bottom: 8px;
+}
+
+.progress-track {
+    height: 5px;
+    background: #172133;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #2563eb;
+    border-radius: inherit;
+}
+
+.no-problems {
+    padding: 25px 10px;
+    text-align: center;
+    color: #5c6b82;
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   PROBLEM PANEL
+============================================================ */
+
+.student-problem-panel {
+    background: #080e19;
+    padding: 28px;
+    overflow-y: auto;
+    border-right: 1px solid #1b2638;
+}
+
+.problem-header {
+    margin-bottom: 25px;
+}
+
+.problem-heading-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.problem-heading-row h1 {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: -0.3px;
+}
+
+.difficulty.large {
+    padding: 5px 9px;
+    font-size: 9px;
+}
+
+.problem-header p {
+    color: #65748b;
+    font-size: 11px;
+    margin: 7px 0 0;
+}
+
+.problem-section {
+    margin-bottom: 25px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #aab7ca;
+    margin-bottom: 12px;
+}
+
+.section-heading svg {
+    color: #60a5fa;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.example-count {
+    background: #14233b;
+    color: #60a5fa;
+    border-radius: 20px;
+    padding: 3px 7px;
+    font-size: 9px;
+}
+
+.problem-statement {
+    background: #0d1524;
+    border: 1px solid #1c2a40;
+    border-radius: 10px;
+    padding: 18px;
+    color: #aeb9ca;
+    font-size: 12px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.problem-limits {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.limit-card {
+    background: #0d1524;
+    border: 1px solid #1c2a40;
+    border-radius: 9px;
+    padding: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.limit-card svg {
+    color: #60a5fa;
+}
+
+.limit-card div {
+    display: flex;
+    flex-direction: column;
+}
+
+.limit-card span {
+    color: #5f6f86;
+    font-size: 9px;
+}
+
+.limit-card strong {
+    color: #d8e0ec;
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+.examples-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.example-card {
+    background: #0d1524;
+    border: 1px solid #1c2a40;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.example-header {
+    height: 38px;
+    padding: 0 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #1c2a40;
+    color: #8e9db2;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.example-header svg {
+    color: #4ade80;
+}
+
+.example-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.example-grid > div {
+    padding: 12px;
+}
+
+.example-grid > div + div {
+    border-left: 1px solid #1c2a40;
+}
+
+.example-grid label {
+    display: block;
+    color: #65748b;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 7px;
+}
+
+.example-grid pre {
+    margin: 0;
+    background: #080e18;
+    border: 1px solid #19263a;
+    border-radius: 7px;
+    padding: 10px;
+    color: #cbd5e1;
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    min-height: 40px;
+}
+
+.no-examples,
+.examples-loading {
+    background: #0d1524;
+    border: 1px solid #1c2a40;
+    border-radius: 10px;
+    padding: 20px;
+    color: #68778e;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* ============================================================
+   EDITOR
+============================================================ */
+
+.student-editor-panel {
+    background: #070c15;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.editor-header {
+    height: 58px;
+    min-height: 58px;
+    border-bottom: 1px solid #1b2638;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+}
+
+.editor-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.editor-title svg {
+    color: #60a5fa;
+}
+
+.editor-header select {
+    background: #111a2a;
+    border: 1px solid #26364e;
+    color: #b9c5d7;
+    border-radius: 7px;
+    padding: 7px 10px;
+    font-size: 11px;
+    outline: none;
+}
+
+.editor-header select:focus {
+    border-color: #3b82f6;
+}
+
+.editor-container {
+    flex: 1;
+    min-height: 400px;
+    display: flex;
+    background: #080d16;
+    overflow: hidden;
+}
+
+.editor-line-numbers {
+    width: 45px;
+    flex-shrink: 0;
+    padding-top: 18px;
+    background: #080d16;
+    border-right: 1px solid #151f30;
+    color: #3f4d62;
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    text-align: right;
+    padding-right: 11px;
+    overflow: hidden;
+}
+
+.editor-line-numbers span {
+    display: block;
+}
+
+.code-editor {
+    flex: 1;
+    width: 100%;
+    resize: none;
+    border: none;
+    outline: none;
+    background: #080d16;
+    color: #d8e2f0;
+    padding: 18px 16px;
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    tab-size: 4;
+}
+
+.code-editor::selection {
+    background: #1e3a5f;
+}
+
+.code-editor::placeholder {
+    color: #344258;
+}
+
+
+/* ============================================================
+   EDITOR FOOTER
+============================================================ */
+
+.editor-footer {
+    min-height: 62px;
+    border-top: 1px solid #1b2638;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.editor-info {
+    display: flex;
+    gap: 14px;
+    color: #53627a;
+    font-size: 9px;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.run-button,
+.submit-button {
+    border-radius: 7px;
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.run-button {
+    background: #111b2c;
+    border: 1px solid #2a3b55;
+    color: #aab9cd;
+}
+
+.run-button:hover:not(:disabled) {
+    border-color: #3b82f6;
+    color: #60a5fa;
+}
+
+.submit-button {
+    background: #2563eb;
+    border: 1px solid #3b82f6;
+    color: white;
+}
+
+.submit-button:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.run-button:disabled,
+.submit-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+
+/* ============================================================
+   EXECUTION PLACEHOLDER
+============================================================ */
+
+.execution-placeholder {
+    margin: 0 15px 15px;
+    padding: 12px;
+    border: 1px dashed #24334a;
+    background: #0b1320;
+    border-radius: 9px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.execution-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background: #12223b;
+    color: #60a5fa;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.execution-placeholder div:last-child {
+    display: flex;
+    flex-direction: column;
+}
+
+.execution-placeholder strong {
+    color: #9eacc0;
+    font-size: 10px;
+}
+
+.execution-placeholder span {
+    color: #53627a;
+    font-size: 9px;
+    margin-top: 3px;
+}
+
+
+/* ============================================================
+   LOADING / ERROR
+============================================================ */
+
+.student-test-loading {
+    min-height: 100vh;
+    background: #070b14;
+    color: #9aa9be;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.student-test-error {
+    margin: 15px 20px 0;
+    padding: 10px 13px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    border-radius: 8px;
+    font-size: 11px;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 1200px) {
+
+    .student-test-body {
+        grid-template-columns:
+            220px
+            minmax(380px, 1fr)
+            minmax(380px, 0.9fr);
+    }
+
+    .student-problem-panel {
+        padding: 20px;
+    }
+
+}
+
+@media (max-width: 950px) {
+
+    .student-test-body {
+        grid-template-columns: 220px 1fr;
+    }
+
+    .student-editor-panel {
+        display: none;
+    }
+
+    .student-test-title {
+        display: none;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .student-test-body {
+        display: block;
+    }
+
+    .student-problem-sidebar {
+        display: none;
+    }
+
+    .student-test-topbar {
+        padding: 0 12px;
+    }
+
+    .student-timer {
+        min-width: auto;
+    }
+
+    .student-problem-panel {
+        padding: 16px;
+    }
+
+}
