@@ -3,8 +3,10 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <fcntl.h>
 #include <cstring>
 #include <cerrno>
+#include <chrono>
 
 using namespace std;
 
@@ -18,11 +20,14 @@ int main(int argc, char* argv[]) {
 
     const char* program = argv[1];
 
+    // Time limit for the program in seconds
+    const int TIME_LIMIT = 5;
+
     cout << "CodeShield Sandbox" << endl;
     cout << "Program: " << program << endl;
+    cout << "Time Limit: " << TIME_LIMIT << " seconds" << endl;
 
-    // Pipe is used to send child output to parent
-    // pipe_fd[0] is for reading and pipe_fd[1] is for writing
+    // Pipe is used to capture child output
     int pipe_fd[2];
 
     if (pipe(pipe_fd) == -1) {
@@ -42,7 +47,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Child process will run the submitted program
+    // Child process
     if (pid == 0) {
 
         // Child does not need the reading side
@@ -75,23 +80,35 @@ int main(int argc, char* argv[]) {
         _exit(127);
     }
 
-    // Parent keeps the child PID to monitor it
+    // Parent process
     cout << "[Parent] Child PID: " << pid << endl;
 
     // Parent only reads from the pipe
     close(pipe_fd[1]);
 
+    // Make the pipe non-blocking
+    int flags = fcntl(pipe_fd[0], F_GETFL, 0);
+    fcntl(pipe_fd[0], F_SETFL, flags | O_NONBLOCK);
+
     cout << "\n----- Program Output -----\n";
 
     char buffer[4096];
-    ssize_t bytes_read;
+    bool timed_out = false;
+    int status = 0;
 
-    // Read the output produced by the child
-    while ((bytes_read = read(
+    // Store the time when execution started
+    auto start_time = chrono::steady_clock::now();
+
+    while (true) {
+
+    // Read available output from the child
+    ssize_t bytes_read = read(
         pipe_fd[0],
         buffer,
         sizeof(buffer) - 1
-    )) > 0) {
+    );
+
+    if (bytes_read > 0) {
 
         buffer[bytes_read] = '\0';
 
@@ -99,26 +116,86 @@ int main(int argc, char* argv[]) {
         cout.flush();
     }
 
-    close(pipe_fd[0]);
-
-    // Wait until the child finishes
-    int status;
-
+    // Check whether the child has finished
     pid_t result = waitpid(
         pid,
         &status,
-        0
+        WNOHANG
     );
+
+    if (result == pid) {
+        break;
+    }
 
     if (result == -1) {
         perror("waitpid failed");
+        close(pipe_fd[0]);
         return 1;
     }
 
+    // Check how much time has passed
+    auto current_time = chrono::steady_clock::now();
+
+    auto elapsed =
+        chrono::duration_cast<chrono::seconds>(
+            current_time - start_time
+        ).count();
+
+    // Kill the process if it exceeds the time limit
+    if (elapsed >= TIME_LIMIT) {
+
+        cout << "\n\nTime limit exceeded!" << endl;
+
+        cout << "Sending SIGKILL to child..." << endl;
+
+        if (kill(pid, SIGKILL) == -1) {
+            perror("kill failed");
+        }
+
+        timed_out = true;
+
+        waitpid(pid, &status, 0);
+
+        break;
+    }
+
+    // Small delay before checking again
+    usleep(10000);
+}
+    // Read any remaining output after process termination
+    while (true) {
+
+        ssize_t bytes_read = read(
+            pipe_fd[0],
+            buffer,
+            sizeof(buffer) - 1
+        );
+
+        if (bytes_read > 0) {
+
+            buffer[bytes_read] = '\0';
+
+            cout << buffer;
+            cout.flush();
+        }
+        else {
+            break;
+        }
+    }
+
+    close(pipe_fd[0]);
+
     cout << "\n--------------------------\n";
 
-    // Check if the program ended normally
-    if (WIFEXITED(status)) {
+    // Handle timeout separately
+    if (timed_out) {
+
+        cout << "Child terminated by SIGKILL" << endl;
+        cout << "Verdict: TIME LIMIT EXCEEDED" << endl;
+    }
+
+    // Check normal termination
+    else if (WIFEXITED(status)) {
 
         int exit_code = WEXITSTATUS(status);
 
@@ -133,15 +210,12 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Check if the process was terminated by a signal
+    // Check if process was terminated by a signal
     else if (WIFSIGNALED(status)) {
 
         int signal_number = WTERMSIG(status);
 
         cout << "Child terminated by signal: "
-             << signal_number << endl;
-
-        cout << "Signal number: "
              << signal_number << endl;
 
         cout << "Verdict: RUNTIME ERROR" << endl;
