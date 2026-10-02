@@ -67,6 +67,50 @@ CREATE TABLE Results (
     created_at   TIMESTAMP DEFAULT NOW()
 );
 
+--ACTIVITY LOG
+CREATE TABLE ActivityLog(
+    log_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES USER(user_id) ON DELETE CASCADE,
+    contest_id INTEGER NOT NULL REFERENCES CONTESTS(contest_id) ON DELETE CASCADE,
+    event_type VARCHAR(50) NOT NULL,
+    event_time TIMESTAMP DEFAULT NOW()
+
+)
+
+--PLAGRISM RESULT
+CREATE TABLE PlagrismChecks(
+    check_id SERIAL PRIMARY KEY,
+    submission_id_1 INTEGER NOT NULL REFERENCES SUBMISSIONS(submission_id) ON DELETE CASCADE,
+    submission_id_2 INTEGER NOT NULL REFERENCES SUBMISSION(submission_id) ON DELETE CASCADE,
+    similarity_score NUMERIC(5,2) NOT NULL,
+    flagged BOOLEAN DEFAULT FALSE,
+    checked_at TIMESTAMP DEFAULT NOW()
+)
+
+--INDEXES
+CREATE INDEX idx_submissions_status ON Submissions(status);
+CREATE INDEX idx_submissions_problem ON Submissions(problem_id);
+CREATE INDEX idx_problems_contest ON Problems(contest_id);
+CREATE INDEX idx_activitylog_contest ON ActivityLog(contest_id);
+
+--LEADERBOARD VIEW
+CREATE VIEW LeaderboardView AS
+SELECT
+    u.username,
+    p.contest_id,
+    COUNT(DISTINCT CASE
+        WHEN r.verdict = 'AC' THEN s.problem_id
+    END) AS problems_solved,
+    SUM(r.execution_time_ms) AS total_time_ms
+FROM Submissions s
+JOIN Users u ON s.user_id = u.user_id
+JOIN Problems p ON s.problem_id = p.problem_id
+JOIN Results r ON r.submission_id = s.submission_id
+GROUP BY u.username, p.contest_id
+ORDER BY problems_solved DESC, total_time_ms ASC;
+
+
+
 
 
 
