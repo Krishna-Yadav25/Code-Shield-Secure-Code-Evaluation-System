@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     cout << "Program: " << program << endl;
     cout << "Time Limit: " << TIME_LIMIT << " seconds" << endl;
 
-    // Pipe is used to capture child output
+    // Create a pipe to capture child output
     int pipe_fd[2];
 
     if (pipe(pipe_fd) == -1) {
@@ -54,14 +54,17 @@ int main(int argc, char* argv[]) {
         // Child does not need the reading side
         close(pipe_fd[0]);
 
-        /*
-         * Set CPU time limit.
-         * Soft limit = 1 second
-         * Hard limit = 2 seconds
-         */
+        // ------------------------------------------------
+        // CPU LIMIT
+        // ------------------------------------------------
+
+        // Set CPU time limit
         struct rlimit cpu_limit;
 
+        // Soft limit = 1 second
         cpu_limit.rlim_cur = 1;
+
+        // Hard limit = 2 seconds
         cpu_limit.rlim_max = 2;
 
         if (setrlimit(RLIMIT_CPU, &cpu_limit) == -1) {
@@ -69,12 +72,14 @@ int main(int argc, char* argv[]) {
             _exit(127);
         }
 
-        /*
-         * Set memory limit.
-         * Limit = 256 MB
-         */
+        // ------------------------------------------------
+        // MEMORY LIMIT
+        // ------------------------------------------------
+
+        // Set memory limit
         struct rlimit memory_limit;
 
+        // Limit = 256 MB
         memory_limit.rlim_cur = 256 * 1024 * 1024;
         memory_limit.rlim_max = 256 * 1024 * 1024;
 
@@ -82,6 +87,26 @@ int main(int argc, char* argv[]) {
             perror("Memory limit failed");
             _exit(127);
         }
+
+        // ------------------------------------------------
+        // PROCESS LIMIT
+        // ------------------------------------------------
+
+        // Limit the number of processes created by the program
+        struct rlimit process_limit;
+
+        // Maximum number of processes
+        process_limit.rlim_cur = 20;
+        process_limit.rlim_max = 20;
+
+        if (setrlimit(RLIMIT_NPROC, &process_limit) == -1) {
+            perror("Process limit failed");
+            _exit(127);
+        }
+
+        // ------------------------------------------------
+        // OUTPUT REDIRECTION
+        // ------------------------------------------------
 
         // Send normal output to the pipe
         if (dup2(pipe_fd[1], STDOUT_FILENO) == -1) {
@@ -95,7 +120,12 @@ int main(int argc, char* argv[]) {
             _exit(127);
         }
 
+        // Pipe write end is no longer needed
         close(pipe_fd[1]);
+
+        // ------------------------------------------------
+        // EXECUTE PROGRAM
+        // ------------------------------------------------
 
         // Execute the submitted program
         execl(
@@ -110,7 +140,10 @@ int main(int argc, char* argv[]) {
         _exit(127);
     }
 
-    // Parent process
+    // ------------------------------------------------
+    // PARENT PROCESS
+    // ------------------------------------------------
+
     cout << "[Parent] Child PID: " << pid << endl;
 
     // Parent only reads from the pipe
@@ -143,14 +176,21 @@ int main(int argc, char* argv[]) {
 
     cout << "\n----- Program Output -----\n";
 
+    // Buffer used to read program output
     char buffer[4096];
 
+    // Used to identify wall-clock timeout
     bool timed_out = false;
 
+    // Store child process status
     int status = 0;
 
     // Store the time when execution started
     auto start_time = chrono::steady_clock::now();
+
+    // ------------------------------------------------
+    // MONITOR CHILD PROCESS
+    // ------------------------------------------------
 
     while (true) {
 
@@ -176,11 +216,14 @@ int main(int argc, char* argv[]) {
             WNOHANG
         );
 
+        // Child has finished
         if (result == pid) {
             break;
         }
 
+        // waitpid failed
         if (result == -1) {
+
             perror("waitpid failed");
 
             kill(pid, SIGKILL);
@@ -191,7 +234,10 @@ int main(int argc, char* argv[]) {
             return 1;
         }
 
-        // Check how much wall-clock time has passed
+        // ------------------------------------------------
+        // WALL-CLOCK TIME CHECK
+        // ------------------------------------------------
+
         auto current_time = chrono::steady_clock::now();
 
         auto elapsed =
@@ -199,7 +245,7 @@ int main(int argc, char* argv[]) {
                 current_time - start_time
             ).count();
 
-        // Kill the process if it exceeds the wall-clock limit
+        // Kill the process if it exceeds the time limit
         if (elapsed >= TIME_LIMIT) {
 
             cout << "\n\nTime limit exceeded!" << endl;
@@ -222,7 +268,10 @@ int main(int argc, char* argv[]) {
         usleep(10000);
     }
 
-    // Read remaining output after process termination
+    // ------------------------------------------------
+    // READ REMAINING OUTPUT
+    // ------------------------------------------------
+
     while (true) {
 
         ssize_t bytes_read = read(
@@ -247,7 +296,10 @@ int main(int argc, char* argv[]) {
 
     cout << "\n--------------------------\n";
 
-    // Handle wall-clock timeout
+    // ------------------------------------------------
+    // HANDLE WALL-CLOCK TIMEOUT
+    // ------------------------------------------------
+
     if (timed_out) {
 
         cout << "Child terminated by SIGKILL" << endl;
@@ -255,7 +307,10 @@ int main(int argc, char* argv[]) {
         cout << "Verdict: TIME LIMIT EXCEEDED" << endl;
     }
 
-    // Check normal termination
+    // ------------------------------------------------
+    // NORMAL TERMINATION
+    // ------------------------------------------------
+
     else if (WIFEXITED(status)) {
 
         int exit_code = WEXITSTATUS(status);
@@ -274,7 +329,10 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Check if process was terminated by a signal
+    // ------------------------------------------------
+    // PROCESS TERMINATED BY SIGNAL
+    // ------------------------------------------------
+
     else if (WIFSIGNALED(status)) {
 
         int signal_number = WTERMSIG(status);
@@ -282,24 +340,28 @@ int main(int argc, char* argv[]) {
         cout << "Child terminated by signal: "
              << signal_number << endl;
 
-        // SIGXCPU means CPU time limit was reached
+        // CPU time limit exceeded
         if (signal_number == SIGXCPU) {
 
             cout << "Verdict: CPU LIMIT EXCEEDED" << endl;
         }
+
+        // SIGKILL from resource limit or another source
         else if (signal_number == SIGKILL) {
 
-            /*
-             * SIGKILL can also happen when the CPU hard limit
-             * is reached. Wall-clock timeout is handled above.
-             */
             cout << "Verdict: RESOURCE LIMIT EXCEEDED" << endl;
         }
+
+        // Other signals
         else {
 
             cout << "Verdict: RUNTIME ERROR" << endl;
         }
     }
+
+    // ------------------------------------------------
+    // UNKNOWN STATUS
+    // ------------------------------------------------
 
     else {
 
