@@ -70,22 +70,22 @@ CREATE TABLE Results (
 --ACTIVITY LOG
 CREATE TABLE ActivityLog(
     log_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES USER(user_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
     contest_id INTEGER NOT NULL REFERENCES CONTESTS(contest_id) ON DELETE CASCADE,
     event_type VARCHAR(50) NOT NULL,
     event_time TIMESTAMP DEFAULT NOW()
 
-)
+);
 
 --PLAGRISM RESULT
 CREATE TABLE PlagrismChecks(
     check_id SERIAL PRIMARY KEY,
     submission_id_1 INTEGER NOT NULL REFERENCES SUBMISSIONS(submission_id) ON DELETE CASCADE,
-    submission_id_2 INTEGER NOT NULL REFERENCES SUBMISSION(submission_id) ON DELETE CASCADE,
+    submission_id_2 INTEGER NOT NULL REFERENCES SUBMISSIONS(submission_id) ON DELETE CASCADE,
     similarity_score NUMERIC(5,2) NOT NULL,
     flagged BOOLEAN DEFAULT FALSE,
     checked_at TIMESTAMP DEFAULT NOW()
-)
+);
 
 --INDEXES
 CREATE INDEX idx_submissions_status ON Submissions(status);
