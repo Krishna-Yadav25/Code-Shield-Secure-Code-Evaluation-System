@@ -464,11 +464,11 @@ int main(int argc, char* argv[]) {
 
 
         // Soft limit = 1 second
-        cpu_limit.rlim_cur = 1;
+        cpu_limit.rlim_cur = 10;
 
 
         // Hard limit = 2 seconds
-        cpu_limit.rlim_max = 2;
+        cpu_limit.rlim_max = 11;
 
 
         if (setrlimit(
