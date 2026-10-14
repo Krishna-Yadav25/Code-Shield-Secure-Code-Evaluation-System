@@ -16,6 +16,7 @@ import {
 
 import "./StudentTestPage.css";
 
+
 const API_BASE = "http://localhost:5000";
 
 
@@ -51,15 +52,22 @@ function StudentTestPage({
     const [timeLeft, setTimeLeft] =
         useState(null);
 
+    const [executionResult, setExecutionResult] =
+        useState(null);
+
+    const [executionLoading, setExecutionLoading] =
+        useState(false);
+
+    const [submissionId, setSubmissionId] =
+        useState(null);
+
+
     const token =
         localStorage.getItem(
             "codeshield_token"
         );
 
 
-    // ============================================================
-    // DEFAULT CODE
-    // ============================================================
 
     const getDefaultCode = () => {
 
@@ -68,6 +76,7 @@ function StudentTestPage({
             return `#include <iostream>
 #include <vector>
 #include <unordered_map>
+
 using namespace std;
 
 int main() {
@@ -90,20 +99,16 @@ public class Main {
         // Write your solution here
 
     }
-}`;
 
+}`;
         }
 
 
         return `# Write your solution here
-
 `;
     };
 
 
-    // ============================================================
-    // TEST STATUS
-    // ============================================================
 
     const testStatus = useMemo(() => {
 
@@ -141,9 +146,6 @@ public class Main {
     }, [test]);
 
 
-    // ============================================================
-    // LOAD PROBLEMS
-    // ============================================================
 
     const loadProblems = async () => {
 
@@ -160,9 +162,7 @@ public class Main {
 
             const response =
                 await fetch(
-
                     `${API_BASE}/api/tests/${test.contest_id}/problems`,
-
                     {
                         method: "GET",
 
@@ -174,7 +174,6 @@ public class Main {
                                 "application/json"
                         }
                     }
-
                 );
 
 
@@ -197,7 +196,6 @@ public class Main {
                 throw new Error(
                     "Server returned an invalid response."
                 );
-
             }
 
 
@@ -207,7 +205,6 @@ public class Main {
                     result.error ||
                     "Failed to load problems."
                 );
-
             }
 
 
@@ -227,8 +224,8 @@ public class Main {
                 setSelectedProblem(
                     loadedProblems[0]
                 );
-
             }
+
 
         } catch (err) {
 
@@ -244,15 +241,10 @@ public class Main {
         } finally {
 
             setLoadingProblems(false);
-
         }
-
     };
 
 
-    // ============================================================
-    // LOAD VISIBLE TEST CASES
-    // ============================================================
 
     const loadVisibleTestCases =
         async (problemId) => {
@@ -271,9 +263,7 @@ public class Main {
 
                 const response =
                     await fetch(
-
                         `${API_BASE}/api/problems/${problemId}/testcases`,
-
                         {
                             method: "GET",
 
@@ -285,7 +275,6 @@ public class Main {
                                     "application/json"
                             }
                         }
-
                     );
 
 
@@ -308,7 +297,6 @@ public class Main {
                     throw new Error(
                         "Could not read visible test cases."
                     );
-
                 }
 
 
@@ -318,13 +306,13 @@ public class Main {
                         result.error ||
                         "Failed to load test cases."
                     );
-
                 }
 
 
                 setVisibleTestCases(
                     result.testcases || []
                 );
+
 
             } catch (err) {
 
@@ -335,20 +323,16 @@ public class Main {
 
                 setVisibleTestCases([]);
 
+
             } finally {
 
                 setLoadingTestCases(
                     false
                 );
-
             }
-
         };
 
 
-    // ============================================================
-    // LOAD PAGE
-    // ============================================================
 
     useEffect(() => {
 
@@ -357,9 +341,6 @@ public class Main {
     }, [test?.contest_id]);
 
 
-    // ============================================================
-    // SELECTED PROBLEM CHANGED
-    // ============================================================
 
     useEffect(() => {
 
@@ -382,7 +363,6 @@ public class Main {
             ) {
 
                 return previous;
-
             }
 
 
@@ -392,17 +372,17 @@ public class Main {
 
                 [selectedProblem.problem_id]:
                     getDefaultCode()
-
             };
-
         });
+
+
+        // Clear old execution result
+        setExecutionResult(null);
+
+        setSubmissionId(null);
 
     }, [selectedProblem]);
 
-
-    // ============================================================
-    // TIMER
-    // ============================================================
 
     useEffect(() => {
 
@@ -432,14 +412,12 @@ public class Main {
                 setTimeLeft(0);
 
                 return;
-
             }
 
 
             setTimeLeft(
                 difference
             );
-
         };
 
 
@@ -458,15 +436,11 @@ public class Main {
             clearInterval(
                 interval
             );
-
         };
 
     }, [test?.end_time]);
 
 
-    // ============================================================
-    // FORMAT TIME
-    // ============================================================
 
     const formatTime =
         (milliseconds) => {
@@ -477,7 +451,6 @@ public class Main {
             ) {
 
                 return "00:00:00";
-
             }
 
 
@@ -515,13 +488,9 @@ public class Main {
                     .padStart(2, "0")
 
             ].join(":");
-
         };
 
 
-    // ============================================================
-    // SELECT PROBLEM
-    // ============================================================
 
     const handleProblemSelect =
         (problem) => {
@@ -529,13 +498,9 @@ public class Main {
             setSelectedProblem(
                 problem
             );
-
         };
 
 
-    // ============================================================
-    // CODE CHANGE
-    // ============================================================
 
     const handleCodeChange =
         (value) => {
@@ -552,16 +517,11 @@ public class Main {
 
                     [selectedProblem.problem_id]:
                         value
-
                 })
             );
-
         };
 
 
-    // ============================================================
-    // LANGUAGE CHANGE
-    // ============================================================
 
     const handleLanguageChange =
         (value) => {
@@ -582,6 +542,7 @@ public class Main {
                 newCode = `#include <iostream>
 #include <vector>
 #include <unordered_map>
+
 using namespace std;
 
 int main() {
@@ -602,13 +563,13 @@ public class Main {
         // Write your solution here
 
     }
+
 }`;
 
             } else {
 
                 newCode =
                     `# Write your solution here`;
-
             }
 
 
@@ -619,42 +580,328 @@ public class Main {
 
                     [selectedProblem.problem_id]:
                         newCode
-
                 })
             );
-
         };
 
 
-    // ============================================================
-    // RUN CODE
-    // ============================================================
 
-    const handleRunCode = () => {
+    const pollResult = async (
+        id
+    ) => {
 
-        alert(
-            "Run Code will be connected to the Queue + Worker + Sandbox system in the next phase."
-        );
+        let attempts = 0;
 
+        const maxAttempts = 40;
+
+
+        const checkResult = async () => {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_BASE}/result/${id}`,
+                        {
+                            method: "GET"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Failed to get execution result."
+                    );
+                }
+
+
+                setExecutionResult(
+                    data
+                );
+
+
+                if (
+                    data.status ===
+                    "completed"
+                ) {
+
+                    setExecutionLoading(
+                        false
+                    );
+
+                    return;
+                }
+
+
+                attempts++;
+
+
+                if (
+                    attempts >=
+                    maxAttempts
+                ) {
+
+                    setExecutionResult({
+
+                        status:
+                            "completed",
+
+                        verdict:
+                            "TIME LIMIT EXCEEDED",
+
+                        output:
+                            "Result polling timed out."
+                    });
+
+
+                    setExecutionLoading(
+                        false
+                    );
+
+                    return;
+                }
+
+
+                setTimeout(
+                    checkResult,
+                    500
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Result polling error:",
+                    error
+                );
+
+
+                setExecutionResult({
+
+                    status:
+                        "completed",
+
+                    verdict:
+                        "SYSTEM ERROR",
+
+                    output:
+                        error.message
+                });
+
+
+                setExecutionLoading(
+                    false
+                );
+            }
+        };
+
+
+        checkResult();
     };
 
 
-    // ============================================================
-    // SUBMIT CODE
-    // ============================================================
+ 
 
-    const handleSubmit = () => {
+const handleRunCode = async () => {
 
-        alert(
-            "Submit will be connected to the submission + DB transaction system in the next phase."
+    if (!selectedProblem) {
+        return;
+    }
+
+    const code =
+        codes[selectedProblem.problem_id] ||
+        getDefaultCode();
+
+    if (!code.trim()) {
+        alert("Code cannot be empty.");
+        return;
+    }
+
+    setExecutionLoading(true);
+
+    setExecutionResult({
+        status: "queued",
+        verdict: null,
+        output: "Code sent for execution..."
+    });
+
+    setSubmissionId(null);
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE}/run`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    code: code,
+
+                    problem_id:
+                        selectedProblem.problem_id,
+
+                    language: "cpp"
+                })
+            }
         );
 
-    };
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Failed to run code."
+            );
+        }
+
+        const id =
+            data.run_id ||
+            data.submission_id;
+
+        setSubmissionId(id);
+
+        setExecutionResult({
+            status: "queued",
+            verdict: null,
+            output:
+                "Your code is waiting for execution..."
+        });
+
+        pollResult(id);
+
+    } catch (error) {
+
+        console.error(
+            "Run Code error:",
+            error
+        );
+
+        setExecutionResult({
+            status: "completed",
+            verdict: "SYSTEM ERROR",
+            output: error.message
+        });
+
+        setExecutionLoading(false);
+    }
+};
 
 
-    // ============================================================
-    // LOADING
-    // ============================================================
+
+
+const handleSubmit = async () => {
+
+    if (!selectedProblem) {
+        return;
+    }
+
+    const code =
+        codes[selectedProblem.problem_id] ||
+        getDefaultCode();
+
+    if (!code.trim()) {
+        alert("Code cannot be empty.");
+        return;
+    }
+
+    setExecutionLoading(true);
+
+    setExecutionResult({
+        status: "queued",
+        verdict: null,
+        output:
+            "Submission sent to execution queue..."
+    });
+
+    setSubmissionId(null);
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE}/submit`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    code: code,
+
+                    problem_id:
+                        selectedProblem.problem_id,
+
+                    language: "cpp"
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Failed to submit code."
+            );
+        }
+
+        const id =
+            data.submission_id;
+
+        setSubmissionId(id);
+
+        setExecutionResult({
+            status: "queued",
+            verdict: null,
+            output:
+                "Your submission is waiting for execution..."
+        });
+
+        pollResult(id);
+
+    } catch (error) {
+
+        console.error(
+            "Submit error:",
+            error
+        );
+
+        setExecutionResult({
+            status: "completed",
+            verdict: "SYSTEM ERROR",
+            output: error.message
+        });
+
+        setExecutionLoading(false);
+    }
+};
+
+
+   
+
 
     if (loadingProblems) {
 
@@ -672,30 +919,25 @@ public class Main {
                 </span>
 
             </div>
-
         );
-
     }
 
 
-    // ============================================================
-    // MAIN
-    // ============================================================
 
     return (
 
         <div className="student-test-page">
 
 
-            {/* ==================================================
-                TOP BAR
-            ================================================== */}
+            
 
             <header
                 className="student-test-topbar"
             >
 
-                <div className="student-test-brand">
+                <div
+                    className="student-test-brand"
+                >
 
                     <button
                         className="student-back-btn"
@@ -711,11 +953,15 @@ public class Main {
 
                     <div>
 
-                        <div className="student-brand-name">
+                        <div
+                            className="student-brand-name"
+                        >
                             CodeShield
                         </div>
 
-                        <div className="student-brand-subtitle">
+                        <div
+                            className="student-brand-subtitle"
+                        >
                             Student Workspace
                         </div>
 
@@ -724,7 +970,9 @@ public class Main {
                 </div>
 
 
-                <div className="student-test-title">
+                <div
+                    className="student-test-title"
+                >
 
                     <span>
                         {test?.title ||
@@ -740,15 +988,15 @@ public class Main {
                                 : "student-status"
                         }
                     >
-
                         {testStatus}
-
                     </span>
 
                 </div>
 
 
-                <div className="student-timer">
+                <div
+                    className="student-timer"
+                >
 
                     <Clock3
                         size={17}
@@ -773,31 +1021,27 @@ public class Main {
             </header>
 
 
-            {/* ==================================================
-                ERROR
-            ================================================== */}
+           
 
             {error && (
 
-                <div className="student-test-error">
-
+                <div
+                    className="student-test-error"
+                >
                     {error}
-
                 </div>
 
             )}
 
 
-            {/* ==================================================
-                BODY
-            ================================================== */}
+            
 
-            <div className="student-test-body">
+            <div
+                className="student-test-body"
+            >
 
 
-                {/* ==================================================
-                    LEFT PROBLEMS
-                ================================================== */}
+             
 
                 <aside
                     className="student-problem-sidebar"
@@ -835,11 +1079,11 @@ public class Main {
 
                         {problems.length === 0 ? (
 
-                            <div className="no-problems">
-
+                            <div
+                                className="no-problems"
+                            >
                                 No problems
                                 available.
-
                             </div>
 
                         ) : (
@@ -922,7 +1166,6 @@ public class Main {
                                         />
 
                                     </button>
-
                                 )
                             )
 
@@ -968,9 +1211,7 @@ public class Main {
                 </aside>
 
 
-                {/* ==================================================
-                    PROBLEM DETAILS
-                ================================================== */}
+                
 
                 <main
                     className="student-problem-panel"
@@ -1076,11 +1317,9 @@ public class Main {
                                 <div
                                     className="problem-statement"
                                 >
-
                                     {
                                         selectedProblem.statement
                                     }
-
                                 </div>
 
                             </section>
@@ -1276,7 +1515,6 @@ public class Main {
                                                         </div>
 
                                                     </div>
-
                                                 )
                                             )
                                         }
@@ -1294,9 +1532,6 @@ public class Main {
                 </main>
 
 
-                {/* ==================================================
-                    CODE EDITOR
-                ================================================== */}
 
                 <section
                     className="student-editor-panel"
@@ -1415,7 +1650,6 @@ public class Main {
                             disabled={
                                 !selectedProblem
                             }
-
                         />
 
                     </div>
@@ -1432,13 +1666,11 @@ public class Main {
                         >
 
                             <span>
-
                                 {language === "cpp"
                                     ? "C++17"
                                     : language === "java"
                                         ? "Java"
                                         : "Python 3"}
-
                             </span>
 
 
@@ -1461,15 +1693,29 @@ public class Main {
                                 }
 
                                 disabled={
-                                    !selectedProblem
+                                    !selectedProblem ||
+                                    executionLoading
                                 }
                             >
 
-                                <Play
-                                    size={16}
-                                />
+                                {executionLoading ? (
 
-                                Run Code
+                                    <Loader2
+                                        size={16}
+                                        className="spin"
+                                    />
+
+                                ) : (
+
+                                    <Play
+                                        size={16}
+                                    />
+
+                                )}
+
+                                {executionLoading
+                                    ? "Running..."
+                                    : "Run Code"}
 
                             </button>
 
@@ -1482,7 +1728,8 @@ public class Main {
                                 }
 
                                 disabled={
-                                    !selectedProblem
+                                    !selectedProblem ||
+                                    executionLoading
                                 }
                             >
 
@@ -1499,36 +1746,178 @@ public class Main {
                     </div>
 
 
-                    {/* FUTURE EXECUTION */}
+                    
 
                     <div
-                        className="execution-placeholder"
+                        className="execution-result-panel"
                     >
 
                         <div
-                            className="execution-icon"
+                            className="execution-result-header"
                         >
 
-                            <Code2
-                                size={19}
-                            />
+                            <div>
+
+                                <strong>
+                                    Execution Result
+                                </strong>
+
+
+                                {executionLoading && (
+
+                                    <span
+                                        className="execution-running"
+                                    >
+
+                                        <Loader2
+                                            size={15}
+                                            className="spin"
+                                        />
+
+                                        Running...
+
+                                    </span>
+
+                                )}
+
+                            </div>
+
+
+                            {executionResult?.verdict && (
+
+                                <span
+                                    className={
+                                        `execution-verdict ${
+                                            executionResult.verdict ===
+                                            "AC"
+                                                ? "success"
+                                                : "failed"
+                                        }`
+                                    }
+                                >
+                                    {
+                                        executionResult.verdict
+                                    }
+                                </span>
+
+                            )}
 
                         </div>
 
 
-                        <div>
+                        <div
+                            className="execution-result-body"
+                        >
 
-                            <strong>
-                                Secure execution
-                                coming next
-                            </strong>
+                            {!executionResult ? (
 
-                            <span>
-                                Code will later be
-                                processed through the
-                                CodeShield queue and
-                                sandbox.
-                            </span>
+                                <div
+                                    className="execution-empty"
+                                >
+
+                                    <Code2
+                                        size={22}
+                                    />
+
+                                    <span>
+                                        Run your code to see
+                                        the result.
+                                    </span>
+
+                                </div>
+
+                            ) : (
+
+                                <>
+
+                                    <div
+                                        className="execution-status"
+                                    >
+
+                                        <span>
+                                            Status
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                executionResult.status
+                                            }
+                                        </strong>
+
+                                    </div>
+
+
+                                    {executionResult.execution_time_ms !==
+                                        undefined && (
+
+                                        <div
+                                            className="execution-status"
+                                        >
+
+                                            <span>
+                                                Execution Time
+                                            </span>
+
+                                            <strong>
+                                                {
+                                                    executionResult.execution_time_ms
+                                                } ms
+                                            </strong>
+
+                                        </div>
+
+                                    )}
+
+
+                                    {executionResult.test_cases_total !==
+                                        undefined && (
+                                        
+                                        <div
+                                            className="execution-status"
+                                        >
+
+                                            <span>
+                                                Test Cases
+                                            </span>
+
+                                            <strong>
+                                                {
+                                                    executionResult.test_cases_passed
+                                                }
+                                                {" / "}
+                                                {
+                                                    executionResult.test_cases_total
+                                                }
+                                            </strong>
+
+                                        </div>
+
+                                    )}
+
+
+                                    <div
+                                        className="execution-output"
+                                    >
+
+                                        <div
+                                            className="output-title"
+                                        >
+                                            Output
+                                        </div>
+
+
+                                        <pre>
+                                            {
+                                                executionResult.output ||
+                                                "No output"
+                                            }
+                                        </pre>
+
+                                    </div>
+
+                                </>
+
+                            )}
 
                         </div>
 
@@ -1539,9 +1928,7 @@ public class Main {
             </div>
 
         </div>
-
     );
-
 }
 
 
