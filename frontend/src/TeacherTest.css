@@ -1,0 +1,1598 @@
+/* ============================================================
+   TEACHER TEST MANAGEMENT
+   ============================================================ */
+
+.teacher-test-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+/* ============================================================
+   BREADCRUMB
+   ============================================================ */
+
+.test-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #71809c;
+
+    font-size: 12px;
+}
+
+.back-link {
+    border: 0;
+    background: transparent;
+
+    color: #63a0ff;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    cursor: pointer;
+
+    padding: 0;
+}
+
+.test-breadcrumb strong {
+    color: #cbd5e8;
+}
+
+
+/* ============================================================
+   TITLE
+   ============================================================ */
+
+.test-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.test-title-line {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.test-title-line h1 {
+    margin: 0;
+
+    font-size: 27px;
+
+    letter-spacing: -.6px;
+}
+
+.test-title-row p {
+    margin: 7px 0 0;
+
+    color: #91a0bb;
+
+    font-size: 14px;
+}
+
+.large-status {
+    display: inline-flex;
+
+    padding: 5px 11px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.large-status.success {
+    color: #32dda0;
+    background: rgba(40,216,154,.11);
+    border: 1px solid rgba(40,216,154,.2);
+}
+
+.large-status.warning {
+    color: #f4ab48;
+    background: rgba(244,163,64,.11);
+}
+
+.large-status.neutral {
+    color: #8d9ab2;
+    background: rgba(138,150,178,.1);
+}
+
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+
+.test-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.outline-btn,
+.primary-small-btn {
+    height: 40px;
+
+    border-radius: 9px;
+
+    padding: 0 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.outline-btn {
+    background: transparent;
+
+    color: #d8e1f3;
+
+    border: 1px solid #2b3c57;
+}
+
+.outline-btn:hover {
+    background: rgba(255,255,255,.04);
+}
+
+.primary-small-btn {
+    color: white;
+
+    border: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2d70f7,
+            #2158d6
+        );
+}
+
+
+/* ============================================================
+   STAT GRID
+   ============================================================ */
+
+.test-stat-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+}
+
+.test-stat-card {
+    min-height: 94px;
+
+    padding: 16px;
+
+    border-radius: 13px;
+
+    border: 1px solid #1c2b44;
+
+    background: #0d1628;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+}
+
+.test-stat-card .stat-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 10px;
+
+    display: grid;
+    place-items: center;
+}
+
+.test-stat-card.blue .stat-icon {
+    color: #62a0ff;
+    background: rgba(47,123,255,.13);
+}
+
+.test-stat-card.pink .stat-icon {
+    color: #ef72bd;
+    background: rgba(239,114,189,.11);
+}
+
+.test-stat-card.orange .stat-icon {
+    color: #f3a347;
+    background: rgba(243,163,71,.12);
+}
+
+.test-stat-card.purple .stat-icon {
+    color: #9d7cff;
+    background: rgba(157,124,255,.12);
+}
+
+.test-stat-card span {
+    display: block;
+
+    color: #7887a1;
+
+    font-size: 10px;
+}
+
+.test-stat-card strong {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #edf2ff;
+
+    font-size: 14px;
+}
+
+
+/* ============================================================
+   TABS
+   ============================================================ */
+
+.test-tabs {
+    display: flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    border-bottom: 1px solid #1c2940;
+
+    overflow-x: auto;
+}
+
+.test-tabs button {
+    height: 45px;
+
+    padding: 0 15px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #77869f;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    border-bottom: 2px solid transparent;
+}
+
+.test-tabs button:hover {
+    color: #dce6fa;
+}
+
+.test-tabs button.active {
+    color: #4c91ff;
+
+    border-bottom-color: #347bff;
+}
+
+
+/* ============================================================
+   OVERVIEW
+   ============================================================ */
+
+.test-overview-card {
+    padding: 25px;
+
+    border: 1px solid #1d2a42;
+
+    border-radius: 14px;
+
+    background: #0e1729;
+}
+
+.test-overview-card h2 {
+    margin: 0 0 8px;
+    font-size: 17px;
+}
+
+.test-overview-card p {
+    color: #8998b2;
+    font-size: 13px;
+}
+
+
+/* ============================================================
+   PLACEHOLDER
+   ============================================================ */
+
+.placeholder-panel {
+    min-height: 280px;
+
+    border: 1px dashed #293b57;
+
+    border-radius: 15px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #66758f;
+
+    text-align: center;
+}
+
+.placeholder-panel h2 {
+    color: #dce5f7;
+
+    font-size: 18px;
+
+    margin: 14px 0 5px;
+}
+
+.placeholder-panel p {
+    margin: 0;
+
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+    .test-stat-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .test-title-row {
+        flex-direction: column;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .test-stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .test-actions {
+        width: 100%;
+    }
+
+    .test-actions button {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .test-title-line h1 {
+        font-size: 22px;
+    }
+
+}
+/* ============================================================
+   PROBLEM WORKSPACE
+   ============================================================ */
+
+.problem-workspace {
+    display: grid;
+
+    grid-template-columns:
+        minmax(260px, .85fr)
+        minmax(420px, 1.5fr);
+
+    gap: 15px;
+
+    align-items: start;
+}
+
+
+/* ============================================================
+   PANELS
+   ============================================================ */
+
+.problems-panel,
+.problem-details-panel {
+    background: #0e1729;
+
+    border: 1px solid #1d2a42;
+
+    border-radius: 15px;
+}
+
+.problems-panel {
+    padding: 18px;
+}
+
+.problem-details-panel {
+    padding: 20px;
+    min-height: 550px;
+}
+
+
+/* ============================================================
+   PANEL HEADER
+   ============================================================ */
+
+.panel-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 17px;
+}
+
+.panel-header h2 {
+    margin: 0;
+
+    font-size: 17px;
+}
+
+.panel-header h2 span {
+    color: #64748b;
+
+    font-weight: 500;
+
+    margin-left: 4px;
+}
+
+
+/* ============================================================
+   ADD PROBLEM
+   ============================================================ */
+
+.add-problem-btn,
+.add-testcase-btn {
+    height: 35px;
+
+    padding: 0 11px;
+
+    border-radius: 8px;
+
+    border: 1px solid #2867d9;
+
+    background: rgba(37,99,235,.12);
+
+    color: #65a0ff;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 650;
+}
+
+.add-problem-btn:hover,
+.add-testcase-btn:hover {
+    background: rgba(37,99,235,.2);
+}
+
+
+/* ============================================================
+   PROBLEM CREATE FORM
+   ============================================================ */
+
+.problem-create-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+
+    padding: 13px;
+
+    margin-bottom: 14px;
+
+    border-radius: 10px;
+
+    background: #09111f;
+
+    border: 1px solid #1d2a42;
+}
+
+.problem-create-form input,
+.problem-create-form textarea,
+.problem-create-form select {
+    width: 100%;
+
+    padding: 10px;
+
+    border-radius: 7px;
+
+    border: 1px solid #263854;
+
+    background: #080e19;
+
+    color: white;
+
+    font-size: 12px;
+
+    font-family: inherit;
+}
+
+.problem-create-form textarea {
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+.problem-input-row {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    gap: 7px;
+}
+
+
+/* ============================================================
+   PROBLEM LIST
+   ============================================================ */
+
+.problem-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.problem-list-item {
+    width: 100%;
+
+    border: 1px solid transparent;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 11px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.problem-list-item:hover {
+    background: #111d31;
+
+    border-color: #1e3455;
+}
+
+.problem-list-item.selected {
+    background:
+        linear-gradient(
+            100deg,
+            rgba(37,99,235,.17),
+            rgba(37,99,235,.05)
+        );
+
+    border-color: #2866cf;
+}
+
+.problem-number {
+    width: 29px;
+    height: 29px;
+
+    border-radius: 50%;
+
+    display: grid;
+    place-items: center;
+
+    background: #15284d;
+
+    color: #6da4ff;
+
+    font-size: 12px;
+
+    flex-shrink: 0;
+}
+
+.problem-list-content {
+    flex: 1;
+}
+
+.problem-list-content strong {
+    display: block;
+
+    font-size: 13px;
+
+    margin-bottom: 6px;
+}
+
+.problem-list-content > div {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    color: #73829b;
+
+    font-size: 9px;
+}
+
+.problem-list-content > div span {
+    display: flex;
+
+    align-items: center;
+
+    gap: 3px;
+}
+
+
+/* ============================================================
+   DIFFICULTY
+   ============================================================ */
+
+.difficulty {
+    display: inline-flex;
+
+    padding: 3px 8px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+
+    font-weight: 700;
+}
+
+.difficulty.easy {
+    color: #34d399;
+
+    background: rgba(52,211,153,.1);
+}
+
+.difficulty.medium {
+    color: #fbbf24;
+
+    background: rgba(251,191,36,.1);
+}
+
+.difficulty.hard {
+    color: #fb7185;
+
+    background: rgba(251,113,133,.1);
+}
+
+
+/* ============================================================
+   PROBLEM DETAILS
+   ============================================================ */
+
+.problem-detail-header {
+    margin-bottom: 17px;
+}
+
+.problem-title-line {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.problem-title-line h2 {
+    margin: 0;
+
+    font-size: 20px;
+}
+
+.statement-box {
+    padding: 17px;
+
+    border-radius: 11px;
+
+    background: #0a1221;
+
+    border: 1px solid #1b2b44;
+}
+
+.statement-box h3 {
+    margin: 0 0 10px;
+
+    font-size: 13px;
+}
+
+.statement-box p {
+    margin: 0;
+
+    color: #9ba9c0;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+
+    white-space: pre-line;
+}
+
+
+/* ============================================================
+   LIMITS
+   ============================================================ */
+
+.limits-row {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin: 13px 0;
+}
+
+.limits-row > div {
+    padding: 13px;
+
+    border-radius: 10px;
+
+    background: #0a1221;
+
+    border: 1px solid #1b2b44;
+
+    display: grid;
+
+    grid-template-columns:
+        25px 1fr;
+
+    align-items: center;
+
+    column-gap: 7px;
+}
+
+.limits-row svg {
+    grid-row: span 2;
+
+    color: #6ca2ff;
+}
+
+.limits-row span {
+    color: #7887a1;
+
+    font-size: 9px;
+}
+
+.limits-row strong {
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   TEST CASE SECTION
+   ============================================================ */
+
+.testcase-section {
+    margin-top: 22px;
+}
+
+.testcase-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+}
+
+.testcase-header h3 {
+    margin: 0;
+
+    font-size: 15px;
+}
+
+.testcase-header span {
+    display: block;
+
+    color: #687892;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* ============================================================
+   TEST CASE FORM
+   ============================================================ */
+
+.testcase-form {
+    padding: 15px;
+
+    margin-bottom: 13px;
+
+    border-radius: 11px;
+
+    background: #09111f;
+
+    border: 1px solid #20324e;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.testcase-form label {
+    color: #8997ad;
+
+    font-size: 10px;
+
+    margin-top: 4px;
+}
+
+.testcase-form textarea {
+    width: 100%;
+
+    min-height: 80px;
+
+    padding: 10px;
+
+    resize: vertical;
+
+    border-radius: 7px;
+
+    border: 1px solid #263954;
+
+    background: #070d17;
+
+    color: #e8efff;
+
+    font-family: "JetBrains Mono",
+        "Fira Code",
+        monospace;
+
+    font-size: 11px;
+}
+
+.hidden-toggle {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #c4cee0 !important;
+
+    cursor: pointer;
+}
+
+.hidden-toggle input {
+    width: 15px;
+    height: 15px;
+}
+
+.testcase-form-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 6px;
+}
+
+.testcase-form-actions .outline-btn,
+.testcase-form-actions .primary-small-btn {
+    height: 36px;
+}
+
+
+/* ============================================================
+   EMPTY TEST CASE
+   ============================================================ */
+
+.no-testcases {
+    min-height: 160px;
+
+    border: 1px dashed #263955;
+
+    border-radius: 11px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: #687892;
+}
+
+.testcase-empty-icon {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 10px;
+
+    background: #121f34;
+
+    color: #6b91c5;
+
+    margin-bottom: 9px;
+}
+
+.no-testcases strong {
+    color: #b8c5d9;
+
+    font-size: 12px;
+}
+
+.no-testcases span {
+    margin-top: 4px;
+
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   TEST CASE CARDS
+   ============================================================ */
+
+.testcase-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.testcase-card {
+    padding: 14px;
+
+    border-radius: 11px;
+
+    background: #09111f;
+
+    border: 1px solid #1d2d46;
+}
+
+.testcase-card.visible-case {
+    border-left:
+        2px solid #28d89a;
+}
+
+.testcase-card.hidden-case {
+    border-left:
+        2px solid #e49b3d;
+}
+
+.testcase-card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+}
+
+.testcase-card-header > div {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.testcase-card-header svg {
+    color: #7292be;
+}
+
+.testcase-card-header strong {
+    font-size: 11px;
+}
+
+.testcase-card-header button {
+    border: 0;
+
+    background: transparent;
+
+    color: #71809a;
+
+    cursor: pointer;
+
+    padding: 4px;
+}
+
+.testcase-card-header button:hover {
+    color: white;
+}
+
+.visible-badge,
+.hidden-badge {
+    padding: 3px 7px;
+
+    border-radius: 999px;
+
+    font-size: 8px;
+
+    font-weight: 700;
+}
+
+.visible-badge {
+    color: #3ce0a4;
+
+    background: rgba(40,216,154,.1);
+}
+
+.hidden-badge {
+    color: #efa94c;
+
+    background: rgba(244,163,64,.1);
+}
+
+.case-label {
+    margin-top: 9px;
+
+    margin-bottom: 5px;
+
+    color: #72819a;
+
+    font-size: 9px;
+
+    font-weight: 650;
+}
+
+.testcase-card pre {
+    margin: 0;
+
+    padding: 10px;
+
+    border-radius: 7px;
+
+    background: #060b13;
+
+    border: 1px solid #18263c;
+
+    color: #cbd8ed;
+
+    font-family:
+        "JetBrains Mono",
+        "Fira Code",
+        monospace;
+
+    font-size: 10px;
+
+    overflow-x: auto;
+
+    white-space: pre-wrap;
+}
+
+
+/* ============================================================
+   MESSAGES
+   ============================================================ */
+
+.mini-success {
+    padding: 8px 10px;
+
+    border-radius: 7px;
+
+    background: rgba(40,216,154,.08);
+
+    border: 1px solid rgba(40,216,154,.17);
+
+    color: #42dca1;
+
+    font-size: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+.mini-error {
+    padding: 8px 10px;
+
+    border-radius: 7px;
+
+    background: rgba(239,91,108,.08);
+
+    border: 1px solid rgba(239,91,108,.17);
+
+    color: #ff7d8b;
+
+    font-size: 10px;
+}
+
+.no-problems {
+    min-height: 180px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #65748d;
+}
+
+.no-problems p {
+    margin: 9px 0 3px;
+
+    color: #b3c0d5;
+
+    font-size: 12px;
+}
+
+.no-problems span {
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1050px) {
+
+    .problem-workspace {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .problem-input-row {
+        grid-template-columns: 1fr;
+    }
+
+    .limits-row {
+        grid-template-columns: 1fr;
+    }
+
+    .problem-details-panel,
+    .problems-panel {
+        padding: 14px;
+    }
+
+    .testcase-header {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+}
+/* =========================================================
+   TEACHER TEST SETTINGS
+   ========================================================= */
+
+.teacher-settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+.settings-card {
+    background: #0f172a;
+    border: 1px solid #22304a;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px;
+}
+
+
+.settings-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+.settings-icon-box {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(37, 99, 235, 0.14);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+
+    color: #60a5fa;
+}
+
+
+.settings-heading h2 {
+    margin: 0 0 5px;
+
+    color: #f8fafc;
+
+    font-size: 17px;
+}
+
+
+.settings-heading p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+.settings-divider {
+    height: 1px;
+
+    background: #1e293b;
+}
+
+
+.password-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.password-status.enabled {
+    color: #34d399;
+
+    background: rgba(16, 185, 129, 0.1);
+
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+
+.password-status.disabled {
+    color: #94a3b8;
+
+    background: rgba(100, 116, 139, 0.1);
+
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+
+.password-setting-body {
+    padding: 24px;
+}
+
+
+.password-setting-body > label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #e2e8f0;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.settings-help {
+    margin: 0 0 16px;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+.password-input-wrapper {
+    position: relative;
+
+    max-width: 560px;
+}
+
+
+.password-input-wrapper input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px 48px 13px 14px;
+
+    border-radius: 10px;
+
+    border: 1px solid #334155;
+
+    background: #020617;
+
+    color: #f8fafc;
+
+    outline: none;
+
+    font-size: 14px;
+}
+
+
+.password-input-wrapper input:focus {
+    border-color: #3b82f6;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+
+.password-input-wrapper input::placeholder {
+    color: #475569;
+}
+
+
+.password-eye-btn {
+    position: absolute;
+
+    right: 8px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 34px;
+
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    cursor: pointer;
+
+    border-radius: 7px;
+}
+
+
+.password-eye-btn:hover {
+    color: #cbd5e1;
+
+    background: #1e293b;
+}
+
+
+.password-setting-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 18px;
+}
+
+
+.save-password-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 11px 16px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #2563eb;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.save-password-btn:hover {
+    background: #1d4ed8;
+}
+
+
+.save-password-btn:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+.remove-password-btn {
+    padding: 11px 16px;
+
+    border-radius: 9px;
+
+    border: 1px solid rgba(239, 68, 68, 0.3);
+
+    background: rgba(239, 68, 68, 0.08);
+
+    color: #f87171;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.remove-password-btn:hover {
+    background: rgba(239, 68, 68, 0.14);
+}
+
+
+.remove-password-btn:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+.settings-message {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    max-width: 560px;
+
+    margin-top: 12px;
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+}
+
+
+.settings-message.success {
+    color: #34d399;
+
+    background: rgba(16, 185, 129, 0.08);
+
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+
+.settings-message.error {
+    color: #f87171;
+
+    background: rgba(239, 68, 68, 0.08);
+
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+
+.settings-info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 1px;
+
+    background: #1e293b;
+}
+
+
+.settings-info-grid > div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    padding: 18px 24px;
+
+    background: #0f172a;
+}
+
+
+.settings-info-grid span {
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+.settings-info-grid strong {
+    color: #e2e8f0;
+
+    font-size: 14px;
+}
+
+
+@media (max-width: 700px) {
+
+    .settings-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .settings-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .password-setting-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+}

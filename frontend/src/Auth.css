@@ -1,0 +1,966 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: #050b14;
+    color: white;
+}
+
+
+/* =========================================================
+   AUTH PAGE
+========================================================= */
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(0, 140, 255, 0.16),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 70%,
+            rgba(130, 60, 255, 0.18),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #030811,
+            #081321 50%,
+            #050913
+        );
+}
+
+
+/* =========================================================
+   BACKGROUND GRID
+========================================================= */
+
+.auth-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 45px 45px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   LEFT SECTION
+========================================================= */
+
+.auth-left {
+    width: 50%;
+    min-height: 100vh;
+
+    padding: 45px 7%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo {
+    position: absolute;
+
+    top: 38px;
+    left: 7%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.logo-shield {
+    width: 44px;
+    height: 50px;
+
+    border: 3px solid #18a0ff;
+
+    border-radius:
+        14px 14px 22px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #18a0ff;
+
+    font-size: 21px;
+
+    box-shadow:
+        0 0 25px rgba(24, 160, 255, 0.35);
+}
+
+.logo-text {
+    font-size: 27px;
+    font-weight: 800;
+
+    letter-spacing: -1px;
+}
+
+.logo-text span {
+    color: #18a0ff;
+}
+
+.logo-subtitle {
+    font-size: 11px;
+    color: #9caec2;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.top-nav {
+    position: absolute;
+
+    top: 45px;
+    right: 7%;
+
+    display: flex;
+    gap: 35px;
+
+    z-index: 5;
+}
+
+.top-nav span {
+    color: #a9b5c5;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+}
+
+.top-nav span:hover {
+    color: white;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    max-width: 520px;
+
+    margin-top: 45px;
+}
+
+.hero h1 {
+    font-size: 55px;
+
+    line-height: 1.02;
+
+    margin: 0 0 25px;
+
+    font-weight: 800;
+
+    letter-spacing: -2px;
+}
+
+.hero h1 span {
+    color: #159cff;
+}
+
+.hero p {
+    color: #aebdce;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+
+    max-width: 430px;
+}
+
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.features {
+    margin-top: 35px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.feature {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+.feature-icon {
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(24, 160, 255, 0.10);
+
+    border:
+        1px solid rgba(24, 160, 255, 0.22);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #20a4ff;
+
+    font-size: 20px;
+}
+
+.feature strong {
+    display: block;
+
+    font-size: 15px;
+
+    margin-bottom: 3px;
+}
+
+.feature small {
+    color: #8999aa;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RIGHT SECTION
+========================================================= */
+
+.auth-right {
+    width: 50%;
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 80px 7% 40px;
+
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   AUTH CARD
+========================================================= */
+
+.auth-card {
+    width: 100%;
+    max-width: 455px;
+
+    padding: 38px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(13, 24, 38, 0.84);
+
+    border:
+        1px solid rgba(130, 160, 200, 0.18);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.45),
+        inset 0 1px rgba(255, 255, 255, 0.03);
+
+    backdrop-filter: blur(20px);
+}
+
+.auth-card h2 {
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 30px;
+}
+
+.auth-card-subtitle {
+    text-align: center;
+
+    color: #8e9daf;
+
+    font-size: 14px;
+
+    margin: 9px 0 30px;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.input-group {
+    position: relative;
+
+    margin-bottom: 16px;
+}
+
+.input-icon {
+    position: absolute;
+
+    left: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #8291a5;
+
+    font-size: 17px;
+
+    z-index: 2;
+}
+
+.input-group input {
+    width: 100%;
+
+    height: 54px;
+
+    padding: 0 45px;
+
+    border:
+        1px solid #27374b;
+
+    border-radius: 10px;
+
+    background:
+        rgba(18, 31, 48, 0.85);
+
+    color: white;
+
+    outline: none;
+
+    font-size: 14px;
+
+    transition: 0.25s;
+}
+
+.input-group input::placeholder {
+    color: #7e8da0;
+}
+
+.input-group input:focus {
+    border-color: #159cff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(21, 156, 255, 0.10);
+}
+
+
+/* =========================================================
+   PASSWORD EYE
+========================================================= */
+
+.password-eye {
+    position: absolute;
+
+    right: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    cursor: pointer;
+
+    color: #8493a7;
+
+    border: none;
+
+    background: transparent;
+
+    font-size: 17px;
+
+    padding: 4px;
+}
+
+.password-eye:hover {
+    color: white;
+}
+
+
+/* =========================================================
+   LOGIN OPTIONS
+========================================================= */
+
+.login-options {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 5px 0 20px;
+
+    font-size: 12px;
+
+    color: #91a0b1;
+}
+
+.login-options label {
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+}
+
+.login-options input {
+    accent-color: #159cff;
+
+    cursor: pointer;
+}
+
+.login-options a {
+    color: #159cff;
+
+    cursor: pointer;
+
+    text-decoration: none;
+}
+
+.login-options a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   PRIMARY LOGIN BUTTON
+========================================================= */
+
+.primary-btn {
+    width: 100%;
+
+    height: 53px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            90deg,
+            #138fff,
+            #1477ff
+        );
+
+    box-shadow:
+        0 10px 30px
+        rgba(20, 130, 255, 0.25);
+
+    transition: 0.25s;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 35px
+        rgba(20, 130, 255, 0.38);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+.primary-btn:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   OAUTH DIVIDER
+========================================================= */
+
+.oauth-divider {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 23px 0 14px;
+}
+
+.oauth-divider span {
+    flex: 1;
+
+    height: 1px;
+
+    background: #263649;
+}
+
+.oauth-divider p {
+    margin: 0;
+
+    color: #748296;
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   OAUTH BUTTONS
+========================================================= */
+
+.oauth-btn {
+    width: 100%;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    margin-bottom: 11px;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.oauth-btn:hover {
+    transform: translateY(-1px);
+}
+
+.oauth-btn:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   GOOGLE BUTTON
+========================================================= */
+
+.google-btn {
+    background:
+        rgba(22, 36, 56, 0.9);
+
+    border:
+        1px solid #38506b;
+
+    color: #ffffff;
+}
+
+.google-btn:hover {
+    background:
+        rgba(29, 48, 71, 1);
+
+    border-color: #4c6b8c;
+
+    box-shadow:
+        0 7px 22px
+        rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   GITHUB BUTTON
+========================================================= */
+
+.github-btn {
+    background:
+        rgba(17, 28, 44, 0.9);
+
+    border:
+        1px solid #2a3b50;
+
+    color: #ffffff;
+}
+
+.github-btn:hover {
+    background:
+        rgba(28, 43, 61, 0.95);
+
+    border-color: #52677f;
+
+    box-shadow:
+        0 7px 22px
+        rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   OAUTH ICONS
+========================================================= */
+
+.oauth-icon {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+}
+
+.github-icon {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   OLD SECONDARY BUTTON SUPPORT
+========================================================= */
+
+.secondary-btn {
+    width: 100%;
+
+    height: 48px;
+
+    border:
+        1px solid #2a3b50;
+
+    border-radius: 9px;
+
+    background:
+        rgba(18, 30, 45, 0.7);
+
+    color: white;
+
+    cursor: pointer;
+
+    margin-bottom: 11px;
+
+    transition: 0.25s;
+}
+
+.secondary-btn:hover {
+    border-color: #52677f;
+
+    background:
+        rgba(28, 43, 61, 0.9);
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+.error-message {
+    color: #ff6b7a;
+
+    font-size: 13px;
+
+    background:
+        rgba(255, 60, 80, 0.08);
+
+    border:
+        1px solid rgba(255, 60, 80, 0.18);
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+========================================================= */
+
+.success-message {
+    color: #46df9b;
+
+    font-size: 13px;
+
+    background:
+        rgba(50, 220, 140, 0.08);
+
+    border:
+        1px solid rgba(50, 220, 140, 0.18);
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   REGISTER ROLE SECTION
+========================================================= */
+
+.role-title {
+    color: #a8b5c5;
+
+    font-size: 13px;
+
+    margin: 20px 0 10px;
+}
+
+.role-container {
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.role-card {
+    flex: 1;
+
+    padding: 15px;
+
+    border:
+        1px solid #2a3b50;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    background:
+        rgba(18, 30, 45, 0.7);
+
+    transition: 0.25s;
+}
+
+.role-card:hover {
+    border-color: #8d4dff;
+}
+
+.role-card.active {
+    border-color: #9b4dff;
+
+    background:
+        rgba(145, 70, 255, 0.10);
+
+    box-shadow:
+        0 0 20px
+        rgba(145, 70, 255, 0.12);
+}
+
+.role-card strong {
+    display: block;
+
+    font-size: 14px;
+}
+
+.role-card small {
+    color: #8492a5;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   REGISTER BUTTON
+========================================================= */
+
+.register-btn {
+    background:
+        linear-gradient(
+            90deg,
+            #8d3fff,
+            #b24cff
+        );
+
+    box-shadow:
+        0 10px 30px
+        rgba(145, 65, 255, 0.25);
+}
+
+.register-btn:hover {
+    box-shadow:
+        0 14px 35px
+        rgba(145, 65, 255, 0.4);
+}
+
+
+/* =========================================================
+   AUTH SWITCH
+========================================================= */
+
+.auth-switch {
+    text-align: center;
+
+    color: #8998aa;
+
+    font-size: 13px;
+
+    margin-top: 23px;
+}
+
+.auth-switch span {
+    color: #159cff;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.auth-switch span:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .auth-page {
+        flex-direction: column;
+    }
+
+    .auth-left {
+        width: 100%;
+
+        min-height: auto;
+
+        padding:
+            120px 30px 30px;
+    }
+
+    .auth-right {
+        width: 100%;
+
+        min-height: auto;
+
+        padding:
+            20px 25px 50px;
+    }
+
+    .top-nav {
+        display: none;
+    }
+
+    .hero h1 {
+        font-size: 42px;
+    }
+
+    .logo {
+        left: 30px;
+    }
+
+    .auth-card {
+        padding:
+            28px 22px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .auth-left {
+        padding:
+            105px 22px 25px;
+    }
+
+    .auth-right {
+        padding:
+            15px 18px 40px;
+    }
+
+    .auth-card {
+        padding:
+            25px 18px;
+
+        border-radius: 16px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
+
+    .feature {
+        gap: 10px;
+    }
+
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 17px;
+    }
+}
