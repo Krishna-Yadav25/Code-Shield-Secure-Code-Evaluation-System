@@ -1,3 +1,80 @@
-.DS_Store
+
+# =========================
+# SECRETS AND ENVIRONMENT
+# =========================
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# =========================
+# PYTHON BACKEND
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+ENV/
+
+# =========================
+# REACT / NODE / VITE
+# =========================
 node_modules/
+**/node_modules/
 dist/
+**/dist/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# =========================
+# IDE AND EDITOR
+# =========================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# =========================
+# LOGS AND TEMPORARY FILES
+# =========================
+*.log
+*.tmp
+*.bak
+*.orig
+*.stackdump
+
+# =========================
+# C / C++ BUILD OUTPUTS
+# =========================
+*.o
+*.obj
+*.out
+*.exe
+*.so
+*.a
+*.dll
+
+# =========================
+# DATABASE / LOCAL DATA
+# =========================
+*.sqlite
+*.sqlite3
+*.db
+
+# =========================
+# GENERATED TEST / EXECUTOR FILES
+# =========================
+core
+core.*
