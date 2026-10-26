@@ -14,6 +14,9 @@ sys.path.append(
 from auth import get_connection, verify_token
 
 
+DEFAULT_MAX_MARKS = 10.0
+
+
 # ============================================================
 # BLUEPRINT
 # ============================================================
@@ -81,6 +84,7 @@ def create_problem(contest_id):
     difficulty = data.get("difficulty", "Easy")
     time_limit_ms = data.get("time_limit_ms", 1000)
     memory_limit_mb = data.get("memory_limit_mb", 256)
+    max_marks = data.get("max_marks", DEFAULT_MAX_MARKS)
 
     if not title or not statement:
 
@@ -96,6 +100,23 @@ def create_problem(contest_id):
 
         return jsonify({
             "error": "Difficulty must be Easy, Medium or Hard"
+        }), 400
+
+    # --------------------------------------------------------
+    # Validate max marks
+    # --------------------------------------------------------
+
+    try:
+
+        max_marks = float(max_marks)
+
+        if max_marks <= 0:
+            raise ValueError
+
+    except (TypeError, ValueError):
+
+        return jsonify({
+            "error": "max_marks must be a number greater than 0"
         }), 400
 
     conn = None
@@ -145,10 +166,12 @@ def create_problem(contest_id):
                 statement,
                 difficulty,
                 time_limit_ms,
-                memory_limit_mb
+                memory_limit_mb,
+                max_marks
             )
             VALUES
             (
+                %s,
                 %s,
                 %s,
                 %s,
@@ -164,7 +187,8 @@ def create_problem(contest_id):
                 statement,
                 difficulty,
                 time_limit_ms,
-                memory_limit_mb
+                memory_limit_mb,
+                max_marks
             )
         )
 
@@ -174,7 +198,8 @@ def create_problem(contest_id):
 
         return jsonify({
             "message": "Problem created successfully",
-            "problem_id": problem_id
+            "problem_id": problem_id,
+            "max_marks": max_marks
         }), 201
 
     except Exception as e:
@@ -236,7 +261,8 @@ def get_test_problems(contest_id):
                 statement,
                 difficulty,
                 time_limit_ms,
-                memory_limit_mb
+                memory_limit_mb,
+                max_marks
             FROM Problems
             WHERE contest_id = %s
             ORDER BY problem_id
@@ -256,7 +282,12 @@ def get_test_problems(contest_id):
                 "statement": row[2],
                 "difficulty": row[3],
                 "time_limit_ms": row[4],
-                "memory_limit_mb": row[5]
+                "memory_limit_mb": row[5],
+                "max_marks": (
+                    float(row[6])
+                    if row[6] is not None
+                    else DEFAULT_MAX_MARKS
+                )
             })
 
         return jsonify({

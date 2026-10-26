@@ -1,4 +1,3 @@
-
 import os
 import sys
 import time
@@ -9,7 +8,14 @@ import subprocess
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+from assessment_routes import assessment_bp
 
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
+)
+
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 # ============================================================
 # LOAD ENVIRONMENT
@@ -83,6 +89,7 @@ app.register_blueprint(oauth_bp)
 
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(coding_bp)
+app.register_blueprint(assessment_bp)
 
 
 # ============================================================
@@ -411,8 +418,7 @@ def worker():
         problem_id = job["problem_id"]
         code = job["code"]
 
-        # submit = database submission
-        # run    = temporary execution only
+       
         job_type = job.get(
             "job_type",
             "submit"
@@ -422,14 +428,21 @@ def worker():
             job_type == "submit"
         )
 
+        
+        file_prefix = (
+            "submit"
+            if persist_to_database
+            else "run"
+        )
+
         source_path = os.path.join(
             TEMP_DIR,
-            f"execution_{abs(result_id)}.cpp"
+            f"{file_prefix}_{abs(result_id)}.cpp"
         )
 
         executable_path = os.path.join(
             TEMP_DIR,
-            f"execution_{abs(result_id)}"
+            f"{file_prefix}_{abs(result_id)}"
         )
 
         try:
@@ -524,6 +537,8 @@ def worker():
 
             # ==================================================
             # GET TEST CASES
+            # Submit  -> visible + hidden
+            # Run     -> visible only
             # ==================================================
 
             test_cases = get_test_cases(
@@ -579,7 +594,7 @@ def worker():
                 continue
 
             # ==================================================
-            # RUN TEST CASES
+            # RUN ALL TEST CASES
             # ==================================================
 
             for index, test_case in enumerate(
@@ -591,6 +606,7 @@ def worker():
                 expected_output = test_case[
                     "expected_output"
                 ]
+                is_hidden = test_case["is_hidden"]
 
                 # Show progress
                 update_memory_result(
@@ -601,7 +617,8 @@ def worker():
                     0,
                     passed_test_cases,
                     total_test_cases,
-                    f"Running test case {index}..."
+                    f"Running test case {index} "
+                    f"of {total_test_cases}..."
                 )
 
                 # ==================================================
@@ -643,22 +660,20 @@ def worker():
 
                 except subprocess.TimeoutExpired:
 
-                    execution_time_ms = 15000
+                    total_execution_time += 15000
 
-                    total_execution_time += (
-                        execution_time_ms
-                    )
+                    if final_verdict == "AC":
 
-                    final_verdict = (
-                        "TIME LIMIT EXCEEDED"
-                    )
+                        final_verdict = (
+                            "TIME LIMIT EXCEEDED"
+                        )
 
-                    final_output = (
-                        "Program execution "
-                        "exceeded the backend timeout."
-                    )
+                        final_output = (
+                            "Program execution "
+                            "exceeded the backend timeout."
+                        )
 
-                    break
+                    continue
 
                 end_time = time.perf_counter()
 
@@ -703,19 +718,27 @@ def worker():
 
                 # ==================================================
                 # SANDBOX FAILURE
+                # (runtime error, TLE, resource limit...)
                 # ==================================================
 
                 if sandbox_verdict != "SUCCESS":
 
-                    final_verdict = (
-                        sandbox_verdict
-                    )
+                    if final_verdict == "AC":
 
-                    final_output = (
-                        sandbox_output
-                    )
+                        final_verdict = (
+                            sandbox_verdict
+                        )
 
-                    break
+                        # Do not leak hidden test details
+                        final_output = (
+                            f"{sandbox_verdict} "
+                            f"on a hidden test case."
+                            if is_hidden
+                            else sandbox_output
+                        )
+
+                    # Move on to the next test case
+                    continue
 
                 # ==================================================
                 # ACTUAL PROGRAM OUTPUT
@@ -750,37 +773,49 @@ def worker():
 
                     passed_test_cases += 1
 
-                    final_output = (
-                        actual_output
-                    )
+                    if final_verdict == "AC":
 
-                else:
+                        final_output = (
+                            actual_output
+                        )
+
+                elif final_verdict == "AC":
 
                     final_verdict = (
                         "WRONG ANSWER"
                     )
 
-                    final_output = (
-                        "Expected:\n"
-                        + normalized_expected
-                        + "\n\nActual:\n"
-                        + normalized_actual
-                    )
+                    if is_hidden:
 
-                    break
+                       
+                        final_output = (
+                            "Wrong answer on a "
+                            "hidden test case."
+                        )
+
+                    else:
+
+                        final_output = (
+                            f"Wrong answer on "
+                            f"test case {index}.\n\n"
+                            "Expected:\n"
+                            + normalized_expected
+                            + "\n\nActual:\n"
+                            + normalized_actual
+                        )
 
             # ==================================================
-            # ALL TEST CASES PASSED
+            # FINAL VERDICT
+            # AC only when every test case passed
             # ==================================================
 
             if (
                 final_verdict == "AC"
-                and
-                passed_test_cases
-                == total_test_cases
+                and passed_test_cases
+                != total_test_cases
             ):
 
-                final_verdict = "AC"
+                final_verdict = "WRONG ANSWER"
 
             # ==================================================
             # SAVE SUBMIT RESULT TO DATABASE
