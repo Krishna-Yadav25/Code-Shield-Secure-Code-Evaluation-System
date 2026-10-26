@@ -9,6 +9,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 from assessment_routes import assessment_bp
+from notification_routes import notification_bp
 
 PROJECT_ROOT = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
@@ -90,6 +91,7 @@ app.register_blueprint(oauth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(coding_bp)
 app.register_blueprint(assessment_bp)
+app.register_blueprint(notification_bp)
 
 
 # ============================================================
