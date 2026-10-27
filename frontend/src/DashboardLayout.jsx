@@ -1,16 +1,22 @@
+
+
 import {
     LayoutDashboard,
     Plus,
     FileText,
     Shield,
     LogOut,
-    Bell,
     ChevronDown,
     Menu,
-    X
+    X,
+    Trophy,
+    Medal,
+    History
 } from "lucide-react";
 
 import { useState } from "react";
+
+import NotificationBell from "./NotificationBell.jsx";
 
 import "./DashboardLayout.css";
 
@@ -35,6 +41,11 @@ function DashboardLayout({
         setSidebarOpen(false);
     };
 
+    /* ==========================================================
+       MENU ITEMS
+      
+       ========================================================== */
+
     const teacherMenu = [
         {
             id: "home",
@@ -55,13 +66,57 @@ function DashboardLayout({
             icon: LayoutDashboard
         },
         {
-            id: "tests",
-            label: "Available tests",
-            icon: FileText
+            id: "results",
+            label: "My results",
+            icon: Trophy
+        },
+          { id: "leaderboard", 
+            label: "Leaderboard", 
+            icon: Medal },
+        {
+            id: "history",
+            label: "Submission history",
+            icon: History
         }
     ];
 
     const menuItems = isTeacher ? teacherMenu : studentMenu;
+
+    /* ==========================================================
+       PAGE TITLE
+       ========================================================== */
+
+    const getPageTitle = () => {
+
+        switch (active) {
+
+            case "home":
+                return "Dashboard";
+
+            case "create":
+                return "Create test";
+
+            case "tests":
+                return isTeacher
+                    ? "My tests"
+                    : "Available tests";
+
+            case "manage":
+                return "Manage test";
+
+            case "results":
+                return "My results";
+
+            case "leaderboard":
+                return "Leaderboard";
+
+            case "history":
+                return "Submission history";
+
+            default:
+                return "CodeShield";
+        }
+    };
 
     return (
         <div className="dl-root">
@@ -160,7 +215,8 @@ function DashboardLayout({
 
                                 <button
                                     className={`dl-nav-item ${
-                                        active === "tests"
+                                        active === "tests" ||
+                                        (isTeacher && active === "manage")
                                             ? "active"
                                             : ""
                                     }`}
@@ -241,15 +297,7 @@ function DashboardLayout({
                         <div className="dl-page-title">
 
                             <span>
-                                {active === "home"
-                                    ? "Dashboard"
-                                    : active === "create"
-                                    ? "Create test"
-                                    : active === "tests"
-                                    ? isTeacher
-                                        ? "My tests"
-                                        : "Available tests"
-                                    : "CodeShield"}
+                                {getPageTitle()}
                             </span>
 
                         </div>
@@ -258,14 +306,8 @@ function DashboardLayout({
 
                     <div className="dl-topbar-right">
 
-                        <button
-                            className="dl-icon-button"
-                            title="Notifications"
-                        >
-                            <Bell size={19} />
-
-                            <span className="dl-notification-dot" />
-                        </button>
+                       
+                        <NotificationBell role={role} />
 
                         <div className="dl-top-user">
 
