@@ -1,83 +1,108 @@
-/* ============================================================
-   TEACHER TEST MANAGEMENT
-   ============================================================ */
+/* ============================================================*
+ *   TEACHER TEST MANAGEMENT
+*   ============================================================ */
 
 .teacher-test-page {
+
     display: flex;
+
     flex-direction: column;
+
     gap: 24px;
+
 }
 
 
-/* ============================================================
-   BREADCRUMB
-   ============================================================ */
-
 .test-breadcrumb {
+
     display: flex;
+
     align-items: center;
+
     gap: 9px;
 
     color: #71809c;
 
     font-size: 12px;
+
 }
 
 .back-link {
+
     border: 0;
+
     background: transparent;
 
     color: #63a0ff;
 
     display: flex;
+
     align-items: center;
+
     gap: 6px;
 
     cursor: pointer;
 
     padding: 0;
+
 }
 
 .test-breadcrumb strong {
+
     color: #cbd5e8;
+
 }
 
-
-/* ============================================================
-   TITLE
-   ============================================================ */
+/* ============================================================*
+ *   TITLE
+*   ============================================================ */
 
 .test-title-row {
+
     display: flex;
+
     align-items: flex-start;
+
     justify-content: space-between;
+
     gap: 20px;
+
 }
 
 .test-title-line {
+
     display: flex;
+
     align-items: center;
+
     gap: 14px;
+
     flex-wrap: wrap;
+
 }
 
 .test-title-line h1 {
+
     margin: 0;
 
     font-size: 27px;
 
     letter-spacing: -.6px;
+
 }
 
 .test-title-row p {
+
     margin: 7px 0 0;
 
     color: #91a0bb;
 
     font-size: 14px;
+
 }
 
 .large-status {
+
     display: inline-flex;
 
     padding: 5px 11px;
@@ -85,37 +110,53 @@
     border-radius: 999px;
 
     font-size: 11px;
+
     font-weight: 700;
+
 }
 
 .large-status.success {
+
     color: #32dda0;
+
     background: rgba(40,216,154,.11);
+
     border: 1px solid rgba(40,216,154,.2);
+
 }
 
 .large-status.warning {
+
     color: #f4ab48;
+
     background: rgba(244,163,64,.11);
+
 }
 
 .large-status.neutral {
+
     color: #8d9ab2;
+
     background: rgba(138,150,178,.1);
+
 }
 
-
-/* ============================================================
-   ACTIONS
-   ============================================================ */
+/* ============================================================*
+ *   ACTIONS
+*   ============================================================ */
 
 .test-actions {
+
     display: flex;
+
     gap: 10px;
+
 }
 
 .outline-btn,
+
 .primary-small-btn {
+
     height: 40px;
 
     border-radius: 9px;
@@ -123,6 +164,7 @@
     padding: 0 14px;
 
     display: flex;
+
     align-items: center;
 
     gap: 8px;
@@ -130,49 +172,65 @@
     cursor: pointer;
 
     font-size: 12px;
+
     font-weight: 650;
+
 }
 
 .outline-btn {
+
     background: transparent;
 
     color: #d8e1f3;
 
     border: 1px solid #2b3c57;
+
 }
 
 .outline-btn:hover {
+
     background: rgba(255,255,255,.04);
+
 }
 
 .primary-small-btn {
+
     color: white;
 
     border: 0;
 
     background:
+
         linear-gradient(
+
             135deg,
+
             #2d70f7,
+
             #2158d6
+
         );
+
 }
 
-
-/* ============================================================
-   STAT GRID
-   ============================================================ */
+/* ============================================================*
+ *   STAT GRID
+*   ============================================================ */
 
 .test-stat-grid {
+
     display: grid;
 
     grid-template-columns:
+
         repeat(4, 1fr);
 
     gap: 15px;
+
 }
 
 .test-stat-card {
+
     min-height: 94px;
 
     padding: 16px;
@@ -184,50 +242,71 @@
     background: #0d1628;
 
     display: flex;
+
     align-items: center;
 
     gap: 13px;
+
 }
 
 .test-stat-card .stat-icon {
+
     width: 40px;
+
     height: 40px;
 
     border-radius: 10px;
 
     display: grid;
+
     place-items: center;
+
 }
 
 .test-stat-card.blue .stat-icon {
+
     color: #62a0ff;
+
     background: rgba(47,123,255,.13);
+
 }
 
 .test-stat-card.pink .stat-icon {
+
     color: #ef72bd;
+
     background: rgba(239,114,189,.11);
+
 }
 
 .test-stat-card.orange .stat-icon {
+
     color: #f3a347;
+
     background: rgba(243,163,71,.12);
+
 }
 
 .test-stat-card.purple .stat-icon {
+
     color: #9d7cff;
+
     background: rgba(157,124,255,.12);
+
 }
 
 .test-stat-card span {
+
     display: block;
 
     color: #7887a1;
 
     font-size: 10px;
+
 }
 
 .test-stat-card strong {
+
     display: block;
 
     margin-top: 4px;
@@ -235,14 +314,15 @@
     color: #edf2ff;
 
     font-size: 14px;
+
 }
 
-
-/* ============================================================
-   TABS
-   ============================================================ */
+/* ============================================================*
+ *   TABS
+*   ============================================================ */
 
 .test-tabs {
+
     display: flex;
 
     align-items: center;
@@ -252,14 +332,17 @@
     border-bottom: 1px solid #1c2940;
 
     overflow-x: auto;
+
 }
 
 .test-tabs button {
+
     height: 45px;
 
     padding: 0 15px;
 
     display: flex;
+
     align-items: center;
 
     gap: 7px;
@@ -277,24 +360,29 @@
     white-space: nowrap;
 
     border-bottom: 2px solid transparent;
+
 }
 
 .test-tabs button:hover {
+
     color: #dce6fa;
+
 }
 
 .test-tabs button.active {
+
     color: #4c91ff;
 
     border-bottom-color: #347bff;
+
 }
 
-
-/* ============================================================
-   OVERVIEW
-   ============================================================ */
+/* ============================================================*
+ *   OVERVIEW
+*   ============================================================ */
 
 .test-overview-card {
+
     padding: 25px;
 
     border: 1px solid #1d2a42;
@@ -302,24 +390,31 @@
     border-radius: 14px;
 
     background: #0e1729;
+
 }
 
 .test-overview-card h2 {
+
     margin: 0 0 8px;
+
     font-size: 17px;
+
 }
 
 .test-overview-card p {
+
     color: #8998b2;
+
     font-size: 13px;
+
 }
 
-
-/* ============================================================
-   PLACEHOLDER
-   ============================================================ */
+/* ============================================================*
+ *   PLACEHOLDER
+*   ============================================================ */
 
 .placeholder-panel {
+
     min-height: 280px;
 
     border: 1px dashed #293b57;
@@ -337,36 +432,45 @@
     color: #66758f;
 
     text-align: center;
+
 }
 
 .placeholder-panel h2 {
+
     color: #dce5f7;
 
     font-size: 18px;
 
     margin: 14px 0 5px;
+
 }
 
 .placeholder-panel p {
+
     margin: 0;
 
     font-size: 12px;
+
 }
 
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* ============================================================*
+ *   RESPONSIVE
+*   ============================================================ */
 
 @media (max-width: 1100px) {
 
     .test-stat-grid {
+
         grid-template-columns:
+
             repeat(2, 1fr);
+
     }
 
     .test-title-row {
+
         flex-direction: column;
+
     }
 
 }
@@ -374,68 +478,89 @@
 @media (max-width: 600px) {
 
     .test-stat-grid {
+
         grid-template-columns: 1fr;
+
     }
 
     .test-actions {
+
         width: 100%;
+
     }
 
     .test-actions button {
+
         flex: 1;
+
         justify-content: center;
+
     }
 
     .test-title-line h1 {
+
         font-size: 22px;
+
     }
 
 }
-/* ============================================================
-   PROBLEM WORKSPACE
-   ============================================================ */
+
+/* ============================================================*
+ *   PROBLEM WORKSPACE
+*   ============================================================ */
 
 .problem-workspace {
+
     display: grid;
 
     grid-template-columns:
+
         minmax(260px, .85fr)
+
         minmax(420px, 1.5fr);
 
     gap: 15px;
 
     align-items: start;
+
 }
 
-
-/* ============================================================
-   PANELS
-   ============================================================ */
+/* ============================================================*
+ *   PANELS
+*   ============================================================ */
 
 .problems-panel,
+
 .problem-details-panel {
+
     background: #0e1729;
 
     border: 1px solid #1d2a42;
 
     border-radius: 15px;
+
 }
 
 .problems-panel {
+
     padding: 18px;
+
 }
 
 .problem-details-panel {
+
     padding: 20px;
+
     min-height: 550px;
+
 }
 
-
-/* ============================================================
-   PANEL HEADER
-   ============================================================ */
+/* ============================================================*
+ *   PANEL HEADER
+*   ============================================================ */
 
 .panel-header {
+
     display: flex;
 
     justify-content: space-between;
@@ -443,29 +568,35 @@
     align-items: center;
 
     margin-bottom: 17px;
+
 }
 
 .panel-header h2 {
+
     margin: 0;
 
     font-size: 17px;
+
 }
 
 .panel-header h2 span {
+
     color: #64748b;
 
     font-weight: 500;
 
     margin-left: 4px;
+
 }
 
-
-/* ============================================================
-   ADD PROBLEM
-   ============================================================ */
+/* ============================================================*
+ *   ADD PROBLEM
+*   ============================================================ */
 
 .add-problem-btn,
+
 .add-testcase-btn {
+
     height: 35px;
 
     padding: 0 11px;
@@ -489,19 +620,23 @@
     font-size: 11px;
 
     font-weight: 650;
+
 }
 
 .add-problem-btn:hover,
+
 .add-testcase-btn:hover {
+
     background: rgba(37,99,235,.2);
+
 }
 
-
-/* ============================================================
-   PROBLEM CREATE FORM
-   ============================================================ */
+/* ============================================================*
+ *   PROBLEM CREATE FORM
+*   ============================================================ */
 
 .problem-create-form {
+
     display: flex;
 
     flex-direction: column;
@@ -517,11 +652,15 @@
     background: #09111f;
 
     border: 1px solid #1d2a42;
+
 }
 
 .problem-create-form input,
+
 .problem-create-form textarea,
+
 .problem-create-form select {
+
     width: 100%;
 
     padding: 10px;
@@ -537,37 +676,45 @@
     font-size: 12px;
 
     font-family: inherit;
+
 }
 
 .problem-create-form textarea {
+
     min-height: 100px;
 
     resize: vertical;
+
 }
 
 .problem-input-row {
+
     display: grid;
 
     grid-template-columns:
+
         1fr 1fr 1fr;
 
     gap: 7px;
+
 }
 
-
-/* ============================================================
-   PROBLEM LIST
-   ============================================================ */
+/* ============================================================*
+ *   PROBLEM LIST
+*   ============================================================ */
 
 .problem-list {
+
     display: flex;
 
     flex-direction: column;
 
     gap: 8px;
+
 }
 
 .problem-list-item {
+
     width: 100%;
 
     border: 1px solid transparent;
@@ -589,32 +736,45 @@
     text-align: left;
 
     cursor: pointer;
+
 }
 
 .problem-list-item:hover {
+
     background: #111d31;
 
     border-color: #1e3455;
+
 }
 
 .problem-list-item.selected {
+
     background:
+
         linear-gradient(
+
             100deg,
+
             rgba(37,99,235,.17),
+
             rgba(37,99,235,.05)
+
         );
 
     border-color: #2866cf;
+
 }
 
 .problem-number {
+
     width: 29px;
+
     height: 29px;
 
     border-radius: 50%;
 
     display: grid;
+
     place-items: center;
 
     background: #15284d;
@@ -624,21 +784,27 @@
     font-size: 12px;
 
     flex-shrink: 0;
+
 }
 
 .problem-list-content {
+
     flex: 1;
+
 }
 
 .problem-list-content strong {
+
     display: block;
 
     font-size: 13px;
 
     margin-bottom: 6px;
+
 }
 
 .problem-list-content > div {
+
     display: flex;
 
     align-items: center;
@@ -650,22 +816,25 @@
     color: #73829b;
 
     font-size: 9px;
+
 }
 
 .problem-list-content > div span {
+
     display: flex;
 
     align-items: center;
 
     gap: 3px;
+
 }
 
-
-/* ============================================================
-   DIFFICULTY
-   ============================================================ */
+/* ============================================================*
+ *   DIFFICULTY
+*   ============================================================ */
 
 .difficulty {
+
     display: inline-flex;
 
     padding: 3px 8px;
@@ -675,50 +844,63 @@
     font-size: 9px;
 
     font-weight: 700;
+
 }
 
 .difficulty.easy {
+
     color: #34d399;
 
     background: rgba(52,211,153,.1);
+
 }
 
 .difficulty.medium {
+
     color: #fbbf24;
 
     background: rgba(251,191,36,.1);
+
 }
 
 .difficulty.hard {
+
     color: #fb7185;
 
     background: rgba(251,113,133,.1);
+
 }
 
-
-/* ============================================================
-   PROBLEM DETAILS
-   ============================================================ */
+/* ============================================================*
+ *   PROBLEM DETAILS
+*   ============================================================ */
 
 .problem-detail-header {
+
     margin-bottom: 17px;
+
 }
 
 .problem-title-line {
+
     display: flex;
 
     align-items: center;
 
     gap: 10px;
+
 }
 
 .problem-title-line h2 {
+
     margin: 0;
 
     font-size: 20px;
+
 }
 
 .statement-box {
+
     padding: 17px;
 
     border-radius: 11px;
@@ -726,15 +908,19 @@
     background: #0a1221;
 
     border: 1px solid #1b2b44;
+
 }
 
 .statement-box h3 {
+
     margin: 0 0 10px;
 
     font-size: 13px;
+
 }
 
 .statement-box p {
+
     margin: 0;
 
     color: #9ba9c0;
@@ -744,25 +930,29 @@
     line-height: 1.7;
 
     white-space: pre-line;
+
 }
 
-
-/* ============================================================
-   LIMITS
-   ============================================================ */
+/* ============================================================*
+ *   LIMITS
+*   ============================================================ */
 
 .limits-row {
+
     display: grid;
 
     grid-template-columns:
+
         1fr 1fr;
 
     gap: 10px;
 
     margin: 13px 0;
+
 }
 
 .limits-row > div {
+
     padding: 13px;
 
     border-radius: 10px;
@@ -774,39 +964,49 @@
     display: grid;
 
     grid-template-columns:
+
         25px 1fr;
 
     align-items: center;
 
     column-gap: 7px;
+
 }
 
 .limits-row svg {
+
     grid-row: span 2;
 
     color: #6ca2ff;
+
 }
 
 .limits-row span {
+
     color: #7887a1;
 
     font-size: 9px;
+
 }
 
 .limits-row strong {
+
     font-size: 12px;
+
 }
 
-
-/* ============================================================
-   TEST CASE SECTION
-   ============================================================ */
+/* ============================================================*
+ *   TEST CASE SECTION
+*   ============================================================ */
 
 .testcase-section {
+
     margin-top: 22px;
+
 }
 
 .testcase-header {
+
     display: flex;
 
     justify-content: space-between;
@@ -814,15 +1014,19 @@
     align-items: center;
 
     margin-bottom: 12px;
+
 }
 
 .testcase-header h3 {
+
     margin: 0;
 
     font-size: 15px;
+
 }
 
 .testcase-header span {
+
     display: block;
 
     color: #687892;
@@ -830,14 +1034,15 @@
     font-size: 10px;
 
     margin-top: 3px;
+
 }
 
-
-/* ============================================================
-   TEST CASE FORM
-   ============================================================ */
+/* ============================================================*
+ *   TEST CASE FORM
+*   ============================================================ */
 
 .testcase-form {
+
     padding: 15px;
 
     margin-bottom: 13px;
@@ -853,17 +1058,21 @@
     flex-direction: column;
 
     gap: 7px;
+
 }
 
 .testcase-form label {
+
     color: #8997ad;
 
     font-size: 10px;
 
     margin-top: 4px;
+
 }
 
 .testcase-form textarea {
+
     width: 100%;
 
     min-height: 80px;
@@ -881,13 +1090,17 @@
     color: #e8efff;
 
     font-family: "JetBrains Mono",
+
         "Fira Code",
+
         monospace;
 
     font-size: 11px;
+
 }
 
 .hidden-toggle {
+
     display: flex;
 
     align-items: center;
@@ -897,14 +1110,19 @@
     color: #c4cee0 !important;
 
     cursor: pointer;
+
 }
 
 .hidden-toggle input {
+
     width: 15px;
+
     height: 15px;
+
 }
 
 .testcase-form-actions {
+
     display: flex;
 
     justify-content: flex-end;
@@ -912,19 +1130,23 @@
     gap: 8px;
 
     margin-top: 6px;
+
 }
 
 .testcase-form-actions .outline-btn,
+
 .testcase-form-actions .primary-small-btn {
+
     height: 36px;
+
 }
 
-
-/* ============================================================
-   EMPTY TEST CASE
-   ============================================================ */
+/* ============================================================*
+ *   EMPTY TEST CASE
+*   ============================================================ */
 
 .no-testcases {
+
     min-height: 160px;
 
     border: 1px dashed #263955;
@@ -942,13 +1164,17 @@
     text-align: center;
 
     color: #687892;
+
 }
 
 .testcase-empty-icon {
+
     width: 38px;
+
     height: 38px;
 
     display: grid;
+
     place-items: center;
 
     border-radius: 10px;
@@ -958,34 +1184,41 @@
     color: #6b91c5;
 
     margin-bottom: 9px;
+
 }
 
 .no-testcases strong {
+
     color: #b8c5d9;
 
     font-size: 12px;
+
 }
 
 .no-testcases span {
+
     margin-top: 4px;
 
     font-size: 10px;
+
 }
 
-
-/* ============================================================
-   TEST CASE CARDS
-   ============================================================ */
+/* ============================================================*
+ *   TEST CASE CARDS
+*   ============================================================ */
 
 .testcase-list {
+
     display: flex;
 
     flex-direction: column;
 
     gap: 10px;
+
 }
 
 .testcase-card {
+
     padding: 14px;
 
     border-radius: 11px;
@@ -993,19 +1226,27 @@
     background: #09111f;
 
     border: 1px solid #1d2d46;
+
 }
 
 .testcase-card.visible-case {
+
     border-left:
+
         2px solid #28d89a;
+
 }
 
 .testcase-card.hidden-case {
+
     border-left:
+
         2px solid #e49b3d;
+
 }
 
 .testcase-card-header {
+
     display: flex;
 
     justify-content: space-between;
@@ -1013,25 +1254,33 @@
     align-items: center;
 
     margin-bottom: 12px;
+
 }
 
 .testcase-card-header > div {
+
     display: flex;
 
     align-items: center;
 
     gap: 8px;
+
 }
 
 .testcase-card-header svg {
+
     color: #7292be;
+
 }
 
 .testcase-card-header strong {
+
     font-size: 11px;
+
 }
 
 .testcase-card-header button {
+
     border: 0;
 
     background: transparent;
@@ -1041,14 +1290,19 @@
     cursor: pointer;
 
     padding: 4px;
+
 }
 
 .testcase-card-header button:hover {
+
     color: white;
+
 }
 
 .visible-badge,
+
 .hidden-badge {
+
     padding: 3px 7px;
 
     border-radius: 999px;
@@ -1056,21 +1310,27 @@
     font-size: 8px;
 
     font-weight: 700;
+
 }
 
 .visible-badge {
+
     color: #3ce0a4;
 
     background: rgba(40,216,154,.1);
+
 }
 
 .hidden-badge {
+
     color: #efa94c;
 
     background: rgba(244,163,64,.1);
+
 }
 
 .case-label {
+
     margin-top: 9px;
 
     margin-bottom: 5px;
@@ -1080,9 +1340,11 @@
     font-size: 9px;
 
     font-weight: 650;
+
 }
 
 .testcase-card pre {
+
     margin: 0;
 
     padding: 10px;
@@ -1096,8 +1358,11 @@
     color: #cbd8ed;
 
     font-family:
+
         "JetBrains Mono",
+
         "Fira Code",
+
         monospace;
 
     font-size: 10px;
@@ -1105,14 +1370,15 @@
     overflow-x: auto;
 
     white-space: pre-wrap;
+
 }
 
-
-/* ============================================================
-   MESSAGES
-   ============================================================ */
+/* ============================================================*
+ *   MESSAGES
+*   ============================================================ */
 
 .mini-success {
+
     padding: 8px 10px;
 
     border-radius: 7px;
@@ -1130,9 +1396,11 @@
     align-items: center;
 
     gap: 6px;
+
 }
 
 .mini-error {
+
     padding: 8px 10px;
 
     border-radius: 7px;
@@ -1144,9 +1412,11 @@
     color: #ff7d8b;
 
     font-size: 10px;
+
 }
 
 .no-problems {
+
     min-height: 180px;
 
     display: flex;
@@ -1158,29 +1428,35 @@
     justify-content: center;
 
     color: #65748d;
+
 }
 
 .no-problems p {
+
     margin: 9px 0 3px;
 
     color: #b3c0d5;
 
     font-size: 12px;
+
 }
 
 .no-problems span {
+
     font-size: 10px;
+
 }
 
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* ============================================================*
+ *   RESPONSIVE
+*   ============================================================ */
 
 @media (max-width: 1050px) {
 
     .problem-workspace {
+
         grid-template-columns: 1fr;
+
     }
 
 }
@@ -1188,102 +1464,137 @@
 @media (max-width: 600px) {
 
     .problem-input-row {
+
         grid-template-columns: 1fr;
+
     }
 
     .limits-row {
+
         grid-template-columns: 1fr;
+
     }
 
     .problem-details-panel,
+
     .problems-panel {
+
         padding: 14px;
+
     }
 
     .testcase-header {
+
         align-items: flex-start;
+
         gap: 10px;
+
     }
 
 }
-/* =========================================================
-   TEACHER TEST SETTINGS
-   ========================================================= */
+
+/* =========================================================*
+ *   TEACHER TEST SETTINGS
+*   ========================================================= */
 
 .teacher-settings-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
 
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+}
 
 .settings-card {
-    background: #0f172a;
-    border: 1px solid #22304a;
-    border-radius: 16px;
-    overflow: hidden;
-}
 
+    background: #0f172a;
+
+    border: 1px solid #22304a;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+}
 
 .settings-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 24px;
-}
 
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 24px;
+
+}
 
 .settings-heading {
+
     display: flex;
+
     align-items: center;
+
     gap: 14px;
+
 }
 
-
 .settings-icon-box {
+
     width: 42px;
+
     height: 42px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 10px;
 
     background: rgba(37, 99, 235, 0.14);
+
     border: 1px solid rgba(59, 130, 246, 0.25);
 
     color: #60a5fa;
+
 }
 
-
 .settings-heading h2 {
+
     margin: 0 0 5px;
 
     color: #f8fafc;
 
     font-size: 17px;
+
 }
 
-
 .settings-heading p {
+
     margin: 0;
 
     color: #64748b;
 
     font-size: 13px;
+
 }
 
-
 .settings-divider {
+
     height: 1px;
 
     background: #1e293b;
+
 }
 
-
 .password-status {
+
     display: inline-flex;
 
     align-items: center;
@@ -1297,33 +1608,37 @@
     font-size: 12px;
 
     font-weight: 600;
+
 }
 
-
 .password-status.enabled {
+
     color: #34d399;
 
     background: rgba(16, 185, 129, 0.1);
 
     border: 1px solid rgba(16, 185, 129, 0.2);
+
 }
 
-
 .password-status.disabled {
+
     color: #94a3b8;
 
     background: rgba(100, 116, 139, 0.1);
 
     border: 1px solid rgba(100, 116, 139, 0.2);
-}
 
+}
 
 .password-setting-body {
+
     padding: 24px;
+
 }
 
-
 .password-setting-body > label {
+
     display: block;
 
     margin-bottom: 5px;
@@ -1333,26 +1648,29 @@
     font-size: 13px;
 
     font-weight: 600;
+
 }
 
-
 .settings-help {
+
     margin: 0 0 16px;
 
     color: #64748b;
 
     font-size: 13px;
+
 }
 
-
 .password-input-wrapper {
+
     position: relative;
 
     max-width: 560px;
+
 }
 
-
 .password-input-wrapper input {
+
     width: 100%;
 
     box-sizing: border-box;
@@ -1370,23 +1688,27 @@
     outline: none;
 
     font-size: 14px;
+
 }
 
-
 .password-input-wrapper input:focus {
+
     border-color: #3b82f6;
 
     box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.1);
-}
 
+        0 0 0 3px rgba(59, 130, 246, 0.1);
+
+}
 
 .password-input-wrapper input::placeholder {
+
     color: #475569;
+
 }
 
-
 .password-eye-btn {
+
     position: absolute;
 
     right: 8px;
@@ -1414,17 +1736,19 @@
     cursor: pointer;
 
     border-radius: 7px;
+
 }
 
-
 .password-eye-btn:hover {
+
     color: #cbd5e1;
 
     background: #1e293b;
+
 }
 
-
 .password-setting-actions {
+
     display: flex;
 
     align-items: center;
@@ -1432,10 +1756,11 @@
     gap: 12px;
 
     margin-top: 18px;
+
 }
 
-
 .save-password-btn {
+
     display: inline-flex;
 
     align-items: center;
@@ -1457,22 +1782,25 @@
     font-size: 13px;
 
     font-weight: 600;
-}
 
+}
 
 .save-password-btn:hover {
+
     background: #1d4ed8;
+
 }
 
-
 .save-password-btn:disabled {
+
     opacity: 0.5;
 
     cursor: not-allowed;
+
 }
 
-
 .remove-password-btn {
+
     padding: 11px 16px;
 
     border-radius: 9px;
@@ -1488,22 +1816,25 @@
     font-size: 13px;
 
     font-weight: 600;
-}
 
+}
 
 .remove-password-btn:hover {
+
     background: rgba(239, 68, 68, 0.14);
+
 }
 
-
 .remove-password-btn:disabled {
+
     opacity: 0.5;
 
     cursor: not-allowed;
+
 }
 
-
 .settings-message {
+
     display: flex;
 
     align-items: center;
@@ -1519,40 +1850,45 @@
     border-radius: 8px;
 
     font-size: 13px;
+
 }
 
-
 .settings-message.success {
+
     color: #34d399;
 
     background: rgba(16, 185, 129, 0.08);
 
     border: 1px solid rgba(16, 185, 129, 0.2);
+
 }
 
-
 .settings-message.error {
+
     color: #f87171;
 
     background: rgba(239, 68, 68, 0.08);
 
     border: 1px solid rgba(239, 68, 68, 0.2);
+
 }
 
-
 .settings-info-grid {
+
     display: grid;
 
     grid-template-columns:
+
         repeat(2, minmax(0, 1fr));
 
     gap: 1px;
 
     background: #1e293b;
+
 }
 
-
 .settings-info-grid > div {
+
     display: flex;
 
     flex-direction: column;
@@ -1562,37 +1898,981 @@
     padding: 18px 24px;
 
     background: #0f172a;
+
 }
 
-
 .settings-info-grid span {
+
     color: #64748b;
 
     font-size: 12px;
+
 }
 
-
 .settings-info-grid strong {
+
     color: #e2e8f0;
 
     font-size: 14px;
-}
 
+}
 
 @media (max-width: 700px) {
 
     .settings-card-header {
+
         flex-direction: column;
+
         align-items: flex-start;
+
     }
 
     .settings-info-grid {
+
         grid-template-columns: 1fr;
+
     }
 
     .password-setting-actions {
+
         flex-direction: column;
+
         align-items: stretch;
+
     }
 
+}
+
+
+
+.teacher-test-page {
+
+  width: 100%;
+
+  min-width: 0;
+
+  gap: 22px;
+
+  color: #e7edf8;
+
+}
+
+.teacher-test-page button {
+
+  transition: background 0.2s ease, border-color 0.2s ease,
+
+    color 0.2s ease, transform 0.2s ease;
+
+}
+
+.teacher-test-page button:disabled {
+
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+}
+
+/* Header */
+
+.teacher-test-page .test-title-row {
+
+  align-items: center;
+
+  gap: 24px;
+
+  margin-bottom: 2px;
+
+}
+
+.teacher-test-page .test-title-line h1 {
+
+  font-size: clamp(23px, 2vw, 29px);
+
+  line-height: 1.3;
+
+  font-weight: 750;
+
+  color: #f0f4ff;
+
+}
+
+.teacher-test-page .test-title-row p {
+
+  color: #91a0bb;
+
+  line-height: 1.6;
+
+}
+
+.teacher-test-page .test-breadcrumb {
+
+  flex-wrap: wrap;
+
+  margin-bottom: -4px;
+
+}
+
+.teacher-test-page .test-actions {
+
+  flex-shrink: 0;
+
+  flex-wrap: wrap;
+
+}
+
+.teacher-test-page .outline-btn,
+
+.teacher-test-page .primary-small-btn {
+
+  min-height: 40px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+
+  justify-content: center;
+
+}
+
+.teacher-test-page .outline-btn:hover {
+
+  border-color: #45618a;
+
+  background: #17243a;
+
+}
+
+.teacher-test-page .primary-small-btn {
+
+  background: linear-gradient(135deg, #347eff, #225ce0);
+
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
+
+}
+
+.teacher-test-page .primary-small-btn:hover {
+
+  background: linear-gradient(135deg, #4b8cff, #306ce9);
+
+  transform: translateY(-1px);
+
+}
+
+/* Four summary cards */
+
+.teacher-test-page .test-stat-grid {
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+
+  margin: 0;
+
+}
+
+.teacher-test-page .test-stat-card {
+
+  min-width: 0;
+
+  min-height: 94px;
+
+  padding: 18px;
+
+  gap: 13px;
+
+  border-radius: 13px;
+
+  border-color: #22324d;
+
+  background: linear-gradient(145deg, #111c30, #0d1627);
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+}
+
+.teacher-test-page .test-stat-card:hover {
+
+  border-color: #3a5276;
+
+  transform: translateY(-2px);
+
+}
+
+.teacher-test-page .test-stat-card span {
+
+  font-size: 11px;
+
+  line-height: 1.5;
+
+  color: #8d9bb3;
+
+}
+
+.teacher-test-page .test-stat-card strong {
+
+  margin-top: 6px;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+
+}
+
+/* Tabs */
+
+.teacher-test-page .test-tabs {
+
+  gap: 7px;
+
+  margin: 0;
+
+  padding-bottom: 0;
+
+  border-bottom: 1px solid #243149;
+
+}
+
+.teacher-test-page .test-tabs button {
+
+  min-height: 46px;
+
+  padding: 0 15px;
+
+  border-radius: 8px 8px 0 0;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+}
+
+.teacher-test-page .test-tabs button.active {
+
+  color: #69a2ff;
+
+  border-bottom: 2px solid #4387ff;
+
+  background: linear-gradient(
+
+    to bottom,
+
+    transparent,
+
+    rgba(67, 135, 255, 0.07)
+
+  );
+
+}
+
+.teacher-test-page .test-tabs button:hover {
+
+  color: #dce8ff;
+
+  background-color: rgba(255, 255, 255, 0.025);
+
+}
+
+/* Overview panel */
+
+.teacher-test-page .test-overview-card {
+
+  padding: 26px;
+
+  border: 1px solid #24334c;
+
+  border-radius: 15px;
+
+  background: linear-gradient(145deg, #111b2e, #0d1525);
+
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+
+}
+
+.teacher-test-page .test-overview-card h2 {
+
+  margin: 0 0 8px;
+
+  font-size: 19px;
+
+  font-weight: 700;
+
+  color: #edf2fc;
+
+}
+
+.teacher-test-page .test-overview-card > p {
+
+  margin: 0;
+
+  color: #96a5bd;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+}
+
+.teacher-test-page .test-overview-card > p strong {
+
+  color: #dce8ff;
+
+}
+
+/* Fix labels and values appearing stuck together */
+
+.teacher-test-page .overview-info-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin-top: 22px;
+
+}
+
+.teacher-test-page .overview-info-grid > \* {
+
+  min-width: 0;
+
+}
+
+.teacher-test-page .overview-info-grid > div {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  min-height: 58px;
+
+  padding: 14px 16px;
+
+  border: 1px solid #25344d;
+
+  border-radius: 10px;
+
+  background: #0a1323;
+
+}
+
+.teacher-test-page .overview-info-grid > div > span:first-child {
+
+  color: #94a4bd;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+}
+
+.teacher-test-page .overview-info-grid > div > span:last-child,
+
+.teacher-test-page .overview-info-grid > div > strong {
+
+  color: #e5edfb;
+
+  font-size: 12px;
+
+  font-weight: 650;
+
+  line-height: 1.6;
+
+  text-align: right;
+
+  overflow-wrap: anywhere;
+
+}
+
+.teacher-test-page .teacher-quick-actions {
+
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 11px;
+
+  margin-top: 22px;
+
+}
+
+/* Submissions and analytics outer panel */
+
+.teacher-test-page .teacher-report-panel {
+
+  width: 100%;
+
+  min-width: 0;
+
+  padding: 24px;
+
+  border: 1px solid #23324b;
+
+  border-radius: 15px;
+
+  background: linear-gradient(145deg, #101a2c, #0b1322);
+
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+
+}
+
+.teacher-test-page .teacher-report-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 22px;
+
+}
+
+.teacher-test-page .teacher-report-header h2 {
+
+  margin: 0;
+
+  color: #edf2fc;
+
+  font-size: 21px;
+
+  font-weight: 720;
+
+  letter-spacing: -0.3px;
+
+}
+
+.teacher-test-page .teacher-report-header p {
+
+  margin: 7px 0 0;
+
+  color: #95a4bc;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+}
+
+.teacher-test-page .teacher-report-header button {
+
+  flex-shrink: 0;
+
+}
+
+/* Submissions table: readable columns and proper spacing */
+
+.teacher-test-page .teacher-table-wrapper {
+
+  width: 100%;
+
+  max-width: 100%;
+
+  overflow-x: auto;
+
+  margin-top: 18px;
+
+  border: 1px solid #263650;
+
+  border-radius: 12px;
+
+  background: #0a1322;
+
+  scrollbar-width: thin;
+
+  scrollbar-color: #344763 #0a1322;
+
+}
+
+.teacher-test-page .teacher-data-table {
+
+  width: 100%;
+
+  min-width: 850px;
+
+  border-collapse: separate;
+
+  border-spacing: 0;
+
+  text-align: left;
+
+  font-size: 12px;
+
+}
+
+.teacher-test-page .teacher-data-table thead {
+
+  background: #17243a;
+
+}
+
+.teacher-test-page .teacher-data-table th {
+
+  padding: 15px 17px;
+
+  color: #b9c8de;
+
+  background: #17243a;
+
+  border-bottom: 1px solid #2a3b55;
+
+  font-size: 10px;
+
+  font-weight: 750;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.055em;
+
+  white-space: nowrap;
+
+}
+
+.teacher-test-page .teacher-data-table td {
+
+  padding: 14px 17px;
+
+  color: #d6dfed;
+
+  border-bottom: 1px solid rgba(42, 58, 83, 0.65);
+
+  line-height: 1.55;
+
+  vertical-align: middle;
+
+}
+
+.teacher-test-page .teacher-data-table tbody tr {
+
+  background: #0d1626;
+
+  transition: background 0.15s ease;
+
+}
+
+.teacher-test-page .teacher-data-table tbody tr:nth-child(even) {
+
+  background: #101a2c;
+
+}
+
+.teacher-test-page .teacher-data-table tbody tr:hover {
+
+  background: #19263c;
+
+}
+
+.teacher-test-page .teacher-data-table tbody tr:last-child td {
+
+  border-bottom: 0;
+
+}
+
+.teacher-test-page .teacher-data-table td:first-child {
+
+  color: #eff4ff;
+
+  font-weight: 650;
+
+}
+
+.teacher-test-page .teacher-data-table td:last-child {
+
+  white-space: nowrap;
+
+}
+
+/* Submission status */
+
+.teacher-test-page .report-status {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  max-width: 180px;
+
+  padding: 5px 9px;
+
+  border: 1px solid #30435f;
+
+  border-radius: 7px;
+
+  background: #17243a;
+
+  color: #cbd9ee;
+
+  font-size: 10px;
+
+  font-weight: 650;
+
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+
+}
+
+/* Analytics: prevent cards stretching into full-width rows */
+
+.teacher-test-page .teacher-analytics-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  align-items: stretch;
+
+  gap: 15px;
+
+  width: 100%;
+
+  margin: 22px 0;
+
+}
+
+.teacher-test-page .teacher-analytics-grid > \* {
+
+  width: auto;
+
+  min-width: 0;
+
+  min-height: 125px;
+
+  padding: 20px;
+
+  border: 1px solid #273751;
+
+  border-radius: 13px;
+
+  background: linear-gradient(145deg, #131f34, #0d1627);
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
+
+}
+
+.teacher-test-page .teacher-analytics-grid > \*:hover {
+
+  border-color: #40587b;
+
+}
+
+/* Analytics problem summary */
+
+.teacher-test-page .teacher-report-panel .test-overview-card {
+
+  margin-top: 22px;
+
+  padding: 22px;
+
+}
+
+.teacher-test-page .teacher-report-panel .test-overview-card h3 {
+
+  margin: 0 0 16px;
+
+  color: #e7eefb;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+}
+
+.teacher-test-page .teacher-report-panel .test-overview-card
+
+.teacher-data-table {
+
+  min-width: 420px;
+
+}
+
+/* Empty state */
+
+.teacher-test-page .placeholder-panel {
+
+  min-height: 230px;
+
+  padding: 30px;
+
+  border: 1px dashed #31425f;
+
+  border-radius: 12px;
+
+  background: rgba(9, 18, 33, 0.55);
+
+}
+
+.teacher-test-page .placeholder-panel h2 {
+
+  margin: 12px 0 8px;
+
+  color: #e7eefb;
+
+  font-size: 18px;
+
+}
+
+.teacher-test-page .placeholder-panel p {
+
+  max-width: 460px;
+
+  color: #91a1ba;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+
+}
+
+.teacher-test-page .placeholder-icon {
+
+  color: #76a9ff;
+
+}
+
+/* Loading and error feedback */
+
+.teacher-test-page .teacher-loading {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 18px;
+
+  border: 1px solid #263650;
+
+  border-radius: 10px;
+
+  background: #0c1525;
+
+  color: #a9b9d1;
+
+  font-size: 13px;
+
+}
+
+.teacher-test-page .settings-message {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 13px 16px;
+
+  border-radius: 10px;
+
+  font-size: 12px;
+
+}
+
+.teacher-test-page .settings-message.error {
+
+  color: #fecdd3;
+
+  border: 1px solid rgba(251, 113, 133, 0.3);
+
+  background: rgba(159, 18, 57, 0.12);
+
+}
+
+/* Responsive tablet */
+
+@media (max-width: 1100px) {
+
+  .teacher-test-page .test-stat-grid,
+
+  .teacher-test-page .teacher-analytics-grid {
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  }
+
+  .teacher-test-page .test-title-row {
+
+    align-items: flex-start;
+
+  }
+
+}
+
+/* Responsive mobile */
+
+@media (max-width: 650px) {
+
+  .teacher-test-page {
+
+    gap: 18px;
+
+  }
+
+  .teacher-test-page .test-title-row {
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+  }
+
+  .teacher-test-page .test-actions {
+
+    width: 100%;
+
+  }
+
+  .teacher-test-page .test-actions button {
+
+    flex: 1;
+
+  }
+
+  .teacher-test-page .test-stat-grid,
+
+  .teacher-test-page .teacher-analytics-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .teacher-test-page .overview-info-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .teacher-test-page .test-overview-card,
+
+  .teacher-test-page .teacher-report-panel {
+
+    padding: 17px;
+
+  }
+
+  .teacher-test-page .teacher-report-header {
+
+    align-items: flex-start;
+
+  }
+
+  .teacher-test-page .teacher-quick-actions {
+
+    align-items: stretch;
+
+    flex-direction: column;
+
+  }
+
+  .teacher-test-page .teacher-quick-actions button {
+
+    width: 100%;
+
+  }
+
+  .teacher-test-page .test-tabs {
+
+    overflow-x: auto;
+
+    flex-wrap: nowrap;
+
+  }
+
+  .teacher-test-page .test-tabs button {
+
+    flex-shrink: 0;
+
+  }
+
+}
+
+
+.teacher-test-page input:not([type="checkbox"]):not([type="radio"]),
+.teacher-test-page textarea,
+.teacher-test-page select,
+.teacher-test-page .teacher-report-panel input:not([type="checkbox"]):not([type="radio"]),
+.teacher-test-page .teacher-report-panel textarea,
+.teacher-test-page .teacher-report-panel select {
+  box-sizing: border-box;
+  color-scheme: dark;
+  color: #e8efff !important;
+  background: #0a1425 !important;
+  border: 1px solid #2a3c59 !important;
+  border-radius: 9px;
+  padding: 10px 12px;
+  font: inherit;
+  line-height: 1.5;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.teacher-test-page input:not([type="checkbox"]):not([type="radio"]):focus,
+.teacher-test-page textarea:focus,
+.teacher-test-page select:focus,
+.teacher-test-page .teacher-report-panel input:not([type="checkbox"]):not([type="radio"]):focus,
+.teacher-test-page .teacher-report-panel textarea:focus,
+.teacher-test-page .teacher-report-panel select:focus {
+  border-color: #4387ff !important;
+  background: #0d192d !important;
+  box-shadow: 0 0 0 3px rgba(67, 135, 255, 0.16);
+}
+
+.teacher-test-page input::placeholder,
+.teacher-test-page textarea::placeholder {
+  color: #71829e !important;
+  opacity: 1;
+}
+
+.teacher-test-page textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.teacher-test-page input[type="number"] {
+  max-width: 180px;
+  min-height: 38px;
+}
+
+.teacher-test-page input[type="checkbox"],
+.teacher-test-page input[type="radio"] {
+  accent-color: #347bff;
+}
+
+.teacher-test-page input:disabled,
+.teacher-test-page textarea:disabled,
+.teacher-test-page select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.teacher-test-page ::selection {
+  color: #ffffff;
+  background: rgba(52, 123, 255, 0.45);
+}
+
+@media (max-width: 600px) {
+  .teacher-test-page input:not([type="checkbox"]):not([type="radio"]),
+  .teacher-test-page textarea,
+  .teacher-test-page select {
+    width: 100%;
+    max-width: 100%;
+  }
 }

@@ -2,7 +2,8 @@ import {
     Plus,
     Clock3,
     Database,
-    ChevronRight
+    ChevronRight,
+    Award
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -13,6 +14,9 @@ import "./Dashboard.css";
 
 
 const API_BASE = "http://localhost:5000";
+
+// problems.max_marks ka DB default 10 hai
+const DEFAULT_MAX_MARKS = 10;
 
 
 function ProblemManager({
@@ -45,6 +49,9 @@ function ProblemManager({
 
     const [memoryLimit, setMemoryLimit] =
         useState(256);
+
+    const [maxMarks, setMaxMarks] =
+        useState(DEFAULT_MAX_MARKS);
 
     const [message, setMessage] =
         useState("");
@@ -97,6 +104,17 @@ function ProblemManager({
 
 
     /* =========================================================
+       HELPERS
+    ========================================================= */
+
+    const marksOf = (problem) =>
+        Number(
+            problem?.max_marks ??
+            DEFAULT_MAX_MARKS
+        );
+
+
+    /* =========================================================
        CREATE PROBLEM
     ========================================================= */
 
@@ -106,6 +124,21 @@ function ProblemManager({
 
         setMessage("");
         setError("");
+
+
+        const marks = Number(maxMarks);
+
+        if (
+            !Number.isFinite(marks) ||
+            marks <= 0
+        ) {
+
+            setError(
+                "Max marks must be greater than 0."
+            );
+
+            return;
+        }
 
 
         try {
@@ -136,7 +169,10 @@ function ProblemManager({
                                 Number(timeLimit),
 
                             memory_limit_mb:
-                                Number(memoryLimit)
+                                Number(memoryLimit),
+
+                            max_marks:
+                                marks
 
                         })
                     }
@@ -171,6 +207,8 @@ function ProblemManager({
             setTimeLimit(1000);
 
             setMemoryLimit(256);
+
+            setMaxMarks(DEFAULT_MAX_MARKS);
 
             setShowForm(false);
 
@@ -398,6 +436,37 @@ function ProblemManager({
                         </div>
 
 
+                        {/* MAX MARKS */}
+
+                        <div className="problem-input-row">
+
+                            <div>
+
+                                <label>
+                                    Max Marks
+                                </label>
+
+                                <input
+                                    type="number"
+                                    min="0.5"
+                                    step="0.5"
+                                    value={
+                                        maxMarks
+                                    }
+                                    onChange={
+                                        (e) =>
+                                            setMaxMarks(
+                                                e.target.value
+                                            )
+                                    }
+                                    required
+                                />
+
+                            </div>
+
+                        </div>
+
+
                         <button
                             className="primary-small-btn"
                             type="submit"
@@ -544,6 +613,21 @@ function ProblemManager({
                                                     problem
                                                         .memory_limit_mb
                                                 } MB
+
+                                            </span>
+
+
+                                            <span>
+
+                                                <Award
+                                                    size={12}
+                                                />
+
+                                                {
+                                                    marksOf(
+                                                        problem
+                                                    )
+                                                } marks
 
                                             </span>
 
@@ -704,6 +788,33 @@ function ProblemManager({
                                             selectedProblem
                                                 .memory_limit_mb
                                         } MB
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div className="limit-card">
+
+                                <Award
+                                    size={18}
+                                />
+
+                                <div>
+
+                                    <span>
+                                        Max Marks
+                                    </span>
+
+                                    <strong>
+
+                                        {
+                                            marksOf(
+                                                selectedProblem
+                                            )
+                                        }
 
                                     </strong>
 
