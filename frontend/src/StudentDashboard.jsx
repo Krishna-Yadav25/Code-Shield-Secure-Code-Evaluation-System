@@ -1,1054 +1,952 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import DashboardLayout from "./DashboardLayout.jsx";
+
 import StudentTestPage from "./StudentTestPage.jsx";
+
+import { NotificationsCard } from "./NotificationBell.jsx";
+
+import Leaderboard from "./Leaderboard.jsx";
+
 import "./Dashboard.css";
+
+
 
 const API_BASE = "http://localhost:5000";
 
+const SUBMITTED_KEY = "codeshield_submitted_tests";
 
-// ============================================================
-// TEST STATUS
-// ============================================================
+
+
+
+const DEFAULT_MAX_MARKS = 10;
+
+
+
+function getSubmittedTests() {
+
+   try {
+
+     return JSON.parse(localStorage.getItem(SUBMITTED_KEY) || "[]").map(String);
+
+   } catch {
+
+     return [];
+
+   }
+
+}
+
+
 
 function testStatus(test) {
 
-    const now = Date.now();
+const now = Date.now();
 
-    if (now < new Date(test.start_time)) {
-        return ["Upcoming", "upcoming"];
-    }
+const start = new Date(test.start_time).getTime();
 
-    if (now > new Date(test.end_time)) {
-        return ["Ended", "ended"];
-    }
+const end = new Date(test.end_time).getTime();
 
-    return ["Live", "live"];
+
+
+   if (Number.isFinite(start) && now < start) return ["Upcoming", "upcoming"];
+
+   if (Number.isFinite(end) && now > end) return ["Ended", "ended"];
+
+   return ["Live", "live"];
+
 }
 
-
-// ============================================================
-// VERDICT CLASS
-// ============================================================
 
 function verdictClass(verdict) {
 
-    if (!verdict) {
-        return "neutral";
-    }
+   if (!verdict) return "neutral";
 
-    return String(verdict)
-        .toLowerCase()
-        .includes("accept")
-        ? "good"
-        : "bad";
+const v = String(verdict).trim().toLowerCase();
+
+   return v === "ac" || v.includes("accept") ? "good" : "bad";
+
 }
 
 
-// ============================================================
-// TEST CARD
-// ============================================================
 
-function TestCard({ test, onStartTest }) {
 
-    const [label, cls] = testStatus(test);
 
-    const isLive = cls === "live";
+function countdownText(test) {
 
-    return (
+  const end = new Date(test.end_time).getTime();
 
-        <div className="test-card">
+  const diff = end - Date.now();
 
-            <div className="test-top">
+  if (!Number.isFinite(end) || diff <= 0) return null;
 
-                <div className="test-icon">
-                    🧪
-                </div>
+  const mins = Math.floor(diff / 60000);
 
-                <span className={`badge ${cls}`}>
-                    {label}
-                </span>
+  const d = Math.floor(mins / 1440);
 
-            </div>
+  const h = Math.floor((mins % 1440) / 60);
 
-            <h3>
-                {test.title}
-            </h3>
+  const m = mins % 60;
 
-            <p>
-                {test.description ||
-                    "Coding assessment"}
-            </p>
+  const text = d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`;
 
-            <div className="test-time">
+  return { text: `Ends in ${text}`, urgent: diff < 3600000 };
 
-                <span>
-
-                    <strong>
-                        Starts
-                    </strong>
-
-                    {new Date(
-                        test.start_time
-                    ).toLocaleString()}
-
-                </span>
-
-                <span>
-
-                    <strong>
-                        Ends
-                    </strong>
-
-                    {new Date(
-                        test.end_time
-                    ).toLocaleString()}
-
-                </span>
-
-            </div>
-
-            <button
-                className="primary-btn"
-                onClick={() => onStartTest(test)}
-                disabled={!isLive}
-            >
-
-                {isLive
-                    ? "🔐 Start Test"
-                    : label === "Upcoming"
-                        ? "Test Not Started"
-                        : "Test Ended"}
-
-            </button>
-
-        </div>
-    );
 }
 
 
-// ============================================================
-// SUBMISSIONS TABLE
-// ============================================================
+
+function TestCard({ test, onStartTest, submitted }) {
+
+const [label, cls] = testStatus(test);
+
+const isLive = cls === "live";
+
+const [, setTick] = useState(0);
+
+useEffect(() => {
+
+  const t = setInterval(() => setTick((n) => n + 1), 60000);
+
+  return () => clearInterval(t);
+
+}, []);
+
+const countdown = isLive && !submitted ? countdownText(test) : null;
+
+
+
+   return (
+
+     <div className="test-card">
+
+       <div className="test-top">
+
+         <div className="test-icon">🧪</div>
+
+         <span className={`badge ${submitted ? "good" : cls}`}>
+
+           {submitted ? "Attempted" : label}
+
+         </span>
+
+       </div>
+
+       <h3>{test.title}</h3>
+
+       <p>{test.description || "Coding assessment"}</p>
+
+       {countdown && (
+
+         <div className={`test-countdown ${countdown.urgent ? "urgent" : ""}`}>
+
+           ⏳ {countdown.text}
+
+         </div>
+
+       )}
+
+       <div className="test-time">
+
+         <span><strong>Starts</strong> {test.start_time ? new Date(test.start_time).toLocaleString() : "—"}</span>
+
+         <span><strong>Ends</strong> {test.end_time ? new Date(test.end_time).toLocaleString() : "—"}</span>
+
+       </div>
+
+       <button
+
+         className="primary-btn"
+
+         onClick={() => onStartTest(test)}
+
+         disabled={!isLive || submitted}
+
+       >
+
+         {submitted ? "✓ Test Submitted" : isLive ? "🔐 Start Test" : label === "Upcoming" ? "Test Not Started" : "Test Ended"}
+
+       </button>
+
+     </div>
+
+   );
+
+}
+
+
 
 function SubmissionsTable({ rows }) {
 
-    if (!rows || rows.length === 0) {
+   if (!rows?.length) {
 
-        return (
+     return <div className="empty-card">No submissions yet.</div>;
 
-            <div className="empty-card">
+   }
 
-                No submissions yet.
 
-                Start a test to see your
-                results here.
 
-            </div>
-        );
-    }
+   return (
 
-    return (
+     <div className="teacher-table-wrapper">
 
-        <table>
+       <table className="teacher-data-table">
 
-            <thead>
+         <thead>
 
-                <tr>
+           <tr><th>Problem</th><th>Language</th><th>Status</th><th>Verdict</th><th>Date</th></tr>
 
-                    <th>
-                        Problem
-                    </th>
+         </thead>
 
-                    <th>
-                        Language
-                    </th>
+         <tbody>
 
-                    <th>
-                        Status
-                    </th>
+           {rows.map((s, i) => (
 
-                    <th>
-                        Verdict
-                    </th>
+             <tr key={s.submission_id ?? i}>
 
-                    <th>
-                        Date
-                    </th>
+               <td>{s.problem || s.problem_title || "—"}</td>
 
-                </tr>
+               <td>{s.language || "—"}</td>
 
-            </thead>
+               <td>{s.status || "—"}</td>
 
-            <tbody>
+               <td><span className={`badge ${verdictClass(s.verdict)}`}>{s.verdict || "—"}</span></td>
 
-                {rows.map((s) => (
+               <td>{s.submitted_at ? new Date(s.submitted_at).toLocaleString() : "—"}</td>
 
-                    <tr
-                        key={s.submission_id}
-                    >
+             </tr>
 
-                        <td>
-                            {s.problem}
-                        </td>
+           ))}
 
-                        <td>
-                            {s.language}
-                        </td>
+         </tbody>
 
-                        <td>
-                            {s.status}
-                        </td>
+       </table>
 
-                        <td>
+     </div>
 
-                            <span
-                                className={
-                                    `badge ${
-                                        verdictClass(
-                                            s.verdict
-                                        )
-                                    }`
-                                }
-                            >
-                                {s.verdict || "-"}
-                            </span>
+   );
 
-                        </td>
-
-                        <td>
-
-                            {s.submitted_at
-                                ? new Date(
-                                    s.submitted_at
-                                ).toLocaleString()
-                                : "-"}
-
-                        </td>
-
-                    </tr>
-
-                ))}
-
-            </tbody>
-
-        </table>
-    );
 }
 
 
-// ============================================================
-// PASSWORD MODAL
-// ============================================================
 
-function PasswordModal({
-    test,
-    password,
-    setPassword,
-    onClose,
-    onUnlock,
-    unlocking,
-    passwordError
-}) {
+function PasswordModal({ test, password, setPassword, onClose, onUnlock, unlocking, error }) {
 
-    return (
+   return (
 
-        <div className="password-overlay">
+     <div className="password-overlay">
 
-            <div className="password-modal">
+       <div className="password-modal">
 
-                <div className="password-icon">
-                    🔐
-                </div>
+         <div className="password-icon">🔐</div>
 
-                <h2>
-                    Test Protected
-                </h2>
+         <h2>Test Protected</h2>
 
-                <p className="password-test-name">
-                    {test.title}
-                </p>
+         <p className="password-test-name">{test.title}</p>
 
-                <p className="password-description">
-                    This assessment is protected by a
-                    password provided by your teacher.
-                </p>
+         <p className="password-description">Enter the password provided by your teacher.</p>
 
-                <label>
-                    Test Password
-                </label>
+         <label>Test Password</label>
 
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) =>
-                        setPassword(e.target.value)
-                    }
-                    onKeyDown={(e) => {
+         <input
 
-                        if (
-                            e.key === "Enter" &&
-                            !unlocking
-                        ) {
-                            onUnlock();
-                        }
+           type="password"
 
-                    }}
-                    placeholder="Enter test password"
-                    autoFocus
-                />
+           value={password}
 
-                {passwordError && (
+           autoFocus
 
-                    <div className="password-error">
-                        {passwordError}
-                    </div>
+           placeholder="Enter test password"
 
-                )}
+           onChange={(e) => setPassword(e.target.value)}
 
-                <div className="password-actions">
+           onKeyDown={(e) => e.key === "Enter" && !unlocking && onUnlock()}
 
-                    <button
-                        className="secondary-btn"
-                        onClick={onClose}
-                        disabled={unlocking}
-                    >
-                        Cancel
-                    </button>
+         />
 
-                    <button
-                        className="primary-btn"
-                        onClick={onUnlock}
-                        disabled={
-                            unlocking ||
-                            !password.trim()
-                        }
-                    >
+         {error && <div className="password-error">{error}</div>}
 
-                        {unlocking
-                            ? "Unlocking..."
-                            : "🔓 Unlock Test"}
+         <div className="password-actions">
 
-                    </button>
+           <button className="secondary-btn" onClick={onClose} disabled={unlocking}>Cancel</button>
 
-                </div>
+           <button className="primary-btn" onClick={onUnlock} disabled={unlocking || !password.trim()}>
 
-            </div>
+             {unlocking ? "Unlocking..." : "🔓 Unlock Test"}
 
-        </div>
-    );
+           </button>
+
+         </div>
+
+       </div>
+
+     </div>
+
+   );
+
 }
 
 
-// ============================================================
-// STUDENT DASHBOARD
-// ============================================================
 
 function StudentDashboard({ onLogout }) {
 
-    const [data, setData] =
-        useState(null);
+const [data, setData] = useState(null);
 
-    const [loading, setLoading] =
-        useState(true);
+const [loading, setLoading] = useState(true);
 
-    const [error, setError] =
-        useState("");
+const [error, setError] = useState("");
 
-    const [tab, setTab] =
-        useState("home");
+const [tab, setTab] = useState("home");
 
+const [selectedTest, setSelectedTest] = useState(null);
 
-    // ========================================================
-    // SELECTED TEST
-    // ========================================================
+const [passwordTest, setPasswordTest] = useState(null);
 
-    const [selectedTest, setSelectedTest] =
-        useState(null);
+const [password, setPassword] = useState("");
 
+const [passwordError, setPasswordError] = useState("");
 
-    // ========================================================
-    // PASSWORD MODAL
-    // ========================================================
+const [unlocking, setUnlocking] = useState(false);
 
-    const [passwordTest, setPasswordTest] =
-        useState(null);
+const [submittedTests, setSubmittedTests] = useState(getSubmittedTests);
 
-    const [password, setPassword] =
-        useState("");
+const [results, setResults] = useState([]);
 
-    const [passwordError, setPasswordError] =
-        useState("");
+const [resultsLoading, setResultsLoading] = useState(false);
 
-    const [unlocking, setUnlocking] =
-        useState(false);
+const [resultsError, setResultsError] = useState("");
 
 
-    // ========================================================
-    // LOAD DASHBOARD
-    // ========================================================
 
-    useEffect(() => {
+const refreshDashboard = useCallback(async () => {
 
-        const token =
-            localStorage.getItem(
-                "codeshield_token"
-            );
+const token = localStorage.getItem("codeshield_token");
 
-        if (!token) {
+     if (!token) {
 
-            setError(
-                "You are not logged in."
-            );
+       setError("You are not logged in.");
 
-            setLoading(false);
+       setLoading(false);
 
-            return;
-        }
+       return;
 
+     }
 
-        fetch(
-            `${API_BASE}/api/student/dashboard`,
-            {
-                method: "GET",
 
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`,
 
-                    "Content-Type":
-                        "application/json"
-                }
-            }
-        )
+     try {
 
-            .then(async (response) => {
+       setError("");
 
-                const result =
-                    await response.json();
+const response = await fetch(`${API_BASE}/api/student/dashboard`, {
 
-                if (!response.ok) {
+         headers: { Authorization: `Bearer ${token}` }
 
-                    throw new Error(
-                        result.error ||
-                        "Failed to load dashboard"
-                    );
-                }
+       });
 
-                return result;
-            })
+const result = await response.json().catch(() => ({}));
 
-            .then((result) => {
+       if (!response.ok) throw new Error(result.error || "Failed to load dashboard.");
 
-                setData(result);
+       setData(result);
 
-                setLoading(false);
-            })
+     } catch (e) {
 
-            .catch((error) => {
+       setError(e.message || "Unable to load dashboard.");
 
-                console.error(
-                    "Dashboard error:",
-                    error
-                );
+     } finally {
 
-                setError(
-                    error.message
-                );
+       setLoading(false);
 
-                setLoading(false);
-            });
+     }
 
-    }, []);
+   }, []);
 
 
-    // ========================================================
-    // OPEN PASSWORD MODAL
-    // ========================================================
 
-    const handleStartTest = (test) => {
+const loadResults = useCallback(async () => {
 
-        const [status] =
-            testStatus(test);
+const token = localStorage.getItem("codeshield_token");
 
-        if (status !== "Live") {
-            return;
-        }
+     if (!token) {
 
-        setPasswordTest(test);
-        setPassword("");
-        setPasswordError("");
-    };
+       setResultsError("Please log in again.");
 
+       return;
 
-    // ========================================================
-    // CLOSE PASSWORD MODAL
-    // ========================================================
+     }
 
-    const handleClosePassword = () => {
 
-        if (unlocking) {
-            return;
-        }
 
-        setPasswordTest(null);
-        setPassword("");
-        setPasswordError("");
-    };
+     setResultsLoading(true);
 
+     setResultsError("");
 
-    // ========================================================
-    // UNLOCK TEST
-    // ========================================================
+     try {
 
-    const handleUnlockTest = async () => {
+const response = await fetch(`${API_BASE}/api/student/results`, {
 
-        if (!passwordTest) {
-            return;
-        }
+         headers: { Authorization: `Bearer ${token}` }
 
-        if (!password.trim()) {
+       });
 
-            setPasswordError(
-                "Please enter the test password."
-            );
+const result = await response.json().catch(() => ({}));
 
-            return;
-        }
+       if (!response.ok) throw new Error(result.error || "Unable to load results.");
 
-        const token =
-            localStorage.getItem(
-                "codeshield_token"
-            );
 
-        if (!token) {
 
-            setPasswordError(
-                "Your login session has expired."
-            );
 
-            return;
-        }
+       setResults(result.results || []);
 
-        setUnlocking(true);
-        setPasswordError("");
+     } catch (e) {
 
-        try {
+       setResultsError(e.message);
 
-            const response = await fetch(
-                `${API_BASE}/api/student/tests/${passwordTest.contest_id}/unlock`,
-                {
-                    method: "POST",
+     } finally {
 
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`,
+       setResultsLoading(false);
 
-                        "Content-Type":
-                            "application/json"
-                    },
+     }
 
-                    body: JSON.stringify({
-                        password: password
-                    })
-                }
-            );
+   }, []);
 
-            const result =
-                await response.json();
 
-            if (!response.ok) {
 
-                setPasswordError(
-                    result.error ||
-                    "Unable to unlock test."
-                );
+   useEffect(() => {
 
-                setUnlocking(false);
+     refreshDashboard();
 
-                return;
-            }
+   }, [refreshDashboard]);
 
-            // Password correct
-            setSelectedTest(passwordTest);
+  
+   useEffect(() => {
+     if (data && Array.isArray(data.recent_submissions) && data.recent_submissions.length === 0) {
+       localStorage.removeItem(SUBMITTED_KEY);
+       setSubmittedTests([]);
+     }
+   }, [data]);
 
-            setPasswordTest(null);
-            setPassword("");
-            setPasswordError("");
 
-        } catch (error) {
 
-            console.error(
-                "Unlock error:",
-                error
-            );
+   useEffect(() => {
 
-            setPasswordError(
-                "Unable to connect to the server."
-            );
+     if (tab === "results") loadResults();
 
-        } finally {
+   }, [tab, loadResults]);
 
-            setUnlocking(false);
-        }
-    };
 
 
-    // ========================================================
-    // GO BACK FROM TEST
-    // ========================================================
+const isTestSubmitted = (test) => submittedTests.includes(String(test.contest_id));
 
-    const handleBackFromTest = () => {
 
-        setSelectedTest(null);
-    };
 
+const handleStartTest = (test) => {
 
-    // ========================================================
-    // LOADING
-    // ========================================================
+const [status] = testStatus(test);
 
-    if (loading) {
+     if (status !== "Live" || isTestSubmitted(test)) return;
 
-        return (
+     setPasswordTest(test);
 
-            <div className="dashboard-loading">
-                Loading dashboard...
-            </div>
+     setPassword("");
 
-        );
-    }
+     setPasswordError("");
 
+   };
 
-    // ========================================================
-    // ERROR
-    // ========================================================
 
-    if (error) {
 
-        return (
+const handleUnlockTest = async () => {
 
-            <div className="dashboard-error">
+     if (!passwordTest || unlocking) return;
 
-                <h2>
-                    Unable to load dashboard
-                </h2>
+     if (!password.trim()) {
 
-                <p>
-                    {error}
-                </p>
+       setPasswordError("Please enter the test password.");
 
-                <button
-                    onClick={onLogout}
-                    className="logout-btn"
-                >
-                    Back to Login
-                </button>
+       return;
 
-            </div>
+     }
 
-        );
-    }
 
 
-    // ========================================================
-    // NO DATA
-    // ========================================================
+const token = localStorage.getItem("codeshield_token");
 
-    if (!data) {
+     if (!token) {
 
-        return (
+       setPasswordError("Your login session has expired.");
 
-            <div className="dashboard-error">
+       return;
 
-                No dashboard data available.
+     }
 
-            </div>
 
-        );
-    }
 
+     setUnlocking(true);
 
-    // ========================================================
-    // IF TEST IS OPEN
-    // ========================================================
+     setPasswordError("");
 
-    if (selectedTest) {
 
-        return (
 
-            <StudentTestPage
-                test={selectedTest}
-                onBack={
-                    handleBackFromTest
-                }
-            />
+     try {
 
-        );
-    }
+const response = await fetch(
 
+         `${API_BASE}/api/student/tests/${passwordTest.contest_id}/unlock`,
 
-    // ========================================================
-    // DASHBOARD DATA
-    // ========================================================
+         {
 
-    const username =
-        data.user?.username ||
-        "Student";
+           method: "POST",
 
-    const tests =
-        data.available_tests || [];
+           headers: {
 
-    const subs =
-        data.recent_submissions || [];
+             Authorization: `Bearer ${token}`,
 
-    const accepted =
-        subs.filter(
-            (s) =>
-                verdictClass(
-                    s.verdict
-                ) === "good"
-        ).length;
+             "Content-Type": "application/json"
 
+           },
 
-    // ========================================================
-    // MAIN DASHBOARD
-    // ========================================================
+           body: JSON.stringify({ password })
 
-    return (
+         }
 
-        <>
+       );
 
-            <DashboardLayout
-                role="student"
-                username={username}
-                active={tab}
-                onNavigate={setTab}
-                onLogout={onLogout}
-            >
 
-                <div className="page">
 
-                    {/* HOME */}
+const result = await response.json().catch(() => ({}));
 
-                    {tab === "home" && (
+       if (!response.ok) throw new Error(result.error || "Unable to unlock test.");
 
-                        <>
 
-                            <section className="hero-card">
 
-                                <h2>
-                                    Welcome back,
-                                    {" "}
-                                    {username}
-                                    {" "}👋
-                                </h2>
+       setSelectedTest(passwordTest);
 
-                                <p>
-                                    View your coding
-                                    assessments and
-                                    submission history.
-                                </p>
+       setPasswordTest(null);
 
-                            </section>
+       setPassword("");
 
+     } catch (e) {
 
-                            {/* STATS */}
+       setPasswordError(e.message);
 
-                            <section className="stats-grid">
+     } finally {
 
-                                <div className="stat-card">
+       setUnlocking(false);
 
-                                    <div className="stat-ico">
-                                        🧪
-                                    </div>
+     }
 
-                                    <div>
+   };
 
-                                        <h3>
-                                            {tests.length}
-                                        </h3>
 
-                                        <p>
-                                            Available tests
-                                        </p>
 
-                                    </div>
+const handleBackFromTest = (wasSubmitted = false) => {
 
-                                </div>
+const completed = selectedTest;
 
+     setSelectedTest(null);
 
-                                <div className="stat-card">
 
-                                    <div className="stat-ico">
-                                        📝
-                                    </div>
 
-                                    <div>
+     if (wasSubmitted && completed?.contest_id != null) {
 
-                                        <h3>
-                                            {subs.length}
-                                        </h3>
+const updated = [...new Set([
 
-                                        <p>
-                                            Recent submissions
-                                        </p>
+         ...getSubmittedTests(),
 
-                                    </div>
+         String(completed.contest_id)
 
-                                </div>
+       ])];
 
+       localStorage.setItem(SUBMITTED_KEY, JSON.stringify(updated));
 
-                                <div className="stat-card">
+       setSubmittedTests(updated);
 
-                                    <div className="stat-ico">
-                                        ✅
-                                    </div>
+     }
 
-                                    <div>
 
-                                        <h3>
-                                            {accepted}
-                                        </h3>
 
-                                        <p>
-                                            Accepted
-                                        </p>
+     setLoading(true);
 
-                                    </div>
+     refreshDashboard();
 
-                                </div>
+   };
 
-                            </section>
 
 
-                            {/* AVAILABLE TESTS */}
+   if (loading) return <div className="dashboard-loading">Loading dashboard...</div>;
 
-                            <section>
 
-                                <div className="sec-head">
 
-                                    <h2>
-                                        Available Tests
-                                    </h2>
+   if (error) {
 
-                                    {tests.length > 3 && (
+     return (
 
-                                        <button
-                                            onClick={() =>
-                                                setTab(
-                                                    "tests"
-                                                )
-                                            }
-                                        >
-                                            View all
-                                        </button>
+       <div className="dashboard-error">
 
-                                    )}
+         <h2>Unable to load dashboard</h2>
 
-                                </div>
+         <p>{error}</p>
 
+         <button className="primary-btn" onClick={refreshDashboard}>Retry</button>
 
-                                <div className="test-grid">
+         <button className="logout-btn" onClick={onLogout}>Back to Login</button>
 
-                                    {tests.length === 0 ? (
+       </div>
 
-                                        <div className="empty-card">
+     );
 
-                                            No active tests
-                                            available.
+   }
 
-                                        </div>
 
-                                    ) : (
 
-                                        tests
-                                            .slice(0, 3)
-                                            .map((t) => (
+   if (!data) return <div className="dashboard-error">No dashboard data available.</div>;
 
-                                                <TestCard
-                                                    key={
-                                                        t.contest_id
-                                                    }
-                                                    test={t}
-                                                    onStartTest={
-                                                        handleStartTest
-                                                    }
-                                                />
 
-                                            ))
 
-                                    )}
+   if (selectedTest) {
 
-                                </div>
+     return <StudentTestPage test={selectedTest} onBack={handleBackFromTest} />;
 
-                            </section>
+   }
 
 
-                            {/* RECENT SUBMISSIONS */}
 
-                            <section>
+const username = data.user?.username || "Student";
 
-                                <div className="sec-head">
+const tests = data.available_tests || [];
 
-                                    <h2>
-                                        Recent Submissions
-                                    </h2>
+const submissions = data.recent_submissions || [];
 
-                                    {subs.length > 5 && (
+const accepted = submissions.filter((s) => verdictClass(s.verdict) === "good").length;
 
-                                        <button
-                                            onClick={() =>
-                                                setTab(
-                                                    "history"
-                                                )
-                                            }
-                                        >
-                                            View all
-                                        </button>
 
-                                    )}
 
-                                </div>
+const renderTestCards = (items) => items.length === 0 ? (
 
+     <div className="empty-card">No tests available.</div>
 
-                                <div className="submission-card">
+   ) : (
 
-                                    <SubmissionsTable
-                                        rows={
-                                            subs.slice(
-                                                0,
-                                                5
-                                            )
-                                        }
-                                    />
+     <div className="test-grid">
 
-                                </div>
+       {items.map((test) => (
 
-                            </section>
+         <TestCard
 
-                        </>
+           key={test.contest_id}
 
-                    )}
+           test={test}
 
+           onStartTest={handleStartTest}
 
-                    {/* TESTS */}
+           submitted={isTestSubmitted(test)}
 
-                    {tab === "tests" && (
+         />
 
-                        <section>
+       ))}
 
-                            <div className="sec-head">
+     </div>
 
-                                <h2>
-                                    Available Tests
-                                </h2>
+   );
 
-                            </div>
 
 
-                            <div className="test-grid">
+   return (
 
-                                {tests.length === 0 ? (
+     <>
 
-                                    <div className="empty-card">
+       <DashboardLayout
 
-                                        No active tests
-                                        available.
+         role="student"
 
-                                    </div>
+         username={username}
 
-                                ) : (
+         active={tab}
 
-                                    tests.map((t) => (
+         onNavigate={setTab}
 
-                                        <TestCard
-                                            key={
-                                                t.contest_id
-                                            }
-                                            test={t}
-                                            onStartTest={
-                                                handleStartTest
-                                            }
-                                        />
+         onLogout={onLogout}
 
-                                    ))
+       >
 
-                                )}
+         <div className="page">
 
-                            </div>
+           {tab === "home" && (
 
-                        </section>
+             <>
 
-                    )}
+               <section className="hero-card">
 
+                 <h2>Welcome back, {username} 👋</h2>
 
-                    {/* HISTORY */}
+                 <p>View your coding assessments, submission history and published results.</p>
 
-                    {tab === "history" && (
+                 <div className="hero-actions">
 
-                        <section>
+                   <button className="primary-btn" onClick={() => setTab("results")}>
 
-                            <div className="sec-head">
+                     🏆 View Results
 
-                                <h2>
-                                    Submission History
-                                </h2>
+                   </button>
 
-                            </div>
+                 </div>
 
+               </section>
 
-                            <div className="submission-card">
 
-                                <SubmissionsTable
-                                    rows={subs}
-                                />
 
-                            </div>
+               <NotificationsCard />
 
-                        </section>
 
-                    )}
 
-                </div>
+               <section className="stats-grid">
 
-            </DashboardLayout>
+                 <div className="stat-card"><div className="stat-ico">🧪</div><div><h3>{tests.length}</h3><p>Available tests</p></div></div>
 
+                 <div className="stat-card"><div className="stat-ico">📝</div><div><h3>{submissions.length}</h3><p>Recent submissions</p></div></div>
 
-            {/* PASSWORD MODAL */}
+                 <div className="stat-card"><div className="stat-ico">✅</div><div><h3>{accepted}</h3><p>Accepted</p></div></div>
 
-            {passwordTest && (
+                 <div className="stat-card"><div className="stat-ico">🎯</div><div><h3>{submittedTests.length}</h3><p>Tests attempted</p></div></div>
 
-                <PasswordModal
+               </section>
 
-                    test={passwordTest}
 
-                    password={password}
 
-                    setPassword={setPassword}
+               <section>
 
-                    onClose={
-                        handleClosePassword
-                    }
+                 <div className="sec-head">
 
-                    onUnlock={
-                        handleUnlockTest
-                    }
+                   <h2>Available Tests</h2>
 
-                    unlocking={
-                        unlocking
-                    }
+                   <button onClick={() => setTab("tests")}>View all</button>
 
-                    passwordError={
-                        passwordError
-                    }
+                 </div>
 
-                />
+                 {renderTestCards(tests.slice(0, 3))}
 
-            )}
+               </section>
 
-        </>
-    );
+
+
+               <section>
+
+                 <div className="sec-head">
+
+                   <h2>Recent Submissions</h2>
+
+                   <button onClick={() => setTab("history")}>View history</button>
+
+                 </div>
+
+                 <div className="submission-card"><SubmissionsTable rows={submissions.slice(0, 5)} /></div>
+
+               </section>
+
+             </>
+
+           )}
+
+
+
+           {tab === "tests" && (
+
+             <section>
+
+               <div className="sec-head"><h2>Available Tests</h2></div>
+
+               {renderTestCards(tests)}
+
+             </section>
+
+           )}
+
+
+
+           {tab === "leaderboard" && (
+
+             <section>
+
+               <div className="sec-head"><h2>Leaderboard</h2></div>
+
+               <Leaderboard />
+
+             </section>
+
+           )}
+
+
+
+           {tab === "history" && (
+
+             <section>
+
+               <div className="sec-head"><h2>Submission History</h2></div>
+
+               <div className="submission-card"><SubmissionsTable rows={submissions} /></div>
+
+             </section>
+
+           )}
+
+
+
+           {tab === "results" && (
+
+             <section>
+
+               <div className="sec-head">
+
+                 <div>
+
+                   <h2>My Results</h2>
+
+                   <p>Only results approved and published by your teacher appear here.</p>
+
+                 </div>
+
+                 <button onClick={loadResults} disabled={resultsLoading}>
+
+                   {resultsLoading ? "Loading..." : "Refresh"}
+
+                 </button>
+
+               </div>
+
+
+
+               {resultsError && <div className="dashboard-error"><p>{resultsError}</p></div>}
+
+
+
+               {resultsLoading ? (
+
+                 <div className="empty-card">Loading published results...</div>
+
+               ) : results.length === 0 ? (
+
+                 <div className="empty-card">
+
+                   <h3>No published results yet</h3>
+
+                   <p>Your teacher has not published a result for you yet. Please check again later.</p>
+
+                 </div>
+
+               ) : (
+
+                 <div className="test-grid">
+
+                   {results.map((r, i) => {
+
+const marks = Number(r.awarded_marks || 0);
+
+const max = Number(r.max_marks || DEFAULT_MAX_MARKS);
+
+const percentage = max > 0 ? (marks / max) * 100 : 0;
+
+
+
+                     return (
+
+                       <article className="test-card" key={r.result_id ?? r.submission_id ?? i}>
+
+                         <div className="test-top">
+
+                           <div className="test-icon">🏆</div>
+
+                           <span className="badge good">Published</span>
+
+                         </div>
+
+                         <h3>{r.contest_title || r.test_title || "Assessment Result"}</h3>
+
+                         <p>{r.problem_title || r.problem || "Coding assessment"}</p>
+
+
+
+                         <div className="stats-grid">
+
+                           <div className="stat-card">
+
+                             <div><h3>{marks} / {max}</h3><p>Marks</p></div>
+
+                           </div>
+
+                           <div className="stat-card">
+
+                             <div><h3>{percentage.toFixed(1)}%</h3><p>Percentage</p></div>
+
+                           </div>
+
+                           <div className="stat-card">
+
+                             <div><h3>{r.test_cases_passed ?? 0} / {r.test_cases_total ?? 0}</h3><p>Test cases passed</p></div>
+
+                           </div>
+
+                         </div>
+
+
+
+                         <p><strong>Teacher feedback:</strong> {r.teacher_feedback || "No feedback provided."}</p>
+
+                         {r.published_at && (
+
+                           <p><small>Published: {new Date(r.published_at).toLocaleString()}</small></p>
+
+                         )}
+
+                       </article>
+
+                     );
+
+                   })}
+
+                 </div>
+
+               )}
+
+             </section>
+
+           )}
+
+         </div>
+
+       </DashboardLayout>
+
+
+
+       {passwordTest && (
+
+         <PasswordModal
+
+           test={passwordTest}
+
+           password={password}
+
+           setPassword={setPassword}
+
+           onClose={() => !unlocking && setPasswordTest(null)}
+
+           onUnlock={handleUnlockTest}
+
+           unlocking={unlocking}
+
+           error={passwordError}
+
+         />
+
+       )}
+
+     </>
+
+   );
+
 }
+
 
 
 export default StudentDashboard;
