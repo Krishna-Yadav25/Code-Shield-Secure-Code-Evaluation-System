@@ -8,9 +8,12 @@ import subprocess
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+from plagiarism_routes import plagiarism_bp
 from assessment_routes import assessment_bp
 from notification_routes import notification_bp
 from leaderboard_routes import leaderboard_bp
+from proctoring_routes import proctoring_bp, is_user_frozen_for_problem
+
 
 PROJECT_ROOT = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
@@ -64,6 +67,7 @@ from auth_routes import auth_bp
 from oauth_routes import oauth_bp, init_oauth
 from dashboard_routes import dashboard_bp
 from coding_routes import coding_bp
+from ai_routes import ai_bp
 
 
 # ============================================================
@@ -91,9 +95,12 @@ app.register_blueprint(oauth_bp)
 
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(coding_bp)
+app.register_blueprint(plagiarism_bp)
 app.register_blueprint(assessment_bp)
 app.register_blueprint(notification_bp)
 app.register_blueprint(leaderboard_bp)
+app.register_blueprint(proctoring_bp)
+app.register_blueprint(ai_bp)
 
 
 # ============================================================
@@ -1068,6 +1075,10 @@ def submit_code():
                 "Invalid user information"
         }), 401
 
+    if is_user_frozen_for_problem(user_id, problem_id):
+        return jsonify({
+            "error": "Your test is frozen. Ask your teacher to unlock it."
+        }), 423
     # ========================================================
     # CREATE DATABASE SUBMISSION
     # ========================================================
@@ -1201,7 +1212,11 @@ def run_code():
             "error":
                 "Currently only C++ is supported"
         }), 400
-
+    
+    if is_user_frozen_for_problem(user.get("user_id"), problem_id):
+        return jsonify({
+            "error": "Your test is frozen. Ask your teacher to unlock it."
+        }), 423
     # ========================================================
     # GENERATE TEMPORARY RUN ID
     # ========================================================

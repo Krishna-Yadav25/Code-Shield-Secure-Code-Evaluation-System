@@ -2,6 +2,7 @@ import os
 import sys
 
 from flask import Blueprint, request, jsonify
+from proctoring_routes import is_user_frozen_for_contest
 
 sys.path.append(
     os.path.join(
@@ -243,6 +244,15 @@ def get_test_problems(contest_id):
         return jsonify({
             "error": "Authentication required"
         }), 401
+    
+    if (
+        user.get("role") == "student"
+        and is_user_frozen_for_contest(user.get("user_id"), contest_id
+        )
+    ):
+        return jsonify({
+            "error": "Your test is frozen. Ask your teacher to unlock it."
+        }), 423
 
     conn = None
     cur = None

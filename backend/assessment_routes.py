@@ -4,6 +4,8 @@ from flask import Blueprint, request, jsonify
 
 from database.auth import get_connection, verify_token
 
+from proctoring_routes import is_frozen
+
 
 assessment_bp = Blueprint("assessment", __name__, url_prefix="/api")
 
@@ -296,6 +298,11 @@ def final_submit_test(contest_id):
             (contest_id,)
         )
         is_over = cur.fetchone()[0]
+
+        if not is_over and is_frozen(cur, contest_id, user_id):
+            return jsonify({
+                "error": "Your test is frozen. Ask your teacher to unlock it."
+            }), 423
 
         new_status = "auto_submitted" if is_over else "submitted"
 
