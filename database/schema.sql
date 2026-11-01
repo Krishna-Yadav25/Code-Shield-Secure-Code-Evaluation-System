@@ -1,4 +1,3 @@
-
 --Database Schema For Code Sheild
 
 --USER
@@ -109,9 +108,113 @@ JOIN Results r ON r.submission_id = s.submission_id
 GROUP BY u.username, p.contest_id
 ORDER BY problems_solved DESC, total_time_ms ASC;
 
+-- 1. Track one student's final attempt for one test.
+CREATE TABLE IF NOT EXISTS ContestAttempts (
+    attempt_id SERIAL PRIMARY KEY,
+    contest_id INTEGER NOT NULL
+        REFERENCES Contests(contest_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL
+        REFERENCES Users(user_id) ON DELETE CASCADE,
+    started_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    submitted_at TIMESTAMP,
+    status VARCHAR(20) NOT NULL DEFAULT 'in_progress'
+        CHECK (status IN ('in_progress', 'submitted', 'auto_submitted')),
+    UNIQUE (contest_id, user_id)
+);
+
+-- 2. Record per-question time and whether the student attempted it.
+CREATE TABLE IF NOT EXISTS ContestAttemptProblems (
+    attempt_problem_id SERIAL PRIMARY KEY,
+    attempt_id INTEGER NOT NULL
+        REFERENCES ContestAttempts(attempt_id) ON DELETE CASCADE,
+    problem_id INTEGER NOT NULL
+        REFERENCES Problems(problem_id) ON DELETE CASCADE,
+    first_opened_at TIMESTAMP,
+    last_activity_at TIMESTAMP,
+    time_spent_seconds INTEGER NOT NULL DEFAULT 0
+        CHECK (time_spent_seconds >= 0),
+    attempted BOOLEAN NOT NULL DEFAULT FALSE,
+    final_submission_id INTEGER
+        REFERENCES Submissions(submission_id) ON DELETE SET NULL,
+    UNIQUE (attempt_id, problem_id)
+);
+
+-- 3. Prevent duplicate final submissions for the same test attempt.
+CREATE INDEX IF NOT EXISTS idx_contest_attempts_contest
+    ON ContestAttempts(contest_id);
+
+CREATE INDEX IF NOT EXISTS idx_contest_attempts_user
+    ON ContestAttempts(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_attempt_problems_attempt
+    ON ContestAttemptProblems(attempt_id);
+
+CREATE INDEX IF NOT EXISTS idx_submissions_problem_user
+    ON Submissions(problem_id, user_id);
+
+-- =========================================================
+-- NOTIFICATIONS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS Notifications (
+    notification_id SERIAL PRIMARY KEY,
+    created_by      INTEGER NOT NULL
+        REFERENCES Users(user_id) ON DELETE CASCADE,
+    title           VARCHAR(150) NOT NULL,
+    message         TEXT NOT NULL,
+    created_at      TIMESTAMP NOT NULL DEFAULT NOW()
+);
 
 
+CREATE TABLE IF NOT EXISTS NotificationReads (
+    notification_id INTEGER NOT NULL
+        REFERENCES Notifications(notification_id) ON DELETE CASCADE,
+    user_id         INTEGER NOT NULL
+        REFERENCES Users(user_id) ON DELETE CASCADE,
+    read_at         TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (notification_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_created
+    ON Notifications(created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_notification_reads_user
+    ON NotificationReads(user_id);
 
 
+  
 
---Run this with: psql -U postgres -d codeshield_db -f schema.sql
+CREATE TABLE IF NOT EXISTS ActivityLog (
+    log_id      SERIAL PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES Users(user_id) ON DELETE CASCADE,
+    contest_id  INTEGER NOT NULL REFERENCES Contests(contest_id) ON DELETE CASCADE,
+    event_type  VARCHAR(50) NOT NULL,
+    event_time  TIMESTAMP DEFAULT NOW()
+);
+
+
+CREATE TABLE IF NOT EXISTS TestSessions (
+    session_id       SERIAL PRIMARY KEY,
+    contest_id       INTEGER NOT NULL
+        REFERENCES Contests(contest_id) ON DELETE CASCADE,
+    user_id          INTEGER NOT NULL
+        REFERENCES Users(user_id) ON DELETE CASCADE,
+    status           VARCHAR(20) NOT NULL DEFAULT 'active'
+        CHECK (status IN ('active', 'frozen')),
+    tab_switch_count INTEGER NOT NULL DEFAULT 0
+        CHECK (tab_switch_count >= 0),
+    last_switch_at   TIMESTAMP,
+    frozen_at        TIMESTAMP,
+    freeze_reason    TEXT,
+    unlock_count     INTEGER NOT NULL DEFAULT 0,
+    unlocked_by      INTEGER REFERENCES Users(user_id) ON DELETE SET NULL,
+    unlocked_at      TIMESTAMP,
+    created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (contest_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_test_sessions_contest
+    ON TestSessions(contest_id);
+
+CREATE INDEX IF NOT EXISTS idx_test_sessions_status
+    ON TestSessions(contest_id, status);
