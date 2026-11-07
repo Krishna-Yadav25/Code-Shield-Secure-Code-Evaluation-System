@@ -9,12 +9,55 @@
 #include <sched.h>
 #include <sys/stat.h>
 #include <cstring>
+#include <cstdlib>
 #include <cerrno>
 #include <chrono>
 #include <fstream>
 #include <string>
-
 using namespace std;
+
+struct Limits {
+
+    long memory_mb  = 256;
+    long address_mb = 0;     
+    long time_s     = 5;
+    long procs      = 10;
+    long cpu_percent = 50;
+};
+
+int parseOption(
+    const string& arg,
+    const string& prefix,
+    long& out,
+    long low,
+    long high
+) {
+
+    if (arg.rfind(prefix, 0) != 0) {
+
+        return 0;
+    }
+
+    string text = arg.substr(prefix.size());
+
+    char* end = nullptr;
+
+    long value = strtol(text.c_str(), &end, 10);
+
+    if (text.empty() || *end != '\0' ||
+        value < low || value > high) {
+
+        cerr << "Invalid value for " << prefix
+             << " (allowed " << low << ".." << high << ")"
+             << endl;
+
+        return -1;
+    }
+
+    out = value;
+
+    return 1;
+}
 
 
 // ------------------------------------------------
@@ -99,7 +142,8 @@ bool writeCgroupFile(
 
 // Apply CPU, memory and process limits
 bool setCgroupLimits(
-    const string& cgroup_path
+    const string& cgroup_path,
+    const Limits& limits
 ) {
 
     bool success = true;
@@ -109,10 +153,14 @@ bool setCgroupLimits(
     // CPU LIMIT
     // ------------------------------------------------
 
-    // 50000 / 100000 means 50% of one CPU
+    // quota / 100000 = share of one CPU
+    // (50 percent => "50000 100000")
+    string cpu_value =
+        to_string(limits.cpu_percent * 1000) + " 100000";
+
     if (writeCgroupFile(
             cgroup_path + "/cpu.max",
-            "50000 100000"
+            cpu_value
         )) {
 
         cout << "[CGroup] CPU limit applied"
@@ -128,10 +176,12 @@ bool setCgroupLimits(
     // MEMORY LIMIT
     // ------------------------------------------------
 
-    // 256 MB = 268435456 bytes
+    string memory_value =
+        to_string(limits.memory_mb * 1024 * 1024);
+
     if (writeCgroupFile(
             cgroup_path + "/memory.max",
-            "268435456"
+            memory_value
         )) {
 
         cout << "[CGroup] Memory limit applied"
@@ -149,7 +199,7 @@ bool setCgroupLimits(
 
     if (writeCgroupFile(
             cgroup_path + "/pids.max",
-            "10"
+            to_string(limits.procs)
         )) {
 
         cout << "[CGroup] Process limit applied"
@@ -216,7 +266,9 @@ int main(int argc, char* argv[]) {
     // Take the program path from command line
     if (argc < 2) {
 
-        cerr << "Usage: ./sandbox_executor <program>"
+        cerr << "Usage: ./sandbox_executor <program> "
+             << "[--memory-mb=N] [--address-mb=N] [--time=N] "
+             << "[--procs=N] [--cpu=N]"
              << endl;
 
         return 1;
@@ -226,8 +278,51 @@ int main(int argc, char* argv[]) {
     const char* program = argv[1];
 
 
+    // Optional limits (defaults = purane limits)
+    Limits limits;
+
+    for (int i = 2; i < argc; i++) {
+
+        string arg = argv[i];
+
+        int r;
+
+        if ((r = parseOption(arg, "--memory-mb=",
+                limits.memory_mb, 16, 4096)) != 0) {
+        }
+        else if ((r = parseOption(arg, "--address-mb=",
+                limits.address_mb, 16, 16384)) != 0) {
+        }
+        else if ((r = parseOption(arg, "--time=",
+                limits.time_s, 1, 60)) != 0) {
+        }
+        else if ((r = parseOption(arg, "--procs=",
+                limits.procs, 1, 512)) != 0) {
+        }
+        else if ((r = parseOption(arg, "--cpu=",
+                limits.cpu_percent, 5, 100)) != 0) {
+        }
+        else {
+
+            cerr << "Unknown option: " << arg << endl;
+
+            return 1;
+        }
+
+        if (r < 0) {
+
+            return 1;
+        }
+    }
+
+    if (limits.address_mb == 0) {
+
+        limits.address_mb = limits.memory_mb;
+    }
+
+
     // Time limit for the program
-    const int TIME_LIMIT = 5;
+    const int TIME_LIMIT = (int)limits.time_s;
 
 
     cout << "CodeShield Sandbox" << endl;
@@ -239,6 +334,12 @@ int main(int argc, char* argv[]) {
     cout << "Time Limit: "
          << TIME_LIMIT
          << " seconds"
+         << endl;
+
+    cout << "Limits: memory " << limits.memory_mb
+         << " MB, address space " << limits.address_mb
+         << " MB, processes " << limits.procs
+         << ", cpu " << limits.cpu_percent << "%"
          << endl;
 
 
@@ -254,7 +355,7 @@ int main(int argc, char* argv[]) {
 
     if (cgroup_created) {
 
-        if (!setCgroupLimits(cgroup_path)) {
+        if (!setCgroupLimits(cgroup_path, limits)) {
 
             cout << "[CGroup] Some limits could not be applied"
                  << endl;
@@ -459,16 +560,12 @@ int main(int argc, char* argv[]) {
         // CPU LIMIT
         // ------------------------------------------------
 
-        // Set CPU time limit
+       
         struct rlimit cpu_limit;
 
+        cpu_limit.rlim_cur = TIME_LIMIT * 2 + 2;
 
-        // Soft limit = 1 second
-        cpu_limit.rlim_cur = 10;
-
-
-        // Hard limit = 2 seconds
-        cpu_limit.rlim_max = 11;
+        cpu_limit.rlim_max = TIME_LIMIT * 2 + 3;
 
 
         if (setrlimit(
@@ -483,20 +580,16 @@ int main(int argc, char* argv[]) {
 
 
         // ------------------------------------------------
-        // MEMORY LIMIT
+        // MEMORY LIMIT (address space)
         // ------------------------------------------------
 
-        // Set memory limit
         struct rlimit memory_limit;
 
-
-        // Limit = 256 MB
         memory_limit.rlim_cur =
-            256 * 1024 * 1024;
-
+            (rlim_t)limits.address_mb * 1024 * 1024;
 
         memory_limit.rlim_max =
-            256 * 1024 * 1024;
+            (rlim_t)limits.address_mb * 1024 * 1024;
 
 
         if (setrlimit(
@@ -514,14 +607,11 @@ int main(int argc, char* argv[]) {
         // PROCESS LIMIT
         // ------------------------------------------------
 
-        // Limit the number of processes
         struct rlimit process_limit;
 
+        process_limit.rlim_cur = (rlim_t)limits.procs;
 
-        // Maximum number of processes
-        process_limit.rlim_cur = 10;
-
-        process_limit.rlim_max = 10;
+        process_limit.rlim_max = (rlim_t)limits.procs;
 
 
         if (setrlimit(

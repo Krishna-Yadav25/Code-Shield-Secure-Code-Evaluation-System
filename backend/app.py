@@ -68,6 +68,29 @@ from oauth_routes import oauth_bp, init_oauth
 from dashboard_routes import dashboard_bp
 from coding_routes import coding_bp
 from ai_routes import ai_bp
+from identity_routes import identity_bp
+from incident_routes import incident_bp
+
+# Practice mode (optional): file na ho to baaki app bina iske chalta hai
+try:
+    from practice_routes import practice_bp, record_practice_attempt
+except ImportError as practice_import_error:
+    print("Practice routes not loaded:", practice_import_error)
+    practice_bp = None
+
+    def record_practice_attempt(*args, **kwargs):
+        return None
+
+# Languages: C++ / Java / Python
+from languages import (
+    LABELS,
+    SUPPORTED_LABEL,
+    build_program,
+    cleanup_paths,
+    detect_languages,
+    normalize_language,
+    sandbox_command
+)
 
 
 # ============================================================
@@ -101,6 +124,11 @@ app.register_blueprint(notification_bp)
 app.register_blueprint(leaderboard_bp)
 app.register_blueprint(proctoring_bp)
 app.register_blueprint(ai_bp)
+app.register_blueprint(identity_bp)
+app.register_blueprint(incident_bp)
+
+if practice_bp is not None:
+    app.register_blueprint(practice_bp)
 
 
 # ============================================================
@@ -127,6 +155,25 @@ os.makedirs(
 
 
 # ============================================================
+# AVAILABLE LANGUAGES
+# Start hote hi har language ko sandbox mein chalakar dekhta hai.
+# Jo nahi chalti use editor ke dropdown mein nahi dikhate
+# (C++ hamesha rehti hai). Isme 3-5 second lagte hain.
+# ============================================================
+
+LANGUAGE_STATUS = detect_languages(SANDBOX_EXECUTOR_PATH, TEMP_DIR)
+
+AVAILABLE_LANGUAGES = LANGUAGE_STATUS["available"]
+
+for _language, _detail in LANGUAGE_STATUS["details"].items():
+
+    print(
+        f"Language {LABELS[_language]:7}:",
+        "OK" if _detail == "ok" else f"NOT AVAILABLE ({_detail[:120]})"
+    )
+
+
+# ============================================================
 # JOB QUEUE
 # ============================================================
 
@@ -140,6 +187,65 @@ job_queue = queue.Queue()
 results = {}
 
 results_lock = threading.Lock()
+
+
+# ============================================================
+# LOAD PROTECTION
+# Last moment par sab ek saath Run dabate hain. Ek student bar-bar
+# dabaye to queue bhar jaati hai aur doosron ko wait karna padta hai.
+#   MAX_PENDING_PER_USER : ek student ke kitne run/submit ek saath queue mein
+#   MAX_QUEUE_SIZE       : poori queue ki limit (zyada ho to "server busy")
+# ============================================================
+
+MAX_PENDING_PER_USER = int(os.getenv("MAX_PENDING_PER_USER", "3"))
+MAX_QUEUE_SIZE = int(os.getenv("MAX_QUEUE_SIZE", "300"))
+
+pending_lock = threading.Lock()
+pending_by_user = {}
+running_jobs = 0
+
+
+def reserve_slot(user_id):
+    """None = slot mil gaya. Warna "busy" ya "user_limit"."""
+
+    with pending_lock:
+
+        if job_queue.qsize() >= MAX_QUEUE_SIZE:
+            return "busy"
+
+        if pending_by_user.get(user_id, 0) >= MAX_PENDING_PER_USER:
+            return "user_limit"
+
+        pending_by_user[user_id] = pending_by_user.get(user_id, 0) + 1
+
+    return None
+
+
+def release_slot(user_id):
+
+    with pending_lock:
+
+        left = pending_by_user.get(user_id, 0) - 1
+
+        if left > 0:
+            pending_by_user[user_id] = left
+        else:
+            pending_by_user.pop(user_id, None)
+
+
+def slot_error_response(reason):
+
+    if reason == "busy":
+        return jsonify({
+            "error": "Server is busy right now. Please try again in a few seconds."
+        }), 503
+
+    return jsonify({
+        "error": (
+            f"You already have {MAX_PENDING_PER_USER} runs waiting. "
+            "Wait for them to finish, then run again."
+        )
+    }), 429
 
 
 # ============================================================
@@ -411,7 +517,8 @@ def update_memory_result(
             "memory_used_kb": memory_used_kb,
             "test_cases_passed": test_cases_passed,
             "test_cases_total": test_cases_total,
-            "output": output
+            "output": output,
+            "updated_at": time.time()
         }
 
 
@@ -425,11 +532,17 @@ def worker():
 
         job = job_queue.get()
 
+        global running_jobs
+
+        with pending_lock:
+            running_jobs += 1
+
         result_id = job["result_id"]
         problem_id = job["problem_id"]
         code = job["code"]
+        user_id = job.get("user_id")
+        language = job.get("language", "cpp")
 
-       
         job_type = job.get(
             "job_type",
             "submit"
@@ -439,22 +552,19 @@ def worker():
             job_type == "submit"
         )
 
-        
         file_prefix = (
             "submit"
             if persist_to_database
             else "run"
         )
 
-        source_path = os.path.join(
-            TEMP_DIR,
-            f"{file_prefix}_{abs(result_id)}.cpp"
-        )
-
-        executable_path = os.path.join(
+        # Is job ke saare temp files / folders (khatam hone par saaf hote hain)
+        base_path = os.path.join(
             TEMP_DIR,
             f"{file_prefix}_{abs(result_id)}"
         )
+
+        cleanup = []
 
         try:
 
@@ -477,32 +587,16 @@ def worker():
                 )
 
             # ==================================================
-            # WRITE SOURCE
-            # ==================================================
-
-            with open(
-                source_path,
-                "w"
-            ) as file:
-
-                file.write(code)
-
-            # ==================================================
-            # COMPILE
+            # BUILD (C++ compile / Java compile / Python syntax check)
             # ==================================================
 
             compile_start = time.perf_counter()
 
-            compile_process = subprocess.run(
-                [
-                    "g++",
-                    source_path,
-                    "-o",
-                    executable_path
-                ],
-                capture_output=True,
-                text=True,
-                timeout=10
+            compile_process, executable_path = build_program(
+                language,
+                code,
+                base_path,
+                cleanup
             )
 
             compile_time_ms = int(
@@ -529,6 +623,15 @@ def worker():
                         verdict,
                         compile_time_ms,
                         0,
+                        0,
+                        0
+                    )
+
+                    record_practice_attempt(
+                        user_id,
+                        problem_id,
+                        result_id,
+                        verdict,
                         0,
                         0
                     )
@@ -659,10 +762,11 @@ def worker():
                 try:
 
                     sandbox_process = subprocess.run(
-                        [
+                        sandbox_command(
                             SANDBOX_EXECUTOR_PATH,
-                            executable_path
-                        ],
+                            executable_path,
+                            language
+                        ),
                         input=test_input,
                         capture_output=True,
                         text=True,
@@ -798,7 +902,6 @@ def worker():
 
                     if is_hidden:
 
-                       
                         final_output = (
                             "Wrong answer on a "
                             "hidden test case."
@@ -839,6 +942,15 @@ def worker():
                     final_verdict,
                     total_execution_time,
                     0,
+                    passed_test_cases,
+                    total_test_cases
+                )
+
+                record_practice_attempt(
+                    user_id,
+                    problem_id,
+                    result_id,
+                    final_verdict,
                     passed_test_cases,
                     total_test_cases
                 )
@@ -943,60 +1055,75 @@ def worker():
         finally:
 
             # ==================================================
-            # CLEAN SOURCE
+            # CLEAN ALL TEMP FILES / FOLDERS OF THIS JOB
             # ==================================================
 
-            try:
+            cleanup_paths(cleanup)
 
-                if os.path.exists(
-                    source_path
-                ):
+            release_slot(user_id)
 
-                    os.remove(
-                        source_path
-                    )
-
-            except Exception as e:
-
-                print(
-                    "SOURCE CLEANUP ERROR:",
-                    e
-                )
-
-            # ==================================================
-            # CLEAN EXECUTABLE
-            # ==================================================
-
-            try:
-
-                if os.path.exists(
-                    executable_path
-                ):
-
-                    os.remove(
-                        executable_path
-                    )
-
-            except Exception as e:
-
-                print(
-                    "EXECUTABLE CLEANUP ERROR:",
-                    e
-                )
+            with pending_lock:
+                running_jobs -= 1
 
             job_queue.task_done()
 
 
 # ============================================================
-# START WORKER
+# START WORKERS
+# Ek se zyada worker, taaki bahut saari submissions ek saath aayein
+# to queue dheemi na ho. Cores se kam rakho (Java ko memory bhi chahiye).
+# Badalne ke liye: WORKER_COUNT=4 python3 app.py
 # ============================================================
 
-worker_thread = threading.Thread(
-    target=worker,
-    daemon=True
-)
+# Default: aadhe cores (max 6). Java ek run mein ~200-300 MB leta hai
+# aur zyada parallel runs se CPU takrane par galat TLE aa jaata hai.
+try:
+    WORKER_COUNT = int(os.getenv("WORKER_COUNT", ""))
+except ValueError:
+    WORKER_COUNT = min(6, max(2, (os.cpu_count() or 4) // 2))
 
-worker_thread.start()
+WORKER_COUNT = max(1, WORKER_COUNT)
+
+for worker_index in range(WORKER_COUNT):
+
+    threading.Thread(
+        target=worker,
+        name=f"judge-{worker_index}",
+        daemon=True
+    ).start()
+
+print(f"Judge workers started: {WORKER_COUNT}")
+
+
+# ============================================================
+# CLEAN OLD RESULTS (memory na bhare)
+# ============================================================
+
+def cleanup_old_results(max_age_seconds=3600):
+
+    while True:
+
+        time.sleep(300)
+
+        cutoff = time.time() - max_age_seconds
+
+        with results_lock:
+
+            stale = [
+                key
+                for key, value in results.items()
+                if value.get("status") == "completed"
+                and value.get("updated_at", 0) < cutoff
+            ]
+
+            for key in stale:
+                del results[key]
+
+
+threading.Thread(
+    target=cleanup_old_results,
+    daemon=True
+).start()
 
 
 # ============================================================
@@ -1052,16 +1179,23 @@ def submit_code():
                 "problem_id is required"
         }), 400
 
-    language = data.get(
-        "language",
-        "cpp"
+    language = normalize_language(
+        data.get("language", "cpp")
     )
 
-    if language.lower() != "cpp":
+    if language is None:
 
         return jsonify({
             "error":
-                "Currently only C++ is supported"
+                f"Unsupported language. Supported: {SUPPORTED_LABEL}"
+        }), 400
+
+    if language not in AVAILABLE_LANGUAGES:
+
+        return jsonify({
+            "error":
+                f"{LABELS[language]} is not available on this server right now. "
+                f"Please choose another language."
         }), 400
 
     user_id = user.get(
@@ -1080,6 +1214,15 @@ def submit_code():
             "error": "Your test is frozen. Ask your teacher to unlock it."
         }), 423
     # ========================================================
+    # LOAD PROTECTION
+    # ========================================================
+
+    blocked = reserve_slot(user_id)
+
+    if blocked:
+        return slot_error_response(blocked)
+
+    # ========================================================
     # CREATE DATABASE SUBMISSION
     # ========================================================
 
@@ -1089,10 +1232,12 @@ def submit_code():
             user_id=user_id,
             problem_id=problem_id,
             code=code,
-            language="cpp"
+            language=language
         )
 
     except Exception as e:
+
+        release_slot(user_id)
 
         print(
             "SUBMISSION DATABASE ERROR:",
@@ -1114,7 +1259,7 @@ def submit_code():
         submission_id,
         "queued",
         None,
-        output="Code submitted to execution queue..."
+        output=f"Waiting in queue ({job_queue.qsize()} ahead)..."
     )
 
     # ========================================================
@@ -1130,6 +1275,12 @@ def submit_code():
 
         "code":
             code,
+
+        "language":
+            language,
+
+        "user_id":
+            user_id,
 
         "job_type":
             "submit"
@@ -1201,22 +1352,40 @@ def run_code():
                 "problem_id is required"
         }), 400
 
-    language = data.get(
-        "language",
-        "cpp"
+    language = normalize_language(
+        data.get("language", "cpp")
     )
 
-    if language.lower() != "cpp":
+    if language is None:
 
         return jsonify({
             "error":
-                "Currently only C++ is supported"
+                f"Unsupported language. Supported: {SUPPORTED_LABEL}"
         }), 400
-    
+
+    if language not in AVAILABLE_LANGUAGES:
+
+        return jsonify({
+            "error":
+                f"{LABELS[language]} is not available on this server right now. "
+                f"Please choose another language."
+        }), 400
+
     if is_user_frozen_for_problem(user.get("user_id"), problem_id):
         return jsonify({
             "error": "Your test is frozen. Ask your teacher to unlock it."
         }), 423
+    # ========================================================
+    # LOAD PROTECTION
+    # ========================================================
+
+    run_user_id = user.get("user_id")
+
+    blocked = reserve_slot(run_user_id)
+
+    if blocked:
+        return slot_error_response(blocked)
+
     # ========================================================
     # GENERATE TEMPORARY RUN ID
     # ========================================================
@@ -1227,7 +1396,7 @@ def run_code():
         run_id,
         "queued",
         None,
-        output="Code sent to execution queue..."
+        output=f"Waiting in queue ({job_queue.qsize()} ahead)..."
     )
 
     # ========================================================
@@ -1243,6 +1412,12 @@ def run_code():
 
         "code":
             code,
+
+        "language":
+            language,
+
+        "user_id":
+            run_user_id,
 
         "job_type":
             "run"
@@ -1312,6 +1487,53 @@ def get_result(result_id):
 
 
 # ============================================================
+# AVAILABLE LANGUAGES (editor ka dropdown yahin se banta hai)
+# ============================================================
+
+@app.route(
+    "/api/languages",
+    methods=["GET"]
+)
+def available_languages():
+
+    return jsonify({
+        "languages": [
+            {"id": language, "label": LABELS[language]}
+            for language in AVAILABLE_LANGUAGES
+        ]
+    }), 200
+
+
+# ============================================================
+# JUDGE STATUS (load test / teacher demo ke liye)
+# ============================================================
+
+@app.route(
+    "/api/judge/status",
+    methods=["GET"]
+)
+def judge_status():
+
+    if not get_logged_in_user():
+
+        return jsonify({
+            "error":
+                "Authentication required"
+        }), 401
+
+    with pending_lock:
+        running = running_jobs
+
+    return jsonify({
+        "workers": WORKER_COUNT,
+        "running": running,
+        "queued": job_queue.qsize(),
+        "max_pending_per_user": MAX_PENDING_PER_USER,
+        "max_queue_size": MAX_QUEUE_SIZE
+    }), 200
+
+
+# ============================================================
 # HEALTH CHECK
 # ============================================================
 
@@ -1333,10 +1555,10 @@ def home():
             "Email/Password + Google OAuth + GitHub OAuth",
 
         "sandbox":
-            "C++ Sandbox Executor",
+            f"Sandbox Executor ({SUPPORTED_LABEL})",
 
         "queue":
-            "Worker Queue Active",
+            f"Worker Queue Active ({WORKER_COUNT} workers)",
 
         "database":
             "PostgreSQL",
@@ -1353,8 +1575,11 @@ def home():
 
 if __name__ == "__main__":
 
+    # debug sirf FLASK_DEBUG=1 par: debug mode mein error page se
+    # server par code chalaya ja sakta hai (network par khula ho to khatarnak).
     app.run(
-        debug=True,
+        debug=os.getenv("FLASK_DEBUG") == "1",
         port=5000,
-        use_reloader=False
+        use_reloader=False,
+        threaded=True
     )
