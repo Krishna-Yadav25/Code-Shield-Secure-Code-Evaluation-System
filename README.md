@@ -1,247 +1,335 @@
-# CodeShield — Secure Code Evaluation System
+# CodeShield – Secure Code Evaluation System
 
-## Project Title and Brief Description
+**AI-Assisted Secure Online Coding Assessment Platform**
 
-**CodeShield** is a secure, multi-tenant online programming assessment platform designed to compile and execute student-submitted code in a controlled environment. The project demonstrates the practical integration of Operating System concepts (process management, resource control, sandboxing, and concurrency) with Database Management System concepts (transactions, constraints, indexing, and persistent storage).
+![Project](https://img.shields.io/badge/Project-CodeShield-blue)
+![Frontend](https://img.shields.io/badge/Frontend-React-blue)
+![Backend](https://img.shields.io/badge/Backend-Flask-green)
+![Database](https://img.shields.io/badge/Database-PostgreSQL-blue)
+![Language](https://img.shields.io/badge/Execution-C%2B%2B-orange)
+![Platform](https://img.shields.io/badge/Platform-Linux-black)
 
-The platform provides separate student and teacher workflows, code submission and evaluation, assessment management, and authentication facilities. Further development focuses on strengthening sandbox security, improving scalability, and introducing academic-integrity modules.
+## 1. Project Overview
 
-**Team ID:** OSDBMS-V-2026-T163  
-**Team Name:** CodeCrafters  
-**Course:** OS & DBMS PBL, 5th Semester
+CodeShield is a web-based secure coding assessment platform designed for academic programming examinations, coding tests and practice assessments.
 
-## Problem Statement / Objective
+The platform provides separate dashboards for teachers and students. Teachers can create coding tests, manage programming questions, configure test cases and monitor student submissions. Students can attempt assessments through an online coding interface and receive automatically evaluated results.
 
-Academic programming assessments require more than basic code execution. Running untrusted student code directly on a server can affect system stability and consume excessive resources. Teachers also need customizable assessments with their own problems, rules, and test cases, while students need a consistent environment to submit and evaluate their solutions.
+CodeShield integrates Operating System concepts, Database Management Systems and web technologies to provide controlled code execution, automated evaluation, plagiarism detection and suspicious activity monitoring.
 
-**Core problem:** How can we provide a secure, customizable, and academic-focused environment for conducting programming assessments while controlling untrusted code execution at the operating-system level and maintaining reliable database storage?
+## 2. Problem Statement
 
-**Objectives:**
+Traditional coding assessments require teachers to manually manage questions, test cases, submissions and evaluation results. Basic online coding platforms may also lack the execution controls and monitoring features required for academic examinations.
 
-- Provide a controlled environment for executing student-submitted code.
-- Allow teachers to create and manage assessments, problems, and test cases.
-- Automatically evaluate submissions against predefined test cases.
-- Provide separate authentication and workflows for students and teachers.
-- Store submission details and evaluation results in PostgreSQL.
-- Apply operating-system resource controls to improve execution safety.
-- Extend the platform with plagiarism detection and suspicious-activity monitoring in Phase III.
-- Improve sandbox isolation, reliability, and concurrent submission handling.
+CodeShield addresses these challenges through a centralized platform that combines automated code evaluation, controlled program execution, database-backed assessment management and academic-integrity monitoring.
 
-## Team Members
+## 3. Key Features
 
-| Name | Roll Number | Role |
-|---|---|---|
-| Krishna Yadav | 240211229 | Backend + Core OS/Sandbox |
-| Abhishek Singh | 240211560 | DBMS + Evaluation & Result Management |
-| Khyati Uttam | 240222306 | Frontend + Academic Integrity |
+### Authentication and Role Management
+- Separate Student and Teacher access.
+- User authentication and role-based authorization.
+- Dedicated dashboards for both user roles.
 
-**Mentor:** Dr. Vikas Tripathi (Prof.), Department of Computer Science & Engineering
+### Assessment and Test Management
+- Teachers can create and manage coding assessments.
+- Add programming questions and configure constraints.
+- Configure visible and hidden test cases.
+- Manage student assessments and submissions.
 
-### Detailed Role Breakdown
+### C++ Sandbox Execution Engine
+- Executes student-submitted C++ programs.
+- Uses Linux process management through the fork-exec model.
+- Uses pipes for inter-process communication where required.
+- Applies execution time and resource restrictions.
+- Supports controlled program execution and automatic evaluation.
 
-**Krishna Yadav — Backend + Core OS/Sandbox**
+### Automated Code Evaluation
+- Compiles and executes submitted programs.
+- Evaluates output against configured test cases.
+- Generates submission results and execution status.
+- Stores evaluation results for later retrieval.
 
-- Develops the Flask backend and API orchestration layer.
-- Manages code submissions through a job queue and worker thread.
-- Develops the C++ sandbox executor.
-- Implements process creation and execution using the fork-exec model.
-- Works on Linux namespaces and cgroups v2 integration.
-- Develops CPU, memory, and execution-time controls.
-- Integrates sandbox execution with the code evaluation workflow.
-- Implements authentication and Gmail-based password-reset functionality in the backend.
+### Plagiarism Detection
+- Token-based code comparison.
+- Jaccard similarity-based comparison.
+- Identifies potentially similar code submissions.
 
-**Abhishek Singh — DBMS + Evaluation Engine**
+### Suspicious Activity Monitoring
+- Tab-switch and browser focus monitoring.
+- Configurable tab-switch threshold.
+- Camera-based student presence and eye-gaze monitoring.
+- Suspicious activity logging.
+- Test freeze and teacher-controlled resume workflow.
 
-- Designs and maintains the PostgreSQL database schema.
-- Creates tables for users, assessments, problems, test cases, submissions, and results.
-- Implements primary keys, foreign keys, and database constraints.
-- Integrates database operations with the backend.
-- Stores submission details and evaluation results.
-- Supports transaction management, indexing, and query optimization.
+### AI-Assisted Question Generation
+- Gemini API integration for AI-assisted coding question generation.
+- Generate proposed questions from teacher prompts.
+- Generate suggested visible and hidden test cases.
+- Teacher review and selection before publishing.
 
-**Khyati Uttam — Frontend + Academic Integrity**
+### Notifications and Results
+- Student and teacher notifications.
+- Submission history and evaluation results.
+- Database-backed result management.
 
-- Develops the React-based student and teacher dashboards.
-- Builds problem-creation and test-case-management interfaces.
-- Develops code submission, execution-result, and submission-history interfaces.
-- Builds teacher-facing assessment-management interfaces.
-- Plans the Jaccard-based code similarity and plagiarism-detection module for Phase III.
-- Plans suspicious-activity logging and monitoring features for Phase III.
-- Integrates frontend components with backend APIs.
+## 4. System Architecture
 
-## Technologies/Tools Used
+CodeShield follows a modular architecture:
 
-- **C++** — Sandbox executor and process management.
-- **Python Flask** — Backend APIs and submission orchestration.
-- **PostgreSQL** — Persistent storage for users, assessments, problems, test cases, submissions, and results.
-- **React.js** — Student and teacher dashboards.
-- **Vite** — Frontend development server and build tooling.
-- **Linux cgroups v2** — Resource control for sandboxed execution.
-- **Linux namespaces** — Planned/in-progress process, filesystem, and network isolation.
-- **POSIX process management** — Child-process execution and process control.
-- **Git & GitHub** — Version control and team collaboration.
-- **Gmail SMTP** — Email delivery for OTP-based password reset.
-- **Google and GitHub OAuth** — Third-party authentication.
+```text
+             STUDENT / TEACHER
+                     |
+                     v
+             REACT FRONTEND
+                     |
+                     v
+              FLASK API LAYER
+                     |
+          +----------+----------+
+          |          |          |
+          v          v          v
+      AUTH API    AI SERVICE   MONITORING
+          |          |          |
+          +----------+----------+
+                     |
+                     v
+             JOB QUEUE & WORKER
+                     |
+                     v
+              C++ SANDBOX ENGINE
+                     |
+                     v
+             AUTOMATED EVALUATION
+                     |
+                     v
+              POSTGRESQL DATABASE
+                     |
+                     v
+             RESULTS & DASHBOARDS
+```
 
-## Project Setup / Installation Instructions
+### Architecture Components
+
+| Component | Responsibility |
+|---|---|
+| React Frontend | Student and Teacher interfaces |
+| Flask Backend | API handling and application logic |
+| PostgreSQL | Users, tests, submissions and results |
+| Job Queue and Worker | Submission processing |
+| C++ Sandbox | Controlled code execution |
+| Gemini API | AI-assisted question generation |
+| Monitoring Module | Suspicious activity detection |
+
+## 5. Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Frontend | React.js, JavaScript, CSS |
+| Backend | Python, Flask |
+| Database | PostgreSQL |
+| Code Execution | C++ |
+| Operating System | Linux |
+| AI Integration | Gemini API |
+| Monitoring | JavaScript, Camera APIs |
+| Version Control | Git and GitHub |
+| Development Environment | Visual Studio Code |
+
+## 6. Operating System Concepts Implemented
+
+CodeShield demonstrates practical Operating System concepts through its sandbox execution engine.
+
+- **Process Management:** Creation and management of child processes using fork().
+- **Program Execution:** Execution of compiled programs using exec().
+- **Process Synchronization:** Waiting for child-process completion using wait mechanisms.
+- **Inter-Process Communication:** Communication using pipes.
+- **Signal Handling:** Handling execution termination and timeout conditions.
+- **Resource Management:** Controlling CPU, memory and process usage.
+- **Linux Isolation:** Use of namespaces and cgroups where configured in the execution environment.
+
+## 7. DBMS Concepts Implemented
+
+PostgreSQL is used for persistent storage and management of application data.
+
+The database manages:
+- User accounts and authentication data.
+- Contests and coding assessments.
+- Programming questions and test cases.
+- Student submissions.
+- Evaluation results.
+- Execution and activity records.
+
+The application uses relational database structures, primary keys, foreign keys and backend database operations to maintain data consistency.
+
+## 8. Project Structure
+
+```text
+CodeShield/
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   ├── package.json
+│   └── package-lock.json
+│
+├── backend/
+│   ├── app.py
+│   ├── auth_routes.py
+│   ├── coding_routes.py
+│   ├── plagiarism_routes.py
+│   ├── proctoring_routes.py
+│   ├── dashboard_routes.py
+│   ├── requirements.txt
+│   └── tests/
+│
+├── database/
+│   ├── schema.sql
+│   ├── authentication.py
+│   └── insert_result.py
+│
+├── sandbox/
+│   └── C++ execution engine source files
+│
+├── README.md
+└── .gitignore
+```
+
+*Note: This is a logical project structure. Actual filenames and folders may differ according to the repository version.*
+
+## 9. Installation and Setup
 
 ### Prerequisites
 
-The project is developed and tested in a Linux environment. The following packages are required for the main components.
+Install the following software:
+
+- Python 3
+- Node.js and npm
+- PostgreSQL
+- C++ compiler (g++)
+- Linux environment
+- Git
+
+### Step 1: Clone the Repository
 
 ```bash
-sudo dnf install gcc gcc-c++ make -y
-sudo dnf install postgresql postgresql-server postgresql-contrib -y
-sudo dnf install python3 python3-pip -y
-```
+git clone https://github.com/Krishna-Yadav25/Code-Shield-Secure-Code-Evaluation-System.git
 
-Install Node.js and npm using a suitable method for your Fedora installation.
-
-### Clone the Repository
-
-```bash
-git clone <repository-url>
 cd Code-Shield-Secure-Code-Evaluation-System
 ```
 
-Use the actual repository URL when cloning.
-
-### Set Up PostgreSQL
-
-Initialize PostgreSQL if it has not already been initialized:
-
-```bash
-sudo postgresql-setup --initdb
-sudo systemctl enable --now postgresql
-```
-
-Configure the database, user, password, and database name according to the project's database configuration.
-
-Apply the project's schema using the appropriate PostgreSQL user and database. Avoid reinitializing an existing database containing project data.
-
-### Configure Environment Variables
-
-Create a local `.env` file containing the required configuration, such as:
-
-- PostgreSQL connection settings.
-- JWT or authentication secret.
-- Google OAuth client credentials.
-- GitHub OAuth client credentials.
-- Gmail SMTP email address and App Password.
-
-**Important:** Do not commit `.env` or any database passwords, OAuth secrets, JWT secrets, or Gmail App Passwords to GitHub. Keep `.env` excluded through `.gitignore`.
-
-### Install Backend Dependencies
-
-From the project root:
+### Step 2: Backend Setup
 
 ```bash
 cd backend
-python3 -m pip install -r requirements.txt
+
+python3 -m venv venv
+
+source venv/bin/activate
+
+pip install -r requirements.txt
 ```
 
-If `requirements.txt` is not present, install the dependencies required by the backend imports or create a requirements file containing the project's actual dependencies.
+Configure the required environment variables and PostgreSQL database connection according to the backend configuration.
 
-### Run the Backend
+### Step 3: Database Setup
 
-From the `backend` directory:
+Create a PostgreSQL database and configure its connection details.
+
+Run the database schema:
 
 ```bash
-python3 app.py
+psql -U postgres -d your_database_name -f database/schema.sql
 ```
 
-The Flask development server runs at the configured local address, currently expected to be:
+Run this command from the project root. Replace the database name and username with your actual configuration.
 
-```text
-http://127.0.0.1:5000
-```
+### Step 4: Frontend Setup
 
-### Run the Frontend
-
-Open a separate terminal from the project root:
+Open another terminal:
 
 ```bash
 cd frontend
+
 npm install
+
 npm run dev
 ```
 
-Open the local URL printed by Vite, usually `http://localhost:5173`.
+### Step 5: Run the Backend
 
-### Build the Sandbox Executor
-
-From the project root:
+From the backend directory, start the Flask application using the project's configured startup command.
 
 ```bash
-cd sandbox
-g++ -o sandbox_executor sandbox_executor.cpp
+python app.py
 ```
 
-Run the executor according to its current interface and configured permissions. Root privileges should only be used where necessary for the implemented OS resource controls. The executor must not be exposed to untrusted input without appropriate isolation and security checks.
+The frontend and backend should be configured to communicate using the appropriate API base URL.
 
-## Major Features/Modules
+## 10. Testing and Validation
 
-- **Authentication & User Management** — Registration and login infrastructure, Google/GitHub authentication, password hashing, and Gmail-based OTP password reset.
-- **Backend & Sandbox Executor (Krishna)** — Flask API orchestration, submission queue, worker-based execution, C++ sandbox integration, and initial OS-level resource controls.
-- **Database & Evaluation Engine (Abhishek)** — PostgreSQL schema and persistent storage for users, problems, test cases, submissions, and results; evaluation of submissions against visible and hidden test cases.
-- **Student Dashboard** — Student-facing interface for accessing assessments, viewing problems, submitting code, and checking execution results.
-- **Teacher Dashboard** — Teacher-facing interface for assessment and problem management, test-case configuration, and assessment-related controls.
-- **Code Execution & Evaluation** — Compilation and execution of C++ submissions, comparison against test cases, and reporting of evaluation results.
-- **Academic Integrity (Phase III)** — Planned Jaccard-based code similarity analysis, plagiarism detection, suspicious-activity logging, and teacher-facing monitoring.
-- **Sandbox Enhancements (Phase III)** — Planned improvements to process isolation, namespace integration, resource enforcement, timeout handling, cleanup, and execution reliability.
+The major application workflows have been tested, including:
 
-## Current Project Status
+| Test Area | Validation |
+|---|---|
+| Authentication | Login and registration workflows |
+| Code Execution | Compilation and execution of C++ submissions |
+| Automated Evaluation | Output comparison against test cases |
+| Resource Control | Execution time and resource-limit handling |
+| Database | Storage and retrieval of assessment results |
+| Multi-Student Execution | Queue-based submission processing |
+| Monitoring | Tab-switch and camera-monitoring workflows |
 
-### Phase I — Completed
+Monitoring accuracy and higher-load performance can be further improved through additional testing.
 
-- Problem identification and current-solution study.
-- Requirements discussion and feature-scope finalization.
-- Mentor interactions and project planning.
+## 11. Team Contributions
 
-### Phase II — In Progress
+**Project Team – OSDBMS-V-2026-T163**
 
-Core modules have been developed and are undergoing integration and testing.
+| Team Member | Major Responsibilities |
+|---|---|
+| Krishna Yadav | C++ Sandbox Engine, OS-based execution, AI question generation and test freeze/resume |
+| Khyati Uttam | React frontend, Flask API integration and plagiarism detection |
+| Abhishek Singh | PostgreSQL database, authentication/result integration and suspicious activity monitoring |
 
-- **Authentication:** Registration/login infrastructure and Google/GitHub authentication are present. Gmail-based password reset has been tested through OTP delivery, OTP verification, and password-reset endpoints.
-- **Backend:** Flask API routes are implemented for authentication, dashboard workflows, and coding/submission workflows.
-- **Database:** PostgreSQL integration supports user authentication and submission/result storage. Further validation and integration are ongoing.
-- **Evaluation Engine:** C++ submissions have been tested using sample problems, including Two Sum and Sum of Array, with visible and hidden test-case evaluation.
-- **Sandbox:** A baseline naive executor and an initial sandboxed executor have been developed. cgroups v2 resource controls and timeout handling have been explored and tested. Stronger isolation and additional reliability testing remain necessary.
-- **Frontend:** React/Vite interfaces and separate student/teacher workflows are under development and integration.
-- **Academic Integrity:** Plagiarism detection and suspicious-activity monitoring have not yet been implemented. Both are planned for Phase III.
+**Project Mentor:** Dr. Vikas Tripathi
 
-### Phase III — Upcoming
+**Department:** Computer Science & Engineering  
+**Institution:** Graphic Era (Deemed to be University), Dehradun  
+**Academic Session:** 2026–27
 
-Phase III will focus on strengthening existing components, implementing planned modules, and completing system integration.
+## 12. Applications
 
-- **Sandbox hardening:** Improve process isolation, filesystem and network restrictions, and execution safety.
-- **Namespace integration:** Complete and validate Linux namespace-based isolation where supported by the execution environment.
-- **Resource enforcement:** Strengthen cgroups-based CPU, memory, and process-count controls.
-- **Execution reliability:** Improve timeout handling, error reporting, cleanup of temporary files and processes, and recovery from failed executions.
-- **Concurrency:** Improve worker-pool handling and test simultaneous submissions under load.
-- **Plagiarism detection:** Implement Jaccard-based code similarity analysis and identify potentially similar submissions.
-- **Suspicious-activity monitoring:** Add activity logging and teacher-facing monitoring features.
-- **Frontend integration:** Complete integration between student/teacher interfaces and backend APIs.
-- **Database validation:** Test transaction handling, constraints, result consistency, and performance under concurrent workloads.
-- **Additional modules:** Introduce further assessment, analytics, reporting, and administrative features based on project requirements.
-- **Testing:** Perform end-to-end testing, security testing, integration testing, and load testing.
+- University coding examinations.
+- Programming laboratories.
+- Online coding assessments.
+- Academic programming competitions.
+- Student coding practice and evaluation.
 
-## Future Scope
+## 13. Future Scope
 
-- Support for additional programming languages beyond C++.
-- Stronger sandbox isolation and configurable execution limits.
-- Advanced plagiarism detection and academic-integrity analytics.
-- Detailed performance reports and assessment analytics for teachers.
-- Improved scalability for concurrent assessments and large numbers of users.
-- Enhanced administrative controls and assessment-management features.
-- More comprehensive execution logs, monitoring, and failure diagnostics.
+- Distributed code execution using multiple independent workers.
+- Advanced sandbox isolation and execution security.
+- AST-based plagiarism detection.
+- AI-assisted code quality analysis.
+- Adaptive question difficulty.
+- Advanced performance analytics.
+- Support for additional programming languages.
+- Improved proctoring and suspicious activity analysis.
 
-## References
+## 14. References
 
-- Silberschatz, Galvin & Gagne — *Operating System Concepts*.
-- Tanenbaum — *Modern Operating Systems*.
-- Linux Kernel Documentation — cgroups v2.
-- PostgreSQL Documentation.
-- React Documentation.
-- Flask Documentation.
-- Michael Kerrisk — Linux man-pages and Linux namespaces documentation.
+- Silberschatz, Galvin and Gagne – *Operating System Concepts*.
+- PostgreSQL Official Documentation.
+- Linux man-pages – Processes, Pipes and Signals.
+- Linux cgroups v2 and Namespace Documentation.
+- React Official Documentation.
+- Flask Official Documentation.
+- Gemini API Documentation.
+
+## 15. Repository
+
+**GitHub:**  
+https://github.com/Krishna-Yadav25/Code-Shield-Secure-Code-Evaluation-System
+
+---
+
+**CodeShield – Making Coding Assessments Secure, Intelligent and Reliable.**
