@@ -22,6 +22,9 @@ __pycache__/
 .venv/
 venv/
 ENV/
+*.egg-info/
+.coverage
+htmlcov/
 
 # =========================
 # REACT / NODE / VITE
@@ -72,9 +75,22 @@ pnpm-debug.log*
 *.sqlite
 *.sqlite3
 *.db
+*.dump
+*.backup
 
 # =========================
 # GENERATED TEST / EXECUTOR FILES
 # =========================
 core
 core.*
+sandbox/tmp/
+sandbox/temp/
+sandbox/output/
+sandbox/*.bin
+sandbox/*.class
+
+# =========================
+# PYTHON ENVIRONMENT FILES
+# =========================
+.python-version
+pip-wheel-metadata/
