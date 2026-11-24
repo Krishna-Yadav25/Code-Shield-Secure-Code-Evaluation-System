@@ -797,3 +797,88 @@ def delete_test_case(testcase_id):
 
         if conn:
             conn.close()
+
+    # ============================================================
+# DELETE PROBLEM (question) FROM A TEST
+# Teacher only
+# ============================================================
+
+@coding_bp.route(
+    "/teacher/problems/<int:problem_id>",
+    methods=["DELETE"]
+)
+def delete_problem(problem_id):
+
+    user = get_logged_in_user()
+
+    if not user:
+        return jsonify({"error": "Authentication required"}), 401
+
+    if user.get("role") != "teacher":
+        return jsonify({"error": "Teacher access required"}), 403
+
+    conn = None
+    cur = None
+
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+
+        
+        cur.execute(
+            """
+            SELECT p.problem_id
+            FROM Problems p
+            JOIN Contests c ON p.contest_id = c.contest_id
+            WHERE p.problem_id = %s AND c.created_by = %s
+            """,
+            (problem_id, user.get("user_id"))
+        )
+
+        if not cur.fetchone():
+            return jsonify({
+                "error": "Problem not found or access denied"
+            }), 404
+
+    
+        cur.execute(
+            "SELECT COUNT(*) FROM Submissions WHERE problem_id = %s",
+            (problem_id,)
+        )
+
+        if cur.fetchone()[0] > 0:
+            return jsonify({
+                "error": "Students have already submitted code for this "
+                         "question, so it cannot be removed."
+            }), 409
+
+        
+        cur.execute(
+            "DELETE FROM TestCases WHERE problem_id = %s",
+            (problem_id,)
+        )
+
+        cur.execute(
+            "DELETE FROM Problems WHERE problem_id = %s",
+            (problem_id,)
+        )
+
+        conn.commit()
+
+        return jsonify({
+            "message": "Question removed from the test"
+        }), 200
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+
+        print("DELETE PROBLEM ERROR:", str(e))
+
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
