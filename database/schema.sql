@@ -218,3 +218,69 @@ CREATE INDEX IF NOT EXISTS idx_test_sessions_contest
 
 CREATE INDEX IF NOT EXISTS idx_test_sessions_status
     ON TestSessions(contest_id, status);
+
+
+-- Run once on your CodeShield database
+
+CREATE TABLE IF NOT EXISTS GazeEvents (
+    event_id    SERIAL PRIMARY KEY,
+    contest_id  INT NOT NULL,
+    user_id     INT NOT NULL,
+    event_type  VARCHAR(30) NOT NULL,   
+    duration_ms INT NOT NULL DEFAULT 0,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_gaze_contest_user
+    ON GazeEvents (contest_id, user_id);
+
+ALTER TABLE TestSessions
+    ADD COLUMN IF NOT EXISTS gaze_warning_count INT NOT NULL DEFAULT 0;
+
+ALTER TABLE TestSessions
+    ADD COLUMN IF NOT EXISTS last_gaze_at TIMESTAMP;
+
+
+    -- Incidents (multiple faces / different person): run once on codeshield_db
+CREATE TABLE IF NOT EXISTS FaceProfiles (
+    user_id    INT PRIMARY KEY,
+    descriptor JSONB NOT NULL,
+    photo      TEXT  NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS FaceChecks (
+    check_id   SERIAL PRIMARY KEY,
+    contest_id INT NOT NULL,
+    user_id    INT NOT NULL,
+    kind       VARCHAR(12) NOT NULL,
+    distance   DOUBLE PRECISION,
+    matched    BOOLEAN NOT NULL,
+    photo      TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_facechecks_contest_user
+    ON FaceChecks (contest_id, user_id, created_at DESC);
+
+ALTER TABLE TestSessions ADD COLUMN IF NOT EXISTS gaze_warning_count INT NOT NULL DEFAULT 0;
+ALTER TABLE TestSessions ADD COLUMN IF NOT EXISTS last_gaze_at TIMESTAMP;
+ALTER TABLE TestSessions ADD COLUMN IF NOT EXISTS cheat_submitted BOOLEAN NOT NULL DEFAULT FALSE;
+
+
+
+CREATE TABLE IF NOT EXISTS ProctorIncidents (
+    incident_id SERIAL PRIMARY KEY,
+    contest_id  INT NOT NULL,
+    user_id     INT NOT NULL,
+    kind        VARCHAR(20) NOT NULL,        
+    photo       TEXT,                       
+    status      VARCHAR(10) NOT NULL DEFAULT 'pending', 
+    note        TEXT,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    decided_by  INT,
+    decided_at  TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_incidents_contest_status
+    ON ProctorIncidents (contest_id, status);
