@@ -1,0 +1,676 @@
+/* =========================================================
+   CodeShield — Aiquestiongenerator.css
+   AI question generator ka naya look. Do jagah use hota hai:
+     1. Aiquestiongenerator.jsx (teacher dashboard "Create with AI")
+     2. TeacherTestPage.jsx ka "AI Generate" tab
+   Purane saare class names (aiq-*) waise hi hain, isliye
+   dono jagah chalta rahega.
+========================================================= */
+
+.aiq {
+  --aq-surface: #0d1626;
+  --aq-border: #1b2a45;
+  --aq-border-soft: #16233b;
+  --aq-text: #e8eefb;
+  --aq-text-2: #a9b8d1;
+  --aq-text-3: #74849f;
+  --aq-blue: #3b82f6;
+  --aq-green: #22c993;
+  --aq-amber: #f5a844;
+  --aq-red: #ef6474;
+  --aq-violet: #8b7cf6;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+  color: var(--aq-text);
+}
+
+.aiq *,
+.aiq *::before,
+.aiq *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- 2-column layout (sirf dashboard wale generator mein) ---------- */
+
+.aiq.aiq-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.aiq-main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.aiq-side {
+  min-width: 0;
+}
+
+.aiq-sticky {
+  position: sticky;
+  top: 84px;
+}
+
+/* ---------- cards ---------- */
+
+.aiq-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px;
+  border: 1px solid var(--aq-border);
+  border-radius: 15px;
+  background: linear-gradient(145deg, #101b2f, #0c1424);
+}
+
+.aiq-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.aiq-head h2 {
+  margin: 2px 0 4px;
+  color: var(--aq-text);
+  font-size: 17px;
+  font-weight: 720;
+  letter-spacing: -0.2px;
+}
+
+.aiq-head p {
+  margin: 0;
+  color: var(--aq-text-3);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.aiq-step {
+  display: inline-block;
+  color: #6aa4ff;
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.aiq-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--aq-violet);
+  background: rgba(139, 124, 246, 0.13);
+  border: 1px solid rgba(139, 124, 246, 0.26);
+}
+
+/* ---------- form fields ---------- */
+
+.aiq-card label {
+  display: block;
+  margin: 12px 0 6px;
+  color: var(--aq-text-2);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.aiq .aiq-card input,
+.aiq .aiq-card select,
+.aiq .aiq-card textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #263450;
+  border-radius: 10px;
+  background: #0a1325;
+  color: var(--aq-text);
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.5;
+  outline: none;
+  color-scheme: dark; /* date picker, dropdown aur number arrows dark rehte hain */
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.aiq .aiq-card input::placeholder,
+.aiq .aiq-card textarea::placeholder {
+  color: #5f7090;
+}
+
+.aiq .aiq-card input:focus,
+.aiq .aiq-card select:focus,
+.aiq .aiq-card textarea:focus {
+  border-color: #4387ff;
+  background: #0c172c;
+  box-shadow: 0 0 0 3px rgba(67, 135, 255, 0.17);
+}
+
+.aiq .aiq-card select option {
+  background: #0b1224;
+  color: #e5e7eb;
+}
+
+.aiq .aiq-card textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+
+.aiq .aiq-card input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  accent-color: #347bff;
+}
+
+.aiq-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.aiq-row > div {
+  min-width: 0;
+}
+
+/* topic chips */
+
+.aiq-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 2px;
+}
+
+.aiq-chip {
+  padding: 5px 11px;
+  border: 1px solid #263450;
+  border-radius: 999px;
+  background: transparent;
+  color: #9fb0cb;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aiq-chip:hover {
+  color: #fff;
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.14);
+}
+
+/* password with eye */
+
+.aiq-pass {
+  position: relative;
+}
+
+.aiq .aiq-card .aiq-pass input {
+  padding-right: 44px;
+}
+
+.aiq-pass-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--aq-text-3);
+  cursor: pointer;
+}
+
+.aiq-pass-btn:hover {
+  color: #dce8ff;
+  background: #1a2842;
+}
+
+/* ---------- buttons ---------- */
+
+.aiq-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.aiq-actions-full {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.aiq-btn,
+.aiq .primary-small-btn,
+.aiq .outline-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.aiq-btn-primary,
+.aiq .primary-small-btn {
+  color: #fff;
+  background: linear-gradient(135deg, #3a82ff, #2459d8);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.22);
+}
+
+.aiq-btn-primary:hover:not(:disabled),
+.aiq .primary-small-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5391ff, #3068e6);
+}
+
+.aiq-btn-ghost,
+.aiq .outline-btn {
+  color: #d3def2;
+  background: transparent;
+  border-color: #2b3c57;
+}
+
+.aiq-btn-ghost:hover:not(:disabled),
+.aiq .outline-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: #45618a;
+}
+
+.aiq-btn:disabled,
+.aiq .primary-small-btn:disabled,
+.aiq .outline-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.aiq-btn-block {
+  width: 100%;
+}
+
+.aiq-hint {
+  margin: 0;
+  color: var(--aq-text-3);
+  font-size: 11.5px;
+  text-align: center;
+}
+
+/* ---------- messages ---------- */
+
+.aiq-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.aiq-msg svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.aiq-msg.error {
+  color: #fecdd3;
+  border: 1px solid rgba(251, 113, 133, 0.3);
+  background: rgba(159, 18, 57, 0.12);
+}
+
+.aiq-msg.success {
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+/* ---------- drafts ---------- */
+
+.aiq-list-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.aiq-list-head h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 2px 0 0;
+  color: var(--aq-text);
+  font-size: 16px;
+  font-weight: 720;
+}
+
+.aiq-count {
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: #15233b;
+  color: #9fb0cb;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.aiq-list-head p {
+  margin: 5px 0 0;
+  color: var(--aq-text-3);
+  font-size: 12.5px;
+}
+
+.aiq-list-head .aiq-actions {
+  margin-top: 0;
+}
+
+.aiq-drafts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.aiq-draft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px;
+  border: 1px solid #22314c;
+  border-radius: 13px;
+  background: #0a1323;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.aiq-draft.selected {
+  border-color: #2f6fe0;
+  box-shadow: 0 0 0 1px rgba(47, 111, 224, 0.35);
+}
+
+.aiq-draft-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.aiq-draft-top .aiq-icon-btn {
+  margin-left: auto;
+}
+
+.aiq-card .aiq-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 5px 11px;
+  border: 1px solid #263450;
+  border-radius: 999px;
+  color: var(--aq-text);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.aiq-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.aiq-badge.ok {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+}
+
+.aiq-badge.warn {
+  color: #f4ab48;
+  background: rgba(244, 163, 64, 0.1);
+  border: 1px solid rgba(244, 163, 64, 0.25);
+}
+
+.aiq-diff,
+.aiq .difficulty {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.aiq-diff.easy,
+.aiq .difficulty.easy { color: #34d399; background: rgba(52, 211, 153, 0.1); }
+.aiq-diff.medium,
+.aiq .difficulty.medium { color: #fbbf24; background: rgba(251, 191, 36, 0.1); }
+.aiq-diff.hard,
+.aiq .difficulty.hard { color: #fb7185; background: rgba(251, 113, 133, 0.1); }
+
+.aiq-note {
+  margin: 6px 0 2px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.aiq-note.ok { color: #7fd9b6; }
+.aiq-note.warn { color: #f4ab48; }
+
+.aiq-icon-btn {
+  border: 0;
+  background: transparent;
+  color: #71809a;
+  cursor: pointer;
+  padding: 7px;
+  border-radius: 8px;
+}
+
+.aiq-icon-btn:hover {
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.1);
+}
+
+.aiq-toggle {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 2px;
+  border: 0;
+  background: transparent;
+  color: #65a0ff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.aiq-toggle:hover {
+  color: #9cc2ff;
+}
+
+/* empty */
+
+.aiq-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 14px;
+  padding: 30px 14px;
+  border: 1px dashed #2a3c59;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.aiq-empty span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: #121f34;
+  color: #6b91c5;
+}
+
+.aiq-empty strong {
+  color: var(--aq-text);
+  font-size: 13.5px;
+}
+
+.aiq-empty p {
+  margin: 5px 0 0;
+  color: var(--aq-text-3);
+  font-size: 12px;
+}
+
+/* ---------- test cases ---------- */
+
+.aiq-cases {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.aiq-case {
+  padding: 12px;
+  border: 1px solid #1d2d46;
+  border-radius: 10px;
+  background: #09111f;
+}
+
+.aiq-case-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #d6dfed;
+  font-size: 12px;
+}
+
+.aiq-vis {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.aiq-vis.visible { color: #3ce0a4; }
+.aiq-vis.hidden { color: #efa94c; }
+
+.aiq-case-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.aiq-case-grid span {
+  display: block;
+  margin-bottom: 4px;
+  color: #72819a;
+  font-size: 11px;
+}
+
+.aiq-case-grid pre {
+  margin: 0;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid #18263c;
+  background: #060b13;
+  color: #cbd8ed;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+/* ---------- create-test summary ---------- */
+
+.aiq-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 6px 0 4px;
+}
+
+.aiq-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 11px 13px;
+  border: 1px solid var(--aq-border-soft);
+  border-radius: 11px;
+  background: #0a1323;
+}
+
+.aiq-summary strong {
+  color: var(--aq-text-2);
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -0.3px;
+}
+
+.aiq-summary.has strong {
+  color: #6aa4ff;
+}
+
+.aiq-summary span {
+  color: var(--aq-text-3);
+  font-size: 11px;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1100px) {
+  .aiq.aiq-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .aiq-sticky {
+    position: static;
+  }
+}
+
+@media (max-width: 650px) {
+  .aiq-card {
+    padding: 16px;
+  }
+
+  .aiq-row,
+  .aiq-case-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aiq-head {
+    align-items: flex-start;
+  }
+}

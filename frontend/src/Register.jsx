@@ -1,5 +1,21 @@
 import { useState } from 'react'
+import {
+  User,
+  Mail,
+  Lock,
+  ArrowRight,
+  Loader2,
+  GraduationCap,
+  Presentation
+} from 'lucide-react'
 import './Auth.css'
+import {
+  AuthShell,
+  AuthField,
+  PasswordToggle,
+  AuthAlert,
+  PasswordStrength
+} from './AuthParts.jsx'
 
 const API_BASE = 'http://localhost:5000'
 
@@ -71,324 +87,178 @@ function Register({ switchToLogin }) {
     }
   }
 
+  const confirmMismatch =
+    confirmPassword.length > 0 && password !== confirmPassword
+
+  const confirmMatch =
+    confirmPassword.length > 0 && password === confirmPassword
+
   return (
-
-    <div className="auth-page">
-
-      {/* LEFT SIDE */}
-
-      <div className="auth-left">
-
-        <div className="logo">
-
-          <div className="logo-shield">
-            ◆
-          </div>
-
-          <div>
-
-            <div className="logo-text">
-              Code<span>Shield</span>
-            </div>
-
-            <div className="logo-subtitle">
-              Secure Code Evaluation System
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div className="top-nav">
-          <span>Home</span>
-          <span>About</span>
-          <span>Contact</span>
-        </div>
-
-
-        <div className="hero">
-
-          <h1>
-            Join<br />
-            Code<span>Shield</span>
-          </h1>
-
-          <p>
-            Create your account and start your
-            coding journey today.
-          </p>
-
-
-          <div className="features">
-
-            <div className="feature">
-
-              <div className="feature-icon">
-                ⚡
-              </div>
-
-              <div>
-                <strong>Solve Real Problems</strong>
-                <small>Sharpen your coding skills</small>
-              </div>
-
-            </div>
-
-
-            <div className="feature">
-
-              <div className="feature-icon">
-                ▥
-              </div>
-
-              <div>
-                <strong>Track Your Progress</strong>
-                <small>View detailed analytics</small>
-              </div>
-
-            </div>
-
-
-            <div className="feature">
-
-              <div className="feature-icon">
-                👥
-              </div>
-
-              <div>
-                <strong>Compete & Grow</strong>
-                <small>Become a better developer</small>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      {/* RIGHT SIDE */}
-
-      <div className="auth-right">
-
-        <div className="auth-card register-card">
-
-          <h2>
-            Create Account
-          </h2>
-
-          <div className="auth-card-subtitle">
-            Fill in the details to get started
-          </div>
-
-
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
-
-
-          {message && (
-            <div className="success-message">
-              {message}
-            </div>
-          )}
-
-
-          <form onSubmit={handleRegister}>
-
-            {/* USERNAME */}
-
-            <div className="input-group">
-
-              <span className="input-icon">
-                👤
-              </span>
-
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-
-            </div>
-
-
-            {/* EMAIL */}
-
-            <div className="input-group">
-
-              <span className="input-icon">
-                ✉
-              </span>
-
-              <input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-
-            </div>
-
-
-            {/* PASSWORD */}
-
-            <div className="input-group">
-
-              <span className="input-icon">
-                🔒
-              </span>
-
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-
-              <button
-                type="button"
-                className="password-eye"
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
-              >
-                {showPassword ? '🙈' : '👁'}
-              </button>
-
-            </div>
-
-
-            {/* CONFIRM PASSWORD */}
-
-            <div className="input-group">
-
-              <span className="input-icon">
-                🔒
-              </span>
-
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) =>
-                  setConfirmPassword(e.target.value)
-                }
-                required
-              />
-
-              <button
-                type="button"
-                className="password-eye"
-                onClick={() =>
-                  setShowConfirmPassword(!showConfirmPassword)
-                }
-              >
-                {showConfirmPassword ? '🙈' : '👁'}
-              </button>
-
-            </div>
-
-
-            {/* ROLE */}
-
-            <div className="role-title">
-              I am a
-            </div>
-
-
-            <div className="role-container">
-
-              {/* STUDENT */}
-
-              <div
-                className={
-                  role === 'student'
-                    ? 'role-card active'
-                    : 'role-card'
-                }
-                onClick={() => setRole('student')}
-              >
-
-                <strong>
-                  🎓 Student
-                </strong>
-
-                <small>
-                  Solve problems & learn
-                </small>
-
-              </div>
-
-
-              {/* TEACHER */}
-
-              <div
-                className={
-                  role === 'teacher'
-                    ? 'role-card active'
-                    : 'role-card'
-                }
-                onClick={() => setRole('teacher')}
-              >
-
-                <strong>
-                  👨‍🏫 Teacher
-                </strong>
-
-                <small>
-                  Create problems & manage
-                </small>
-
-              </div>
-
-            </div>
-
-
-            {/* REGISTER BUTTON */}
-
-            <button
-              type="submit"
-              className="primary-btn register-btn"
-              disabled={loading}
-            >
-
-              {loading
-                ? 'Creating Account...'
-                : 'Create Account →'}
-
-            </button>
-
-          </form>
-
-
-          {/* LOGIN */}
-
-          <div className="auth-switch">
-
-            Already have an account?{' '}
-
-            <span onClick={switchToLogin}>
-              Login here
+    <AuthShell mode="register" onSwitchToLogin={switchToLogin}>
+
+      <h2 className="au-card-title">Create Account</h2>
+      <p className="au-card-sub">Fill in the details to get started</p>
+
+      {error && <AuthAlert kind="error">{error}</AuthAlert>}
+
+      {message && <AuthAlert kind="success">{message}</AuthAlert>}
+
+      <form onSubmit={handleRegister}>
+
+        {/* USERNAME */}
+
+        <AuthField
+          icon={User}
+          type="text"
+          placeholder="Username"
+          aria-label="Username"
+          autoComplete="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+
+        {/* EMAIL */}
+
+        <AuthField
+          icon={Mail}
+          type="email"
+          placeholder="Email address"
+          aria-label="Email address"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+
+        {/* PASSWORD */}
+
+        <AuthField
+          icon={Lock}
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password"
+          aria-label="Password"
+          autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          right={
+            <PasswordToggle
+              shown={showPassword}
+              onToggle={() => setShowPassword(!showPassword)}
+            />
+          }
+        />
+
+        <PasswordStrength password={password} />
+
+        {/* CONFIRM PASSWORD */}
+
+        <AuthField
+          icon={Lock}
+          type={showConfirmPassword ? 'text' : 'password'}
+          placeholder="Confirm Password"
+          aria-label="Confirm Password"
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          invalid={confirmMismatch}
+          required
+          right={
+            <PasswordToggle
+              shown={showConfirmPassword}
+              onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
+            />
+          }
+        />
+
+        {confirmMismatch && (
+          <p className="au-hint bad">Passwords do not match</p>
+        )}
+
+        {confirmMatch && (
+          <p className="au-hint good">Passwords match</p>
+        )}
+
+        {/* ROLE */}
+
+        <div className="au-role-title">I am a</div>
+
+        <div className="au-roles">
+
+          {/* STUDENT */}
+
+          <button
+            type="button"
+            className={role === 'student' ? 'au-role active' : 'au-role'}
+            aria-pressed={role === 'student'}
+            onClick={() => setRole('student')}
+          >
+            <span className="au-role-ico">
+              <GraduationCap size={19} />
             </span>
+            <span>
+              <strong>Student</strong>
+              <small>Solve problems & learn</small>
+            </span>
+          </button>
 
-          </div>
+          {/* TEACHER */}
+
+          <button
+            type="button"
+            className={role === 'teacher' ? 'au-role active' : 'au-role'}
+            aria-pressed={role === 'teacher'}
+            onClick={() => setRole('teacher')}
+          >
+            <span className="au-role-ico">
+              <Presentation size={19} />
+            </span>
+            <span>
+              <strong>Teacher</strong>
+              <small>Create problems & manage</small>
+            </span>
+          </button>
 
         </div>
 
+        {/* REGISTER BUTTON */}
+
+        <button
+          type="submit"
+          className="au-btn au-btn-primary"
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Loader2 size={17} className="au-spin" /> Creating Account...
+            </>
+          ) : (
+            <>
+              Create Account <ArrowRight size={17} />
+            </>
+          )}
+        </button>
+
+      </form>
+
+      {/* LOGIN */}
+
+      <div className="au-switch">
+        Already have an account?{' '}
+        <button
+          type="button"
+          className="au-switch-link"
+          onClick={switchToLogin}
+        >
+          Login here
+        </button>
       </div>
 
-    </div>
+    </AuthShell>
   )
 }
 
 export default Register
+
+

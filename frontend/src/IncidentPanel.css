@@ -1,0 +1,149 @@
+.inc-list {
+    display: grid;
+    gap: 16px;
+}
+
+.inc-card {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid #1f2d46;
+    background: #0d1424;
+}
+
+.inc-card.pending {
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.15);
+}
+
+.inc-photos {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.inc-photos figure {
+    margin: 0;
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+}
+
+.inc-photos img,
+.inc-nophoto {
+    width: 240px;
+    max-width: 100%;
+    border-radius: 11px;
+    border: 2px solid #2a3a57;
+    object-fit: cover;
+    background: #0a1120;
+}
+
+.inc-ref img {
+    width: 110px;
+    height: 110px;
+}
+
+.inc-nophoto {
+    height: 150px;
+    display: grid;
+    place-items: center;
+    color: #55657f;
+    font-size: 12px;
+}
+
+.inc-photos figcaption {
+    color: #7c8ca6;
+    font-size: 11px;
+}
+
+.inc-info {
+    flex: 1;
+    min-width: 240px;
+}
+
+.inc-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.inc-head h3 {
+    margin: 0;
+    color: #f4f7ff;
+    font-size: 17px;
+}
+
+.inc-kind {
+    margin: 8px 0 12px;
+    color: #fca5a5;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.inc-note {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 11px;
+
+    border-radius: 9px;
+    border: 1px solid #263252;
+    background: #0b1224;
+    color: #e5e7eb;
+
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+    color-scheme: dark;
+}
+
+.inc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.inc-reject-btn {
+    height: 34px;
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border: 0;
+    border-radius: 8px;
+    background: #dc2626;
+    color: #fff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.inc-reject-btn:hover:not(:disabled) {
+    background: #b91c1c;
+}
+
+.inc-reject-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.inc-decided {
+    margin: 0;
+    color: #8c9bb3;
+    font-size: 12px;
+}
+
+.pc-badge.inc-rejected {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.35);
+}

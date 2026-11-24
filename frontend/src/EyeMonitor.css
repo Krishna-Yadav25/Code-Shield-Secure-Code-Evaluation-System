@@ -1,0 +1,212 @@
+/* =========================================================
+   Eye monitoring: preview + consent screen
+========================================================= */
+
+.eye-preview {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 1500;
+
+    width: 168px;
+    overflow: hidden;
+
+    border-radius: 12px;
+    border: 2px solid rgba(34, 197, 94, 0.55);
+    background: #0a1120;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.eye-preview.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.eye-preview.alert {
+    border-color: rgba(245, 158, 11, 0.85);
+}
+
+.eye-preview video {
+    display: block;
+    width: 100%;
+    height: 126px;
+    object-fit: cover;
+    transform: scaleX(-1);   /* mirror, natural lagta hai */
+    background: #000;
+}
+
+.eye-preview-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 9px;
+
+    background: #0d1424;
+    color: #cbd5e6;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.eye-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+.eye-preview.alert .eye-dot {
+    background: #f59e0b;
+}
+
+.eye-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1900;
+    padding: 20px;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(4, 7, 13, 0.96);
+}
+
+.eye-card {
+    width: min(540px, 100%);
+    padding: 32px 30px;
+    box-sizing: border-box;
+
+    border-radius: 20px;
+    border: 1px solid #25344d;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(59, 130, 246, 0.16), transparent 52%),
+        #0d1424;
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.6);
+}
+
+.eye-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 17px;
+    color: #60a5fa;
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.eye-card h2 {
+    margin: 0 0 10px;
+    text-align: center;
+    color: #f4f7ff;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+}
+
+.eye-card p {
+    margin: 0 0 14px;
+    color: #9aa9c0;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.eye-points {
+    margin: 0 0 14px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 9px;
+}
+
+.eye-points li {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #1f2d46;
+    background: #0a1120;
+
+    color: #cbd5e6;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.eye-points svg {
+    flex: none;
+    margin-top: 2px;
+    color: #4ade80;
+}
+
+.eye-card .eye-tip {
+    font-size: 12px;
+    color: #7c8ca6;
+}
+
+.eye-error {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.09);
+    color: #fca5a5;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.eye-start-btn {
+    width: 100%;
+    height: 46px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    border: 0;
+    border-radius: 11px;
+    background: #2563eb;
+    color: #fff;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.eye-start-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.eye-start-btn:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+@media (max-width: 600px) {
+    .eye-preview {
+        width: 120px;
+        right: 10px;
+        bottom: 10px;
+    }
+
+    .eye-preview video {
+        height: 90px;
+    }
+
+    .eye-card {
+        padding: 24px 18px;
+    }
+}

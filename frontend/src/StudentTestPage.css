@@ -958,3 +958,29 @@
         transform: rotate(360deg);
     }
 }
+
+.editor-tool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #111a2a;
+    border: 1px solid #26364e;
+    color: #94a3b8;
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.editor-tool-btn:hover:not(:disabled) {
+    background: #1b2638;
+    color: #e2e8f0;
+    border-color: #3b82f6;
+}
+
+.editor-tool-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

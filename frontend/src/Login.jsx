@@ -1,6 +1,15 @@
-
 import { useState } from 'react'
+import { Mail, Lock, KeyRound, ArrowRight, Loader2, Check } from 'lucide-react'
 import './Auth.css'
+import {
+  AuthShell,
+  AuthField,
+  PasswordToggle,
+  AuthAlert,
+  PasswordStrength,
+  StepDots,
+  SocialLogin
+} from './AuthParts.jsx'
 
 const API_BASE = 'http://localhost:5000'
 
@@ -127,7 +136,6 @@ function Login({ onLoginSuccess, switchToRegister }) {
         return
       }
 
-      
       setResetMessage(
         'If your account exists, an OTP has been sent. Check your inbox and spam folder.'
       )
@@ -245,364 +253,280 @@ function Login({ onLoginSuccess, switchToRegister }) {
     }
   }
 
+  const confirmMismatch =
+    confirmPassword.length > 0 && newPassword !== confirmPassword
+
   // =====================================================
-  // LEFT SIDE + RIGHT AUTH CARD
+  // RENDER
   // =====================================================
 
   return (
-    <div className="auth-page">
-      <div className="auth-left">
-        <div className="logo">
-          <div className="logo-shield">◆</div>
-          <div>
-            <div className="logo-text">
-              Code<span>Shield</span>
+    <AuthShell mode="login" onSwitchToRegister={switchToRegister}>
+      {!showForgotPassword ? (
+        <>
+          <h2 className="au-card-title">Welcome Back</h2>
+          <p className="au-card-sub">Login to your CodeShield account</p>
+
+          {error && <AuthAlert kind="error">{error}</AuthAlert>}
+
+          <form onSubmit={handleLogin}>
+            <AuthField
+              icon={Mail}
+              type="email"
+              placeholder="Email address"
+              aria-label="Email address"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <AuthField
+              icon={Lock}
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              aria-label="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              right={
+                <PasswordToggle
+                  shown={showPassword}
+                  onToggle={() => setShowPassword(!showPassword)}
+                />
+              }
+            />
+
+            <div className="au-row">
+              <label className="au-check">
+                <input type="checkbox" />
+                <span className="au-check-box">
+                  <Check size={12} strokeWidth={3} />
+                </span>
+                Remember me
+              </label>
+
+              <a
+                href="#forgot-password"
+                className="au-link"
+                onClick={openForgotPassword}
+              >
+                Forgot password?
+              </a>
             </div>
-            <div className="logo-subtitle">
-              Secure Code Evaluation System
-            </div>
+
+            <button
+              type="submit"
+              className="au-btn au-btn-primary"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={17} className="au-spin" /> Logging in...
+                </>
+              ) : (
+                <>
+                  Login <ArrowRight size={17} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <SocialLogin
+            onGoogle={handleGoogleLogin}
+            onGithub={handleGithubLogin}
+          />
+
+          <div className="au-switch">
+            Don't have an account?{' '}
+            <button
+              type="button"
+              className="au-switch-link"
+              onClick={switchToRegister}
+            >
+              Register here
+            </button>
           </div>
-        </div>
+        </>
+      ) : (
+        <>
+          {resetStep < 4 && <StepDots step={resetStep} />}
 
-        <div className="top-nav">
-          <span>Home</span>
-          <span>About</span>
-          <span>Contact</span>
-        </div>
+          <h2 className="au-card-title">
+            {resetStep === 1 && 'Forgot Password?'}
+            {resetStep === 2 && 'Verify OTP'}
+            {resetStep === 3 && 'Create New Password'}
+            {resetStep === 4 && 'Password Updated'}
+          </h2>
 
-        <div className="hero">
-          <h1>
-            Code.
-            <br />
-            Compile.
-            <br />
-            Compete.
-            <br />
-            <span>Confidently.</span>
-          </h1>
-
-          <p>
-            A secure platform for coding assessments,
-            built for learners and educators.
+          <p className="au-card-sub">
+            {resetStep === 1 && 'Enter your registered email to receive an OTP'}
+            {resetStep === 2 && `Enter the 6-digit OTP sent to ${resetEmail}`}
+            {resetStep === 3 && 'Choose a strong password for your account'}
+            {resetStep === 4 && 'Your account password has been changed'}
           </p>
 
-          <div className="features">
-            <div className="feature">
-              <div className="feature-icon">🛡</div>
-              <div>
-                <strong>Safe &amp; Secure</strong>
-                <small>Sandboxed code execution</small>
-              </div>
-            </div>
+          {error && <AuthAlert kind="error">{error}</AuthAlert>}
 
-            <div className="feature">
-              <div className="feature-icon">▥</div>
-              <div>
-                <strong>Practice &amp; Improve</strong>
-                <small>Track your coding progress</small>
-              </div>
-            </div>
+          {resetMessage && <AuthAlert kind="success">{resetMessage}</AuthAlert>}
 
-            <div className="feature">
-              <div className="feature-icon">👥</div>
-              <div>
-                <strong>Built for Everyone</strong>
-                <small>Students, teachers &amp; institutes</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="auth-right">
-        <div className="auth-card">
-          {!showForgotPassword ? (
-            <>
-              <h2>Welcome Back</h2>
-              <div className="auth-card-subtitle">
-                Login to your CodeShield account
-              </div>
-
-              {error && (
-                <div className="error-message" role="alert">
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={handleLogin}>
-                <div className="input-group">
-                  <span className="input-icon">✉</span>
-                  <input
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="input-group">
-                  <span className="input-icon">🔒</span>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-eye"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? '🙈' : '👁'}
-                  </button>
-                </div>
-
-                <div className="login-options">
-                  <label>
-                    <input type="checkbox" />
-                    {' '}Remember me
-                  </label>
-
-                  <a href="#forgot-password" onClick={openForgotPassword}>
-                    Forgot password?
-                  </a>
-                </div>
-
-                <button
-                  type="submit"
-                  className="primary-btn"
-                  disabled={loading}
-                >
-                  {loading ? 'Logging in...' : 'Login →'}
-                </button>
-              </form>
-
-              <div className="oauth-divider">
-                <span></span>
-                <p>OR</p>
-                <span></span>
-              </div>
+          {resetStep === 1 && (
+            <form onSubmit={handleForgotPassword}>
+              <AuthField
+                icon={Mail}
+                type="email"
+                placeholder="Registered email address"
+                aria-label="Registered email address"
+                autoComplete="email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                required
+              />
 
               <button
-                type="button"
-                className="oauth-btn google-btn"
-                onClick={handleGoogleLogin}
+                type="submit"
+                className="au-btn au-btn-primary"
+                disabled={resetLoading}
               >
-                <svg
-                  className="oauth-icon"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill="#4285F4"
-                    d="M21.35 12.27c0-.73-.07-1.43-.2-2.1H12v3.98h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.7 2.91-4.2 2.91-7.27z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.75 9.75 0 0 0 12 21.75z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M6.54 13.84a5.87 5.87 0 0 1 0-3.68V7.63H3.3a9.75 9.75 0 0 0 0 8.74l3.24-2.53z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.2 14.63 2.25 12 2.25a9.75 9.75 0 0 0-8.7 5.38l3.24 2.53C7.31 7.85 9.46 6.13 12 6.13z"
-                  />
-                </svg>
-                <span>Continue with Google</span>
+                {resetLoading ? (
+                  <>
+                    <Loader2 size={17} className="au-spin" /> Sending OTP...
+                  </>
+                ) : (
+                  <>
+                    Send OTP <ArrowRight size={17} />
+                  </>
+                )}
               </button>
-
-              <button
-                type="button"
-                className="oauth-btn github-btn"
-                onClick={handleGithubLogin}
-              >
-                <svg
-                  className="oauth-icon github-icon"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.26c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.74.08-.74 1.2.09 1.83 1.23 1.83 1.23 1.07 1.83 2.81 1.3 3.49.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 6.58c1.02 0 2.05.14 3.01.42 2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.91 1.24 3.22 0 4.62-2.81 5.64-5.49 5.94.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5z"
-                  />
-                </svg>
-                <span>Continue with GitHub</span>
-              </button>
-
-              <div className="auth-switch">
-                Don't have an account?{' '}
-                <span onClick={switchToRegister} role="button" tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') switchToRegister()
-                  }}
-                >
-                  Register here
-                </span>
-              </div>
-            </>
-          ) : (
-            <>
-              <h2>
-                {resetStep === 1 && 'Forgot Password?'}
-                {resetStep === 2 && 'Verify OTP'}
-                {resetStep === 3 && 'Create New Password'}
-                {resetStep === 4 && 'Password Updated'}
-              </h2>
-
-              <div className="auth-card-subtitle">
-                {resetStep === 1 && 'Enter your registered email to receive an OTP'}
-                {resetStep === 2 && `Enter the 6-digit OTP sent to ${resetEmail}`}
-                {resetStep === 3 && 'Choose a strong password for your account'}
-                {resetStep === 4 && 'Your account password has been changed'}
-              </div>
-
-              {error && (
-                <div className="error-message" role="alert">
-                  {error}
-                </div>
-              )}
-
-              {resetMessage && (
-                <div className="success-message" role="status">
-                  {resetMessage}
-                </div>
-              )}
-
-              {resetStep === 1 && (
-                <form onSubmit={handleForgotPassword}>
-                  <div className="input-group">
-                    <span className="input-icon">✉</span>
-                    <input
-                      type="email"
-                      placeholder="Registered email address"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="primary-btn"
-                    disabled={resetLoading}
-                  >
-                    {resetLoading ? 'Sending OTP...' : 'Send OTP →'}
-                  </button>
-                </form>
-              )}
-
-              {resetStep === 2 && (
-                <form onSubmit={handleVerifyOtp}>
-                  <div className="input-group">
-                    <span className="input-icon">🔐</span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      placeholder="Enter 6-digit OTP"
-                      value={otp}
-                      onChange={(e) => {
-                        setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))
-                      }}
-                      pattern="[0-9]{6}"
-                      maxLength={6}
-                      required
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="primary-btn"
-                    disabled={resetLoading}
-                  >
-                    {resetLoading ? 'Verifying...' : 'Verify OTP →'}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="secondary-btn"
-                    disabled={resetLoading}
-                    onClick={() => {
-                      setError('')
-                      setResetMessage('')
-                      setResetStep(1)
-                    }}
-                  >
-                    Change email
-                  </button>
-                </form>
-              )}
-
-              {resetStep === 3 && (
-                <form onSubmit={handleResetPassword}>
-                  <div className="input-group">
-                    <span className="input-icon">🔒</span>
-                    <input
-                      type="password"
-                      placeholder="New password (minimum 8 characters)"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      minLength={8}
-                      autoComplete="new-password"
-                      required
-                    />
-                  </div>
-
-                  <div className="input-group">
-                    <span className="input-icon">🔒</span>
-                    <input
-                      type="password"
-                      placeholder="Confirm new password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      minLength={8}
-                      autoComplete="new-password"
-                      required
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="primary-btn"
-                    disabled={resetLoading}
-                  >
-                    {resetLoading ? 'Updating password...' : 'Reset Password →'}
-                  </button>
-                </form>
-              )}
-
-              {resetStep === 4 && (
-                <button
-                  type="button"
-                  className="primary-btn"
-                  onClick={backToLogin}
-                >
-                  Back to Login →
-                </button>
-              )}
-
-              {resetStep !== 4 && (
-                <div className="auth-switch">
-                  Remembered your password?{' '}
-                  <span onClick={backToLogin} role="button" tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') backToLogin()
-                    }}
-                  >
-                    Back to Login
-                  </span>
-                </div>
-              )}
-            </>
+            </form>
           )}
-        </div>
-      </div>
-    </div>
+
+          {resetStep === 2 && (
+            <form onSubmit={handleVerifyOtp}>
+              <AuthField
+                icon={KeyRound}
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                placeholder="Enter 6-digit OTP"
+                aria-label="6-digit OTP"
+                value={otp}
+                onChange={(e) => {
+                  setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))
+                }}
+                pattern="[0-9]{6}"
+                maxLength={6}
+                required
+              />
+
+              <button
+                type="submit"
+                className="au-btn au-btn-primary"
+                disabled={resetLoading}
+              >
+                {resetLoading ? (
+                  <>
+                    <Loader2 size={17} className="au-spin" /> Verifying...
+                  </>
+                ) : (
+                  <>
+                    Verify OTP <ArrowRight size={17} />
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="au-btn au-btn-ghost"
+                disabled={resetLoading}
+                onClick={() => {
+                  setError('')
+                  setResetMessage('')
+                  setResetStep(1)
+                }}
+              >
+                Change email
+              </button>
+            </form>
+          )}
+
+          {resetStep === 3 && (
+            <form onSubmit={handleResetPassword}>
+              <AuthField
+                icon={Lock}
+                type="password"
+                placeholder="New password (minimum 8 characters)"
+                aria-label="New password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                minLength={8}
+                autoComplete="new-password"
+                required
+              />
+
+              <PasswordStrength password={newPassword} />
+
+              <AuthField
+                icon={Lock}
+                type="password"
+                placeholder="Confirm new password"
+                aria-label="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                minLength={8}
+                autoComplete="new-password"
+                invalid={confirmMismatch}
+                required
+              />
+
+              {confirmMismatch && (
+                <p className="au-hint bad">Passwords do not match</p>
+              )}
+
+              <button
+                type="submit"
+                className="au-btn au-btn-primary"
+                disabled={resetLoading}
+              >
+                {resetLoading ? (
+                  <>
+                    <Loader2 size={17} className="au-spin" /> Updating password...
+                  </>
+                ) : (
+                  <>
+                    Reset Password <ArrowRight size={17} />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {resetStep === 4 && (
+            <button
+              type="button"
+              className="au-btn au-btn-primary"
+              onClick={backToLogin}
+            >
+              Back to Login <ArrowRight size={17} />
+            </button>
+          )}
+
+          {resetStep !== 4 && (
+            <div className="au-switch">
+              Remembered your password?{' '}
+              <button
+                type="button"
+                className="au-switch-link"
+                onClick={backToLogin}
+              >
+                Back to Login
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </AuthShell>
   )
 }
 

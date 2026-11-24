@@ -1,9 +1,39 @@
+/* =========================================================
+   CodeShield — NotificationBell.css
+   Teacher/student dashboard design ke saath match karta hai.
+   Tokens .nb-wrapper / .nb-card par hi define hain, kyunki
+   ye component dashboard page ke bahar (topbar mein) render hota hai.
+========================================================= */
 
+.nb-wrapper,
+.nb-card {
+    --nb-surface: #0d1626;
+    --nb-surface-2: #101c31;
+    --nb-border: #1b2a45;
+    --nb-border-soft: #16233b;
+    --nb-text: #e8eefb;
+    --nb-text-2: #a9b8d1;
+    --nb-text-3: #74849f;
+    --nb-blue: #3b82f6;
+    --nb-green: #22c993;
+    --nb-red: #ef6474;
+}
 
 .nb-wrapper {
     position: relative;
 }
 
+.nb-wrapper *,
+.nb-wrapper *::before,
+.nb-wrapper *::after,
+.nb-card *,
+.nb-card *::before,
+.nb-card *::after {
+    box-sizing: border-box;
+}
+
+
+/* ---------- Bell badge ---------- */
 
 .nb-count {
     position: absolute;
@@ -15,11 +45,10 @@
 
     display: grid;
     place-items: center;
-    box-sizing: border-box;
 
     border-radius: 999px;
     border: 1.5px solid #070c17;
-    background: #4f8cff;
+    background: var(--nb-blue);
     box-shadow: 0 0 8px rgba(79, 140, 255, 0.6);
 
     color: #fff;
@@ -39,19 +68,19 @@
     right: 0;
     z-index: 200;
 
-    width: 380px;
+    width: 392px;
     max-width: calc(100vw - 24px);
-    max-height: min(560px, calc(100vh - 100px));
+    max-height: min(600px, calc(100vh - 100px));
 
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-sizing: border-box;
 
     border-radius: 16px;
-    border: 1px solid #25405f;
-    background: #0e1728;
+    border: 1px solid var(--nb-border);
+    background: var(--nb-surface);
     box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
+    color: var(--nb-text);
 
     animation: nb-pop 0.18s ease;
 }
@@ -62,20 +91,53 @@
 }
 
 .nb-panel-header {
-    padding: 14px 16px;
+    padding: 14px 14px 14px 16px;
 
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 11px;
 
-    border-bottom: 1px solid #1b2a45;
-    color: #eef3ff;
+    border-bottom: 1px solid var(--nb-border);
+    background: linear-gradient(180deg, var(--nb-surface-2), var(--nb-surface));
+}
+
+.nb-head-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--nb-blue) 35%, transparent);
+    background: color-mix(in srgb, var(--nb-blue) 14%, transparent);
+    color: #8db8ff;
+}
+
+.nb-head-text {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.nb-head-text strong {
+    color: var(--nb-text);
     font-size: 14px;
+    font-weight: 700;
+}
+
+.nb-head-text span {
+    color: var(--nb-text-3);
+    font-size: 11.5px;
 }
 
 .nb-close {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
 
     display: grid;
     place-items: center;
@@ -83,8 +145,9 @@
     border: 0;
     border-radius: 8px;
     background: transparent;
-    color: #7f8ea8;
+    color: var(--nb-text-3);
     cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
 }
 
 .nb-close:hover {
@@ -98,26 +161,29 @@
 ========================================================= */
 
 .nb-form {
-    padding: 14px 16px;
+    padding: 14px 16px 16px;
 
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 10px;
 
-    border-bottom: 1px solid #1b2a45;
+    border-bottom: 1px solid var(--nb-border);
+}
+
+.nb-field {
+    position: relative;
 }
 
 .nb-form input,
 .nb-form textarea {
     width: 100%;
-    box-sizing: border-box;
 
-    border: 1px solid #243752;
+    border: 1px solid var(--nb-border);
     border-radius: 10px;
     outline: none;
 
     background: #0a1322;
-    color: #e8eefb;
+    color: var(--nb-text);
     font-family: inherit;
     font-size: 13px;
 
@@ -130,8 +196,9 @@
 }
 
 .nb-form textarea {
-    min-height: 84px;
-    padding: 10px 12px;
+    display: block;
+    min-height: 92px;
+    padding: 10px 12px 24px;
     resize: vertical;
     line-height: 1.5;
 }
@@ -143,8 +210,23 @@
 
 .nb-form input:focus,
 .nb-form textarea:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.13);
+    border-color: var(--nb-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.nb-form input:disabled,
+.nb-form textarea:disabled {
+    opacity: 0.6;
+}
+
+.nb-counter {
+    position: absolute;
+    right: 12px;
+    bottom: 7px;
+
+    color: var(--nb-text-3);
+    font-size: 10.5px;
+    pointer-events: none;
 }
 
 .nb-send {
@@ -158,6 +240,7 @@
     border: 1px solid rgba(110, 165, 255, 0.4);
     border-radius: 10px;
     background: linear-gradient(135deg, #3f8bff, #2563eb);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
 
     color: #fff;
     font-family: inherit;
@@ -174,7 +257,8 @@
 }
 
 .nb-send:disabled {
-    opacity: 0.55;
+    opacity: 0.45;
+    box-shadow: none;
     cursor: not-allowed;
 }
 
@@ -188,8 +272,12 @@
     margin: 12px 16px 0;
     padding: 9px 12px;
 
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
     border-radius: 9px;
-    font-size: 11.5px;
+    font-size: 12px;
     line-height: 1.5;
 }
 
@@ -208,11 +296,24 @@
 .nb-subhead {
     padding: 14px 16px 4px;
 
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
     color: #5f6f8c;
     font-size: 10px;
     font-weight: 750;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+}
+
+.nb-subhead span {
+    padding: 1px 7px;
+
+    border-radius: 999px;
+    background: #16233b;
+    color: var(--nb-text-2);
+    letter-spacing: 0;
 }
 
 
@@ -234,11 +335,15 @@
     padding: 12px 13px;
     margin-bottom: 6px;
 
-    border-radius: 11px;
-    border: 1px solid transparent;
+    border-radius: 12px;
+    border: 1px solid var(--nb-border-soft);
     background: rgba(255, 255, 255, 0.02);
 
-    transition: background 0.18s ease;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.nb-item:last-child {
+    margin-bottom: 0;
 }
 
 .nb-item:hover {
@@ -246,8 +351,8 @@
 }
 
 .nb-item.nb-unread {
-    border-color: rgba(59, 130, 246, 0.28);
-    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.32);
+    background: rgba(59, 130, 246, 0.09);
 }
 
 .nb-item-top {
@@ -260,17 +365,27 @@
     flex: 1;
     min-width: 0;
 
-    color: #eef3ff;
+    color: var(--nb-text);
     font-size: 13px;
     font-weight: 650;
     line-height: 1.35;
     word-break: break-word;
 }
 
-.nb-item p {
-    margin: 5px 0 7px;
+.nb-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
 
-    color: #aab8d0;
+    border-radius: 50%;
+    background: var(--nb-blue);
+    box-shadow: 0 0 8px rgba(79, 140, 255, 0.7);
+}
+
+.nb-item p {
+    margin: 5px 0 8px;
+
+    color: var(--nb-text-2);
     font-size: 12.5px;
     line-height: 1.55;
     white-space: pre-wrap;
@@ -278,8 +393,10 @@
 }
 
 .nb-time {
-    color: #6a7894;
-    font-size: 10.5px;
+    display: block;
+
+    color: var(--nb-text-3);
+    font-size: 11px;
 }
 
 .nb-new {
@@ -296,18 +413,19 @@
 }
 
 .nb-delete {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
 
     display: grid;
     place-items: center;
 
     border: 0;
-    border-radius: 7px;
+    border-radius: 8px;
     background: transparent;
     color: #75839f;
     cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
 }
 
 .nb-delete:hover {
@@ -315,13 +433,73 @@
     color: #ff7a88;
 }
 
+
+/* ---------- Delete confirm (pehle seedha delete ho jata tha) ---------- */
+
+.nb-confirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--nb-text-2);
+    font-size: 11.5px;
+}
+
+.nb-confirm span {
+    flex: 1;
+    min-width: 0;
+}
+
+.nb-confirm button {
+    height: 28px;
+    padding: 0 11px;
+
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.nb-confirm-no {
+    border: 1px solid var(--nb-border);
+    background: transparent;
+    color: var(--nb-text-2);
+}
+
+.nb-confirm-no:hover {
+    background: #16233b;
+}
+
+.nb-confirm-yes {
+    border: 1px solid rgba(239, 100, 116, 0.4);
+    background: rgba(239, 100, 116, 0.14);
+    color: #ff8a97;
+}
+
+.nb-confirm-yes:hover {
+    background: rgba(239, 100, 116, 0.24);
+}
+
+
+/* ---------- Empty ---------- */
+
 .nb-empty {
     margin: 0;
-    padding: 26px 12px;
+    padding: 28px 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 
     text-align: center;
-    color: #7686a1;
+    color: var(--nb-text-3);
     font-size: 12.5px;
+}
+
+.nb-empty p {
+    margin: 0;
 }
 
 
@@ -333,7 +511,7 @@
     padding: 8px;
 
     border-radius: 18px;
-    border: 1px solid #1b2a45;
+    border: 1px solid var(--nb-border);
     background: linear-gradient(145deg, #111a2b, #0c1525);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
 }

@@ -1,0 +1,368 @@
+/* =========================================================
+   CodeShield — Proctoring.css
+   Student: tab-switch chip, warning banner, freeze screen
+   Teacher: proctoring panel, alert banner, tab badge
+========================================================= */
+
+
+/* =========================================================
+   STUDENT: TOPBAR CHIP
+========================================================= */
+
+.student-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.switch-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+
+    border-radius: 999px;
+    border: 1px solid #26344d;
+    background: #101827;
+    color: #8c9bb3;
+
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.switch-chip.warn {
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.10);
+    border-color: rgba(245, 158, 11, 0.30);
+}
+
+.switch-chip.danger {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.32);
+}
+
+
+/* =========================================================
+   STUDENT: WARNING BANNER
+========================================================= */
+
+.proctor-warning {
+    margin: 15px 20px 0;
+    padding: 11px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    border-radius: 9px;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    background: rgba(245, 158, 11, 0.09);
+    color: #fbbf24;
+
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.proctor-info {
+    border-color: rgba(34, 197, 94, 0.32);
+    background: rgba(34, 197, 94, 0.09);
+    color: #4ade80;
+}
+
+
+/* =========================================================
+   STUDENT: FREEZE SCREEN
+========================================================= */
+
+.freeze-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    padding: 20px;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(4, 7, 13, 0.97);
+}
+
+.freeze-card {
+    width: min(520px, 100%);
+    padding: 36px 32px;
+    box-sizing: border-box;
+
+    text-align: center;
+
+    border-radius: 20px;
+    border: 1px solid rgba(239, 68, 68, 0.30);
+    background:
+        radial-gradient(circle at 50% -10%, rgba(239, 68, 68, 0.16), transparent 50%),
+        #0d1424;
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.6);
+}
+
+.freeze-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 18px;
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.30);
+}
+
+.freeze-card h2 {
+    margin: 0 0 10px;
+    color: #f4f7ff;
+    font-size: 23px;
+    letter-spacing: -0.02em;
+}
+
+.freeze-card p {
+    margin: 0 0 8px;
+    color: #9aa9c0;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.freeze-reason {
+    margin: 18px 0;
+    padding: 12px 14px;
+
+    border-radius: 10px;
+    border: 1px solid #25344d;
+    background: #0a1120;
+
+    color: #cbd5e6;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.freeze-waiting {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+
+    color: #fbbf24;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.freeze-logout {
+    height: 44px;
+    padding: 0 22px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    border-radius: 11px;
+    border: 1px solid #34466a;
+    background: #151f33;
+    color: #e2e9f6;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.freeze-logout:hover {
+    background: #1c2a45;
+    border-color: #4a6296;
+}
+
+
+/* =========================================================
+   TEACHER: TAB BADGE + ALERT BANNER
+========================================================= */
+
+.pc-tab-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+
+    display: inline-grid;
+    place-items: center;
+    box-sizing: border-box;
+
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pc-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+
+    padding: 13px 16px;
+
+    border-radius: 11px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.09);
+    color: #fca5a5;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.pc-banner > span {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.pc-banner button {
+    height: 34px;
+    padding: 0 14px;
+
+    border-radius: 8px;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    background: rgba(239, 68, 68, 0.14);
+    color: #fecaca;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.pc-banner button:hover {
+    background: rgba(239, 68, 68, 0.24);
+}
+
+
+/* =========================================================
+   TEACHER: PANEL
+========================================================= */
+
+.pc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+
+    border-radius: 999px;
+    border: 1px solid transparent;
+
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.pc-badge.frozen {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.30);
+}
+
+.pc-badge.active {
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.10);
+    border-color: rgba(34, 197, 94, 0.26);
+}
+
+.pc-count.high {
+    color: #f87171;
+    font-weight: 700;
+}
+
+.pc-count.mid {
+    color: #fbbf24;
+    font-weight: 700;
+}
+
+.pc-unlock-btn {
+    height: 34px;
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.pc-unlock-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.pc-unlock-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.pc-reason {
+    max-width: 280px;
+    color: #9fb0c9;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.pc-note {
+    margin: 16px 0 0;
+    color: #6f809b;
+    font-size: 11.5px;
+    line-height: 1.7;
+}
+
+
+@media (max-width: 950px) {
+    .switch-chip {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .freeze-card {
+        padding: 28px 20px;
+    }
+}
+/* =========================================================
+   Eye-monitoring additions (Proctoring.css ke END mein paste karo)
+========================================================= */
+
+.pc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+}
+
+.pc-chip {
+    padding: 2px 8px;
+
+    border-radius: 999px;
+    border: 1px solid #2a3a57;
+    background: #0f1828;
+    color: #9fb0c9;
+
+    font-size: 10.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Bell, Send, Trash2, X } from "lucide-react";
+import { Bell, BellOff, Check, Megaphone, Send, Trash2, X } from "lucide-react";
 import "./NotificationBell.css";
 
 const API_BASE = "http://localhost:5000";
@@ -55,9 +55,71 @@ function timeAgo(value) {
     const days = Math.floor(hours / 24);
     if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
 
-    return new Date(value).toLocaleDateString();
+    return new Date(value).toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+    });
 }
 
+
+/* Ek notification ka card (panel aur dashboard card dono mein) */
+function NotificationItem({ item, isTeacher, onDelete, confirming, onAskDelete, onCancelDelete }) {
+    const unread = !isTeacher && !item.is_read;
+
+    return (
+        <article className={`nb-item ${unread ? "nb-unread" : ""}`}>
+            <div className="nb-item-top">
+                {unread && <span className="nb-dot" aria-hidden="true" />}
+
+                <strong>{item.title}</strong>
+
+                {unread && <span className="nb-new">New</span>}
+
+                {isTeacher && !confirming && (
+                    <button
+                        type="button"
+                        className="nb-delete"
+                        title="Delete"
+                        aria-label={`Delete ${item.title}`}
+                        onClick={() => onAskDelete(item.notification_id)}
+                    >
+                        <Trash2 size={14} />
+                    </button>
+                )}
+            </div>
+
+            <p>{item.message}</p>
+
+            {isTeacher && confirming ? (
+                <div className="nb-confirm">
+                    <span>Delete this for all students?</span>
+
+                    <button
+                        type="button"
+                        className="nb-confirm-no"
+                        onClick={onCancelDelete}
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="button"
+                        className="nb-confirm-yes"
+                        onClick={() => onDelete(item.notification_id)}
+                    >
+                        Delete
+                    </button>
+                </div>
+            ) : (
+                <span className="nb-time">
+                    {!isTeacher && item.teacher ? `${item.teacher} · ` : ""}
+                    {timeAgo(item.created_at)}
+                </span>
+            )}
+        </article>
+    );
+}
 
 
 function NotificationBell({ role = "student" }) {
@@ -69,11 +131,11 @@ function NotificationBell({ role = "student" }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    
     const [title, setTitle] = useState("");
     const [message, setMessage] = useState("");
     const [sending, setSending] = useState(false);
     const [info, setInfo] = useState("");
+    const [confirmId, setConfirmId] = useState(null);
 
     const wrapperRef = useRef(null);
 
@@ -81,7 +143,6 @@ function NotificationBell({ role = "student" }) {
         ? "/api/teacher/notifications"
         : "/api/student/notifications";
 
-    
 
     const load = useCallback(async (showLoader = false) => {
         if (showLoader) setLoading(true);
@@ -97,7 +158,6 @@ function NotificationBell({ role = "student" }) {
 
             setError("");
         } catch (e) {
-          
             if (showLoader) setError(e.message);
         } finally {
             if (showLoader) setLoading(false);
@@ -117,17 +177,29 @@ function NotificationBell({ role = "student" }) {
     useEffect(() => {
         if (!open) return undefined;
 
+        const close = () => {
+            setOpen(false);
+            setConfirmId(null);
+
+            // Panel band hone ke baad "New" tag hata do
+            if (!isTeacher) {
+                setItems((current) =>
+                    current.map((item) => ({ ...item, is_read: true }))
+                );
+            }
+        };
+
         const onClick = (event) => {
             if (
                 wrapperRef.current &&
                 !wrapperRef.current.contains(event.target)
             ) {
-                closePanel();
+                close();
             }
         };
 
         const onKey = (event) => {
-            if (event.key === "Escape") closePanel();
+            if (event.key === "Escape") close();
         };
 
         document.addEventListener("mousedown", onClick);
@@ -137,10 +209,8 @@ function NotificationBell({ role = "student" }) {
             document.removeEventListener("mousedown", onClick);
             document.removeEventListener("keydown", onKey);
         };
-        
-    }, [open]);
+    }, [open, isTeacher]);
 
-  
 
     const openPanel = async () => {
         setOpen(true);
@@ -149,7 +219,6 @@ function NotificationBell({ role = "student" }) {
 
         await load(true);
 
-       
         if (!isTeacher) {
             try {
                 await apiCall("/api/student/notifications/read", {
@@ -157,15 +226,15 @@ function NotificationBell({ role = "student" }) {
                 });
                 setUnread(0);
             } catch {
-                
+                /* read-mark fail ho to bhi panel chalta rahe */
             }
         }
     };
 
     const closePanel = () => {
         setOpen(false);
+        setConfirmId(null);
 
-        // Panel band hone ke baad "New" tag hata do
         if (!isTeacher) {
             setItems((current) =>
                 current.map((item) => ({ ...item, is_read: true }))
@@ -173,13 +242,13 @@ function NotificationBell({ role = "student" }) {
         }
     };
 
- 
 
     const sendNotification = async (event) => {
-        event.preventDefault();
+        if (event) event.preventDefault();
 
         if (!title.trim() || !message.trim()) {
-            setError("Write both Title and Message");
+            setInfo("");
+            setError("Write both a title and a message.");
             return;
         }
 
@@ -199,7 +268,7 @@ function NotificationBell({ role = "student" }) {
             setItems((current) => [data.notification, ...current]);
             setTitle("");
             setMessage("");
-            setInfo("Notification sent to all students.");
+            setInfo("Sent to all students.");
         } catch (e) {
             setError(e.message);
         } finally {
@@ -214,11 +283,22 @@ function NotificationBell({ role = "student" }) {
             setItems((current) =>
                 current.filter((item) => item.notification_id !== id)
             );
+            setConfirmId(null);
         } catch (e) {
+            setConfirmId(null);
             setError(e.message);
         }
     };
- 
+
+    const onMessageKey = (event) => {
+        // Ctrl/Cmd + Enter se send
+        if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+            sendNotification();
+        }
+    };
+
+    const canSend = title.trim() && message.trim() && !sending;
+
 
     return (
         <div className="nb-wrapper" ref={wrapperRef}>
@@ -244,9 +324,20 @@ function NotificationBell({ role = "student" }) {
                 <div className="nb-panel" role="dialog" aria-label="Notifications">
 
                     <div className="nb-panel-header">
-                        <strong>
-                            {isTeacher ? "Notify students" : "Notifications"}
-                        </strong>
+                        <span className="nb-head-icon" aria-hidden="true">
+                            {isTeacher ? <Megaphone size={16} /> : <Bell size={16} />}
+                        </span>
+
+                        <div className="nb-head-text">
+                            <strong>
+                                {isTeacher ? "Notify students" : "Notifications"}
+                            </strong>
+                            <span>
+                                {isTeacher
+                                    ? "Visible to every student"
+                                    : "Updates from your teachers"}
+                            </span>
+                        </div>
 
                         <button
                             type="button"
@@ -260,88 +351,85 @@ function NotificationBell({ role = "student" }) {
 
                     {isTeacher && (
                         <form className="nb-form" onSubmit={sendNotification}>
-                            <input
-                                type="text"
-                                placeholder="Title "
-                                value={title}
-                                maxLength={MAX_TITLE}
-                                onChange={(e) => setTitle(e.target.value)}
-                                disabled={sending}
-                            />
+                            <div className="nb-field">
+                                <input
+                                    type="text"
+                                    placeholder="Title (e.g. Test starts at 10 AM)"
+                                    aria-label="Title"
+                                    value={title}
+                                    maxLength={MAX_TITLE}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    disabled={sending}
+                                />
+                            </div>
 
-                            <textarea
-                                placeholder="Write Message"
-                                value={message}
-                                maxLength={MAX_MESSAGE}
-                                onChange={(e) => setMessage(e.target.value)}
-                                disabled={sending}
-                            />
+                            <div className="nb-field">
+                                <textarea
+                                    placeholder="Write your message…"
+                                    aria-label="Message"
+                                    value={message}
+                                    maxLength={MAX_MESSAGE}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onKeyDown={onMessageKey}
+                                    disabled={sending}
+                                />
+                                <span className="nb-counter">
+                                    {message.length}/{MAX_MESSAGE}
+                                </span>
+                            </div>
 
                             <button
                                 type="submit"
                                 className="nb-send"
-                                disabled={sending}
+                                disabled={!canSend}
                             >
                                 <Send size={14} />
-                                {sending ? "Sending..." : "Send to all students"}
+                                {sending ? "Sending…" : "Send to all students"}
                             </button>
                         </form>
                     )}
 
-                    {error && <div className="nb-error">{error}</div>}
-                    {info && <div className="nb-info">{info}</div>}
+                    {error && (
+                        <div className="nb-error" role="alert">{error}</div>
+                    )}
+
+                    {info && (
+                        <div className="nb-info" role="status">
+                            <Check size={13} />
+                            {info}
+                        </div>
+                    )}
 
                     {isTeacher && items.length > 0 && (
-                        <div className="nb-subhead">Sent notifications</div>
+                        <div className="nb-subhead">
+                            Sent notifications
+                            <span>{items.length}</span>
+                        </div>
                     )}
 
                     <div className="nb-list">
                         {loading ? (
-                            <p className="nb-empty">Loading...</p>
+                            <p className="nb-empty">Loading…</p>
                         ) : items.length === 0 ? (
-                            <p className="nb-empty">
-                                {isTeacher
-                                    ? "No notifications sent yet."
-                                    : "No notification yet."}
-                            </p>
+                            <div className="nb-empty">
+                                <BellOff size={22} />
+                                <p>
+                                    {isTeacher
+                                        ? "Nothing sent yet."
+                                        : "You're all caught up."}
+                                </p>
+                            </div>
                         ) : (
                             items.map((item) => (
-                                <div
+                                <NotificationItem
                                     key={item.notification_id}
-                                    className={`nb-item ${
-                                        !isTeacher && !item.is_read ? "nb-unread" : ""
-                                    }`}
-                                >
-                                    <div className="nb-item-top">
-                                        <strong>{item.title}</strong>
-
-                                        {!isTeacher && !item.is_read && (
-                                            <span className="nb-new">New</span>
-                                        )}
-
-                                        {isTeacher && (
-                                            <button
-                                                type="button"
-                                                className="nb-delete"
-                                                title="Delete"
-                                                onClick={() =>
-                                                    removeNotification(item.notification_id)
-                                                }
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    <p>{item.message}</p>
-
-                                    <span className="nb-time">
-                                        {!isTeacher && item.teacher
-                                            ? `${item.teacher} · `
-                                            : ""}
-                                        {timeAgo(item.created_at)}
-                                    </span>
-                                </div>
+                                    item={item}
+                                    isTeacher={isTeacher}
+                                    confirming={confirmId === item.notification_id}
+                                    onAskDelete={setConfirmId}
+                                    onCancelDelete={() => setConfirmId(null)}
+                                    onDelete={removeNotification}
+                                />
                             ))
                         )}
                     </div>
@@ -393,32 +481,21 @@ export function NotificationsCard() {
 
             <div className="nb-card">
                 {loading ? (
-                    <p className="nb-empty">Loading...</p>
+                    <p className="nb-empty">Loading…</p>
                 ) : error ? (
                     <p className="nb-empty">{error}</p>
                 ) : items.length === 0 ? (
-                    <p className="nb-empty">No notification yet.</p>
+                    <div className="nb-empty">
+                        <BellOff size={22} />
+                        <p>No notifications yet.</p>
+                    </div>
                 ) : (
                     items.map((item) => (
-                        <div
+                        <NotificationItem
                             key={item.notification_id}
-                            className={`nb-item ${!item.is_read ? "nb-unread" : ""}`}
-                        >
-                            <div className="nb-item-top">
-                                <strong>{item.title}</strong>
-
-                                {!item.is_read && (
-                                    <span className="nb-new">New</span>
-                                )}
-                            </div>
-
-                            <p>{item.message}</p>
-
-                            <span className="nb-time">
-                                {item.teacher ? `${item.teacher} · ` : ""}
-                                {timeAgo(item.created_at)}
-                            </span>
-                        </div>
+                            item={item}
+                            isTeacher={false}
+                        />
                     ))
                 )}
             </div>
